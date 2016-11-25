@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Course d\'orientation</string>
+    <string name="idRace">Numéro de la course : </string>
+    <string name="idTeam">Numéro d\'équipe : </string>
+</resources>

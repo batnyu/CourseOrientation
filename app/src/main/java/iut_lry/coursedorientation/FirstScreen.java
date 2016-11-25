@@ -22,6 +22,7 @@ import java.util.List;
 
 public class FirstScreen extends AppCompatActivity implements View.OnClickListener {
 
+    IntentIntegrator integrator;
     List<String> messagesBalises = new ArrayList<String>();
     private ListView lv;
     ArrayAdapter<String> arrayAdapter;
@@ -31,8 +32,10 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_screen);
 
-        Button mybutton = (Button) findViewById(R.id.scan_button);
-        mybutton.setOnClickListener(this);
+        Button scanButton = (Button) findViewById(R.id.scan_button);
+
+
+        scanButton.setOnClickListener(this);
 
         lv = (ListView) findViewById(R.id.listView);
 
@@ -42,48 +45,49 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
                 messagesBalises );
     }
 
+
+
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.scan_button){
 
-// on lance le scanner au clic sur notre bouton
+            //On lance le scanner au clic sur notre bouton
             IntentIntegrator integrator = new IntentIntegrator(this);
             integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
             integrator.setOrientationLocked(false);
             integrator.setPrompt("Encadrez le code-barres d'une balise pour la valider !");
             integrator.initiateScan();
+
         }
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    // Get the results:
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Scan annulé !", Toast.LENGTH_LONG).show();
+            } else {
+                //Récupération du contenu du scan
+                String scanContent = result.getContents();
+                String scanFormat = result.getFormatName();
+                //Affichage dans les TextViews
+                TextView scan_format = (TextView) findViewById(R.id.scan_format);
+                TextView scan_content = (TextView) findViewById(R.id.scan_content);
 
-// nous utilisons la classe IntentIntegrator et sa fonction parseActivityResult pour parser le résultat du scan
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-        if (scanningResult != null) {
+                scan_format.setText("FORMAT: " + scanFormat);
+                scan_content.setText("CONTENT: " + scanContent);
 
-// nous récupérons le contenu du code barre
-            String scanContent = scanningResult.getContents();
+                //Ajout dans la liste et refresh
+                messagesBalises.add(scanContent);
+                lv.setAdapter(arrayAdapter);
 
-// nous récupérons le format du code barre
-            String scanFormat = scanningResult.getFormatName();
-
-            TextView scan_format = (TextView) findViewById(R.id.scan_format);
-            TextView scan_content = (TextView) findViewById(R.id.scan_content);
-
-// nous affichons le résultat dans nos TextView
-
-            scan_format.setText("FORMAT: " + scanFormat);
-            scan_content.setText("CONTENT: " + scanContent);
-
-            messagesBalises.add(scanContent);
-            lv.setAdapter(arrayAdapter);
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
-        else{
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Aucune donnée reçu!", Toast.LENGTH_SHORT);
-            toast.show();
-        }
-
     }
 
 }

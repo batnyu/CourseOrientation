@@ -1,6 +1,7 @@
 package iut_lry.coursedorientation;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,15 +18,22 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.w3c.dom.Text;
+
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class FirstScreen extends AppCompatActivity implements View.OnClickListener {
 
     IntentIntegrator integrator;
-    List<String> messagesBalises = new ArrayList<String>();
-    private ListView lv;
-    ArrayAdapter<String> arrayAdapter;
+
+    Calendar rightNow;
+
+    baliseHeureAdapter adapter;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +41,21 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_first_screen);
 
         Button scanButton = (Button) findViewById(R.id.scan_button);
-
-
         scanButton.setOnClickListener(this);
 
-        lv = (ListView) findViewById(R.id.listView);
+        // Construct the data source
+        ArrayList<baliseHeure> arrayOfbaliseHeure = new ArrayList<baliseHeure>();
+        // Create the adapter to convert the array to views
+        adapter = new baliseHeureAdapter(this, arrayOfbaliseHeure);
+        // Attach the adapter to a ListView
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
 
-        arrayAdapter = new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                messagesBalises );
+        //header, on verra plus tard
+        /*TextView header = new TextView(getBaseContext());
+        header.setTextColor(Color.BLACK);
+        header.setText("Numéro Balise     ->     Temps");
+        lv.addHeaderView(header);*/
     }
 
 
@@ -79,11 +92,18 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
                 scan_format.setText("FORMAT: " + scanFormat);
                 scan_content.setText("CONTENT: " + scanContent);
 
-                //Ajout dans la liste et refresh
-                messagesBalises.add(scanContent);
-                lv.setAdapter(arrayAdapter);
+                //récupère le temps actuel
+                rightNow = Calendar.getInstance();
+                SimpleDateFormat format = new SimpleDateFormat("H:mm:ss");
+                String temps = format.format(rightNow.getTime());
 
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                baliseHeure baliseHeure = new baliseHeure(scanContent,temps);
+
+                //Ajout dans la liste et refresh
+                adapter.add(baliseHeure);
+                listView.setAdapter(adapter);
+
+                Toast.makeText(this, "Scanné : " + result.getContents(), Toast.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

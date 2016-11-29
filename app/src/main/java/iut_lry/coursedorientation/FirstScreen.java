@@ -2,6 +2,7 @@ package iut_lry.coursedorientation;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -69,6 +70,7 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
             integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
             integrator.setOrientationLocked(false);
             integrator.setPrompt("Encadrez le code-barres d'une balise pour la valider !");
+            integrator.setBeepEnabled(false);
             integrator.initiateScan();
 
         }
@@ -81,10 +83,15 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(this, "Scan annulé !", Toast.LENGTH_LONG).show();
+
+                //TODO jouez son echec scan
+
             } else {
                 //Récupération du contenu du scan
                 String scanContent = result.getContents();
                 String scanFormat = result.getFormatName();
+
+
                 //Affichage dans les TextViews
                 TextView scan_format = (TextView) findViewById(R.id.scan_format);
                 TextView scan_content = (TextView) findViewById(R.id.scan_content);
@@ -92,9 +99,10 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
                 scan_format.setText("FORMAT: " + scanFormat);
                 scan_content.setText("CONTENT: " + scanContent);
 
+
                 //récupère le temps actuel
                 rightNow = Calendar.getInstance();
-                SimpleDateFormat format = new SimpleDateFormat("H:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
                 String temps = format.format(rightNow.getTime());
 
                 baliseHeure baliseHeure = new baliseHeure(scanContent,temps);
@@ -103,7 +111,15 @@ public class FirstScreen extends AppCompatActivity implements View.OnClickListen
                 adapter.add(baliseHeure);
                 listView.setAdapter(adapter);
 
+
+
                 Toast.makeText(this, "Scanné : " + result.getContents(), Toast.LENGTH_LONG).show();
+
+
+                //Joué un son
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.zxing_beep);
+                mp.start();
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

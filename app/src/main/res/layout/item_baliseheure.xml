@@ -11,9 +11,15 @@
         android:textSize="18sp"
         android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:textColor="#ae0000"
+        android:textColor="#727272"
         android:paddingTop="5dp"
         android:paddingBottom="5dp" />
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="fill_parent"
+        android:background="#000000" />
+
     <TextView
         android:id="@+id/heureBalise"
         android:layout_width="fill_parent"

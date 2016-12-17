@@ -1,7 +1,6 @@
 package iut_lry.coursedorientation;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,21 +10,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements IFragmentToActivity {
     private final String LOG_TAG = "MainActivity";
     private PagerAdapter adapter;
     private TabLayout tabLayout;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +29,15 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         setSupportActionBar(toolbar);
 
         ArrayList<String> tabs = new ArrayList<>();
-        tabs.add("Tab 1");
-        tabs.add("Tab 2");
-        tabs.add("Tab 3");
+        tabs.add("Paramètres");
+        tabs.add("Infos");
+        tabs.add("Parcours");
+        //tabs.add("Course TABLEAU");
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setOffscreenPageLimit(2); //pour garder les 3 fragments dans le cache
         adapter = new PagerAdapter(getSupportFragmentManager(), tabs);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -72,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
                     case 2:
                         ((TabFragment3) fragment).onRefresh();
                         break;
+                    /*case 3:
+                        ((TabFragment4) fragment).onRefresh();
+                        break;*/
                 }
             }
             return true;
@@ -100,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         // in order to receive the result inside onActivityResult from the fragment.
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
 
 }

@@ -32,7 +32,7 @@ public class classAremettre extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_fragment_2);
+        setContentView(R.layout.tab_fragment_3);
 
         Button scanButton = (Button) findViewById(R.id.scan_button);
         scanButton.setOnClickListener(this);

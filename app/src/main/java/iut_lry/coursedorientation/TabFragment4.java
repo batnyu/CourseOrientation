@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class TabFragment2 extends Fragment implements View.OnClickListener {
+public class TabFragment4 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
 
     private Button scanButton;
@@ -33,24 +33,12 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab_fragment_2, container, false);
+        View view = inflater.inflate(R.layout.tab_fragment_4, container, false);
 
         scanButton = (Button) view.findViewById(R.id.scan_button);
         scanButton.setOnClickListener(this);
 
-        // Construct the data source
-        ArrayList<baliseHeure> arrayOfbaliseHeure = new ArrayList<baliseHeure>();
-        // Create the adapter to convert the array to views
-        adapter = new baliseHeureAdapter(getActivity(), arrayOfbaliseHeure);
-        // Attach the adapter to a ListView
-        listView = (ListView) view.findViewById(R.id.listView);
-        listView.setAdapter(adapter);
 
-        //header, on verra plus tard
-        /*TextView header = new TextView(getBaseContext());
-        header.setTextColor(Color.BLACK);
-        header.setText("Numéro Balise     ->     Temps");
-        lv.addHeaderView(header);*/
 
 
         return view;
@@ -108,7 +96,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
                 //Joué un son -> BUG
                 final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.zxing_beep);
-                mp.setVolume(10,10);
                 mp.start();
 
             }

@@ -4,11 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.DhcpInfo;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -52,11 +56,13 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     //TEST
     // DB Class to perform DB related operations
     DBController controller;
+    //DBController controller = ((MainActivity)this.getActivity()).getController();
     // Progress Dialog Object
     ProgressDialog prgDialog;
     HashMap<String, String> queryValues;
 
-
+    public boolean activiteCreated = false;
+    DrawerLayout mDrawer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,12 +79,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         dllParkour = (Button) view.findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
 
-
-
         // Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(getActivity());
         //prgDialog.setMessage("Transferring Data from Remote MySQL DB and Syncing SQLite. Please wait...");
-        prgDialog.setMessage("Transfert en cours du parcours présent sur le serveur. Patientez svp...");
+        prgDialog.setMessage("Transfert en cours du parcours présent sur le serveur.\nPatientez svp...");
         prgDialog.setCancelable(false);
 
         /*// BroadCase Receiver Intent Object
@@ -99,6 +103,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         controller = new DBController(getActivity());
+
+        activiteCreated = true;
+
+        afficherInfoWifi();
+
+        /*
         //TEST MACHIN BDD
         ArrayList<HashMap<String, String>> userList;
         // Get User records from SQLite DB
@@ -113,9 +123,22 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             ListView myList = (ListView) getActivity().findViewById(R.id.listView2);
             myList.setAdapter(adapter);
 
+        }*/
+    }
 
+    //mettre à jour les infos wifi quand l'application est repris sans avoir été arreté
+    @Override
+    public void onResume() {
+        afficherInfoWifi();
+        super.onResume();
+    }
 
-
+    //update les infos wifi quand on active l'onglet
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && activiteCreated) {
+            afficherInfoWifi();
         }
     }
 
@@ -153,11 +176,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.button3:
-                ipServer = getWifiApIpAddress();
-                if(ipServer != null)
-                {
-                    adresseIP.setText(ipServer);
-                }
+                afficherInfoWifi();
                 break;
 
             case R.id.dllParkour:
@@ -168,7 +187,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     public String getWifiApIpAddress() {
         String myIP = null;
-        Log.d("WIFI","Bah ouai c'est dedans là");
         final WifiManager manager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
         final DhcpInfo dhcp = manager.getDhcpInfo();
         //conversion chelou pour la mettre en string adresse IP
@@ -182,74 +200,123 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         } catch (UnknownHostException e) {
             e.printStackTrace();
             Log.d("erreur ",e.getMessage());
-            adresseIP.setText("Vous n'êtes connecté à aucun réseau wifi !");
         }
 
         return myIP;
     }
 
+    public String getWifiNetworkName() {
+        WifiManager wifiMgr = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+        String name = wifiInfo.getSSID();
+        return name;
+    }
+
+    public void afficherInfoWifi() {
+        ipServer = getWifiApIpAddress();
+        String nameServer = getWifiNetworkName();
+        if(ipServer != null)
+        {
+            adresseIP.setText("Vous êtes connecté au réseau Wifi " + nameServer +
+                    " situé à l'adresse IP " + ipServer);
+        }
+        else
+        {
+            adresseIP.setText("Vous n'êtes connecté à aucun réseau wifi !");
+        }
+    }
+
     // Method to Sync MySQL to SQLite DB
     public void syncSQLiteMySQLDB() {
-        //test pour reset table qd télécharge le parcours
-        controller.deleteTable("parcoursLite");
+
 
         // Create AsycHttpClient object
-        Log.d("sync","Bah ouai c'est dedans là");
         AsyncHttpClient client = new AsyncHttpClient();
         // Http Request Params Object
         RequestParams params = new RequestParams();
         // Show ProgressBar
+        //prgDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        //prgDialog.setProgressNumberFormat("");
+        //prgDialog.setTitle("Téléchargement du parcours");
         prgDialog.show();
 
-        //client.setConnectTimeout(60000);
+        client.setConnectTimeout(1000);
+        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
+        // est repéré par onFailure contrairement à host unreachable
+        // à étudié c'est relou
 
         // Make Http call to getusers.php
         client.post("http://192.168.1.52/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
-        //
-            @Override
-            public void onStart() {
-                // called before request is started
-            }
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                // called when response HTTP status is "200 OK"
-                // Hide ProgressBar
-                prgDialog.hide();
-                // Update SQLite DB with response sent by getusers.php
-                String responseString = null;
-                try {
-                    responseString = new String(response, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                updateSQLite(responseString);
-            }
+        @Override
+        public void onStart() {
+            // called before request is started
+        }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                // Hide ProgressBar
-                prgDialog.hide();
-                Toast.makeText(getActivity().getApplicationContext(), "Erreur : " + statusCode, Toast.LENGTH_LONG).show();
-                if (statusCode == 404) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                } else if (statusCode == 500) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            // called when response HTTP status is "200 OK"
+            // Hide ProgressBar
+            //prgDialog.setMessage("Le parcours a été téléchargé !");
+            //prgDialog.setCancelable(true);
+            //prgDialog.setCanceledOnTouchOutside(true);
+            prgDialog.hide();
+            Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
 
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
+            // Update SQLite DB with response sent by getusers.php
+            String responseString = null;
+            try {
+                responseString = new String(response, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
+            updateSQLite(responseString);
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+            // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+            // Hide ProgressBar
+            prgDialog.hide();
+            if (statusCode == 404) {
+                Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+            } else if (statusCode == 500) {
+                Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onRetry(int retryNo) {
+            // called when request is retried
+        }
+
+        @Override //marche pas
+        public void onUserException(java.lang.Throwable error) {
+            prgDialog.hide();
+            Toast.makeText(getActivity().getApplicationContext(), "Erreur : " + error.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        /*@Override
+        public void onProgress(long bytesWritten, long totalSize) {
+            long progressPercentage = (long)100*bytesWritten/totalSize;
+            NumberFormat percentage = NumberFormat.getPercentInstance();
+            prgDialog.setProgress((int)progressPercentage);
+            prgDialog.setProgressPercentFormat(percentage);
+            //a revoir si on veut la barre de progression mais galere
+        }*/
+
+
         });
+
     }
 
     public void updateSQLite(String response){
+        //test pour reset table qd télécharge le parcours
+        controller.deleteTable("parcoursLite");
+
         ArrayList<HashMap<String, String>> usersynclist;
         usersynclist = new ArrayList<HashMap<String, String>>();
         // Create GSON object
@@ -287,8 +354,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
                 // Inform Remote MySQL DB about the completion of Sync activity by passing Sync status of Users
                 //updateMySQLSyncSts(gson.toJson(usersynclist));
-                // Reload the Main Activity
-                reloadActivity();
+                // Reload the Fragment
+                reloadFragment();
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -297,7 +364,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     }
 
     // Reload MainActivity
-    public void reloadActivity() {
+    public void reloadFragment() {
+        //pour reload l'activité
         //Intent objIntent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
         //startActivity(objIntent);
         //CA MARCHE qu'avec un reload du fragment! c'est plus fluide a lecran

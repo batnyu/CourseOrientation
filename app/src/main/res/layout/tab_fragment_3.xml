@@ -6,7 +6,7 @@
     android:layout_width="fill_parent">
     <!-- Header -->
     <LinearLayout android:id="@+id/header"
-        android:background="#ff4e19"
+        android:background="#7c7c7c"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         >
@@ -16,31 +16,43 @@
             android:width="20dip"
             android:height="30dip"
             android:textAlignment="gravity"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#ffffff"
+            android:text="" />
         <TextView android:id="@+id/item2"
-            android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
-            android:text="Index"
-            android:width="100dip"
-            android:height="30dip"
-            android:textAlignment="gravity"
-            android:gravity="center_vertical" />
-        <TextView android:id="@+id/item3"
             android:layout_height="fill_parent"
             android:layout_width="wrap_content"
             android:text="Balise"
             android:width="100dip"
             android:height="30dip"
             android:textAlignment="gravity"
-            android:gravity="center_vertical" />
-        <TextView android:id="@+id/item4"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#ffffff" />
+        <TextView android:id="@+id/item3"
             android:layout_height="fill_parent"
             android:layout_width="wrap_content"
-            android:text="Heures"
+            android:text="Temps"
             android:width="100dip"
             android:height="30dip"
             android:textAlignment="gravity"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#ffffff" />
+        <TextView android:id="@+id/item4"
+            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:width="100dip"
+            android:height="30dip"
+            android:textAlignment="gravity"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#ffffff" />
     </LinearLayout>
 
     <!-- List Divider -->

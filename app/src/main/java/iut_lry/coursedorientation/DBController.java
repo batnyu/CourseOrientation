@@ -1,5 +1,6 @@
 package iut_lry.coursedorientation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,6 +9,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.view.View;
+import android.view.ViewGroup;
 
 
 public class DBController  extends SQLiteOpenHelper {
@@ -56,18 +59,21 @@ public class DBController  extends SQLiteOpenHelper {
      * @return
      */
     public ArrayList<HashMap<String, String>> getAllUsers() {
+
         ArrayList<HashMap<String, String>> usersList;
         usersList = new ArrayList<HashMap<String, String>>();
         String selectQuery = "SELECT * FROM parcoursLite";
+
+        String test;
 
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
-                //map.put("id", cursor.getString(0));
-                map.put("balise", cursor.getString(0));
-                map.put("temps", cursor.getString(1));
+                map.put("id", cursor.getString(0));
+                map.put("balise", cursor.getString(1));
+                map.put("temps", cursor.getString(2));
                 usersList.add(map);
             } while (cursor.moveToNext());
         }

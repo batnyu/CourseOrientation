@@ -19,7 +19,11 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
     private PagerAdapter adapter;
     private TabLayout tabLayout;
 
+    DBController controller;
 
+    /*public DBController getController(){
+        return this.controller;
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -2,19 +2,28 @@ package iut_lry.coursedorientation;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TabFragment3 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
 
     private TextView mTextView1;
     private Button btnFtoA;
+
+    DBController controller;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -24,9 +33,37 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         btnFtoA = (Button) view.findViewById(R.id.button);
         btnFtoA.setOnClickListener(this);*/
 
-
-
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        //updateList();
+
+    }
+
+    public void updateList() {
+
+        controller = new DBController(getActivity());
+        // create the grid item mapping
+        String[] from = new String[] {"RIEN", "balise", "temps", "RIEN"};
+        int[] to = new int[] { R.id.item1, R.id.item2, R.id.item3, R.id.item4 };
+
+        ArrayList<HashMap<String, String>> userList;
+        // Get User records from SQLite DB
+
+        userList = controller.getAllUsers();
+        // If users exists in SQLite DB
+        if (userList.size() != 0) {
+
+            // Set the User Array list in ListView
+            ListAdapter adapter = new SpecialAdapter(getActivity(), userList, R.layout.grid_item, from, to);
+            ListView myList = (ListView) getActivity().findViewById(R.id.listview);
+            myList.setAdapter(adapter);
+            registerForContextMenu(myList);
+        }
     }
 
     @Override
@@ -47,7 +84,7 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     }
 
     public void onRefresh() {
-        Toast.makeText(getActivity(), "Fragment 2: Refresh called.",
+        Toast.makeText(getActivity(), "Fragment 3: Refresh called.",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -64,4 +101,15 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            updateList();
+        }
+        else {
+        }
+    }
+
 }

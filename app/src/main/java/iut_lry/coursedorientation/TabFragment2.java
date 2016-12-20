@@ -135,7 +135,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     }
 
     public void onRefresh() {
-        Toast.makeText(getActivity(), "Fragment 3: Refresh called.",
+        Toast.makeText(getActivity(), "Fragment 2: Refresh called.",
                 Toast.LENGTH_SHORT).show();
     }
 

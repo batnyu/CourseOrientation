@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,10 +14,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -38,6 +42,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.Key;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,15 +53,17 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
     private Button btnFtoA;
     private Button btnFtoF;
+
+    EditText numCourse;
+    EditText numEquipe;
+
     String ipServer;
     TextView adresseIP;
     Button test;
     private Button dllParkour;
 
-    //TEST
     // DB Class to perform DB related operations
     DBController controller;
-    //DBController controller = ((MainActivity)this.getActivity()).getController();
     // Progress Dialog Object
     ProgressDialog prgDialog;
     HashMap<String, String> queryValues;
@@ -67,6 +74,40 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_1, container, false);
+
+        numCourse = (EditText) view.findViewById(R.id.numCourse);
+        numEquipe = (EditText) view.findViewById(R.id.numEquipe);
+
+
+        //A completer pour enlever le focus quand on enleve le truc ou alors quand on appuie sur le bouton
+        numCourse.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View view, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(numCourse.getWindowToken(), 0);
+                    numCourse.setFocusable(false);
+                    numCourse.setFocusableInTouchMode(true);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        numEquipe.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View view, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(numEquipe.getWindowToken(), 0);
+                    numEquipe.setFocusable(false);
+                    numEquipe.setFocusableInTouchMode(true);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
         btnFtoA = (Button) view.findViewById(R.id.button);
         btnFtoF = (Button) view.findViewById(R.id.button2);
         btnFtoA.setOnClickListener(this);
@@ -108,24 +149,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         afficherInfoWifi();
 
-        /*
-        //TEST MACHIN BDD
-        ArrayList<HashMap<String, String>> userList;
-        // Get User records from SQLite DB
-
-        userList = controller.getAllUsers();
-        // If users exists in SQLite DB
-        if (userList.size() != 0) {
-
-            // Set the User Array list in ListView
-            ListAdapter adapter = new SimpleAdapter(getActivity(), userList, R.layout.item_baliseheure, new String[] {
-                    "id", "balise", "temps" }, new int[] {0, R.id.numBalise, R.id.heureBalise });
-            ListView myList = (ListView) getActivity().findViewById(R.id.listView2);
-            myList.setAdapter(adapter);
-
-        }*/
     }
 
+
+    /* La flemme de faire ça
     //mettre à jour les infos wifi quand l'application est repris sans avoir été arreté
     @Override
     public void onResume() {
@@ -140,7 +167,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         if (isVisibleToUser && activiteCreated) {
             afficherInfoWifi();
         }
-    }
+    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -181,6 +208,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             case R.id.dllParkour:
                 syncSQLiteMySQLDB();
+                mCallback.communicateToFragment3();
                 break;
         }
     }
@@ -229,7 +257,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     // Method to Sync MySQL to SQLite DB
     public void syncSQLiteMySQLDB() {
 
-
         // Create AsycHttpClient object
         AsyncHttpClient client = new AsyncHttpClient();
         // Http Request Params Object
@@ -240,75 +267,70 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         //prgDialog.setTitle("Téléchargement du parcours");
         prgDialog.show();
 
-        client.setConnectTimeout(1000);
+        client.setConnectTimeout(5000);
         //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
         // est repéré par onFailure contrairement à host unreachable
         // à étudié c'est relou
+        client.setResponseTimeout(5000); // as above
+        client.setTimeout(5000); // both connection and socket timeout
+        client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
         // Make Http call to getusers.php
-        client.post("http://192.168.1.52/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
+        client.post("http://192.168.1.12/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
 
-        @Override
-        public void onStart() {
-            // called before request is started
-        }
-
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-            // called when response HTTP status is "200 OK"
-            // Hide ProgressBar
-            //prgDialog.setMessage("Le parcours a été téléchargé !");
-            //prgDialog.setCancelable(true);
-            //prgDialog.setCanceledOnTouchOutside(true);
-            prgDialog.hide();
-            Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
-
-            // Update SQLite DB with response sent by getusers.php
-            String responseString = null;
-            try {
-                responseString = new String(response, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            @Override
+            public void onStart() {
+                // called before request is started
             }
-            updateSQLite(responseString);
-        }
 
-        @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-            // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-            // Hide ProgressBar
-            prgDialog.hide();
-            if (statusCode == 404) {
-                Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
-            } else if (statusCode == 500) {
-                Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
-                        Toast.LENGTH_LONG).show();
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                // called when response HTTP status is "200 OK"
+                // Hide ProgressBar
+                //prgDialog.setMessage("Le parcours a été téléchargé !");
+                //prgDialog.setCancelable(true);
+                //prgDialog.setCanceledOnTouchOutside(true);
+                prgDialog.hide();
+                Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
+
+                // Update SQLite DB with response sent by getusers.php
+                String responseString = null;
+                try {
+                    responseString = new String(response, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                updateSQLite(responseString);
             }
-        }
 
-        @Override
-        public void onRetry(int retryNo) {
-            // called when request is retried
-        }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                // Hide ProgressBar
+                prgDialog.hide();
+                if (statusCode == 404) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+                } else if (statusCode == 500) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
 
-        @Override //marche pas
-        public void onUserException(java.lang.Throwable error) {
-            prgDialog.hide();
-            Toast.makeText(getActivity().getApplicationContext(), "Erreur : " + error.getMessage(), Toast.LENGTH_LONG).show();
-        }
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
 
-        /*@Override
-        public void onProgress(long bytesWritten, long totalSize) {
-            long progressPercentage = (long)100*bytesWritten/totalSize;
-            NumberFormat percentage = NumberFormat.getPercentInstance();
-            prgDialog.setProgress((int)progressPercentage);
-            prgDialog.setProgressPercentFormat(percentage);
-            //a revoir si on veut la barre de progression mais galere
-        }*/
-
-
+            /*@Override
+            public void onProgress(long bytesWritten, long totalSize) {
+                long progressPercentage = (long)100*bytesWritten/totalSize;
+                NumberFormat percentage = NumberFormat.getPercentInstance();
+                prgDialog.setProgress((int)progressPercentage);
+                prgDialog.setProgressPercentFormat(percentage);
+                //a revoir si on veut la barre de progression mais galere
+            }*/
         });
 
     }
@@ -354,6 +376,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
                 // Inform Remote MySQL DB about the completion of Sync activity by passing Sync status of Users
                 //updateMySQLSyncSts(gson.toJson(usersynclist));
+
                 // Reload the Fragment
                 reloadFragment();
             }

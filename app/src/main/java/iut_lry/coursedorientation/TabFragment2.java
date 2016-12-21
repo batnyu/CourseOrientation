@@ -46,13 +46,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         listView = (ListView) view.findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
-        //header, on verra plus tard
-        /*TextView header = new TextView(getBaseContext());
-        header.setTextColor(Color.BLACK);
-        header.setText("Numéro Balise     ->     Temps");
-        lv.addHeaderView(header);*/
-
-
         return view;
     }
 
@@ -139,7 +132,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 Toast.LENGTH_SHORT).show();
     }
 
-    public void fragmentCommunication() {
+    public void fragmentCommunication2() {
         //mTextView1.setText("Hello from Tab Fragment 1");
+
     }
 }

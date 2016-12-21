@@ -3,10 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_height="fill_parent"
-    android:layout_width="fill_parent">
+    android:layout_width="fill_parent"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
     <!-- Header -->
+    <TextView
+        android:text="Tableau des balises "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
+        android:textStyle="normal|bold"
+        android:textAlignment="center" />
+
     <LinearLayout android:id="@+id/header"
-        android:background="#7c7c7c"
+        android:background="#9b9b9b"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         >
@@ -55,10 +68,10 @@
             android:textColor="#ffffff" />
     </LinearLayout>
 
-    <!-- List Divider -->
+    <!-- List Divider
     <View android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="?android:attr/listDivider" />
+        android:background="?android:attr/listDivider" />-->
 
     <!-- ListView (grid_items) -->
     <LinearLayout android:id="@+id/layout"
@@ -66,7 +79,8 @@
         android:layout_height="fill_parent">
         <ListView android:id="@+id/listview"
             android:layout_height="fill_parent"
-            android:layout_width="fill_parent">
+            android:layout_width="fill_parent"
+            android:background="@drawable/bg_listview">
         </ListView>
     </LinearLayout>
 </LinearLayout>

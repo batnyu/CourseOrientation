@@ -19,12 +19,6 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
     private PagerAdapter adapter;
     private TabLayout tabLayout;
 
-    DBController controller;
-
-    /*public DBController getController(){
-        return this.controller;
-    }*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setOffscreenPageLimit(2); //pour garder les 3 fragments dans le cache
+        viewPager.setOffscreenPageLimit(2); //pour garder les 2 fragments dans le cache
         adapter = new PagerAdapter(getSupportFragmentManager(), tabs);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -91,9 +85,19 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
     public void communicateToFragment2() {
         TabFragment2 fragment = (TabFragment2) adapter.getFragment(1);
         if (fragment != null) {
-            fragment.fragmentCommunication();
+            fragment.fragmentCommunication2();
         } else {
             Log.i(LOG_TAG, "Fragment 2 is not initialized");
+        }
+    }
+
+    @Override
+    public void communicateToFragment3() {
+        TabFragment3 fragment = (TabFragment3) adapter.getFragment(2);
+        if (fragment != null) {
+            fragment.fragmentCommunication3();
+        } else {
+            Log.i(LOG_TAG, "Fragment 3 is not initialized");
         }
     }
 

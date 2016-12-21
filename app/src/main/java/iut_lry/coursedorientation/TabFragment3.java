@@ -20,28 +20,13 @@ import java.util.HashMap;
 public class TabFragment3 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
 
-    private TextView mTextView1;
-    private Button btnFtoA;
-
     DBController controller;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_3, container, false);
 
-        /*mTextView1 = (TextView) view.findViewById(R.id.textView1);
-        btnFtoA = (Button) view.findViewById(R.id.button);
-        btnFtoA.setOnClickListener(this);*/
-
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        //updateList();
-
     }
 
     public void updateList() {
@@ -67,6 +52,14 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //pour afficher la base déjà téléchargé quand on redémarre l'appli
+        updateList();
+
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
@@ -88,9 +81,9 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
                 Toast.LENGTH_SHORT).show();
     }
 
-    public void fragmentCommunication() {
+    public void fragmentCommunication3() {
 
-        mTextView1.setText("Hello from Tab Fragment 1");
+        updateList();
     }
 
     @Override
@@ -101,15 +94,4 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
                 break;
         }
     }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            updateList();
-        }
-        else {
-        }
-    }
-
 }

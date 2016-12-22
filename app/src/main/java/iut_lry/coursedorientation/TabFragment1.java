@@ -208,7 +208,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             case R.id.dllParkour:
                 syncSQLiteMySQLDB();
-                mCallback.communicateToFragment3();
                 break;
         }
     }
@@ -376,6 +375,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
                 // Inform Remote MySQL DB about the completion of Sync activity by passing Sync status of Users
                 //updateMySQLSyncSts(gson.toJson(usersynclist));
+
+                //On update la listView du fragment 3 (onglet parcours)
+                mCallback.communicateToFragment3();
 
                 // Reload the Fragment
                 reloadFragment();

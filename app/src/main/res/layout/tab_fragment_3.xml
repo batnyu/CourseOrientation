@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/main"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1">
+
+    <TextView
+        android:text="Vous n'avez téléchargé aucun parcours !"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/noParcours"
+        android:layout_weight="1"
+        android:gravity="center_vertical|center"
+        android:textColor="@android:color/background_dark"
+        android:textAllCaps="false"
+        android:textSize="18sp" />
+
+    <LinearLayout android:id="@+id/main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:paddingTop="10dp">
+    android:paddingTop="10dp"
+        android:paddingBottom="10dp">
     <!-- Header -->
-    <TextView
+
+
+        <TextView
         android:text="Tableau des balises "
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +36,8 @@
         android:textSize="16sp"
         android:layout_marginBottom="8dp"
         android:textStyle="normal|bold"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@android:color/background_dark" />
 
     <LinearLayout android:id="@+id/header"
         android:background="#9b9b9b"
@@ -25,62 +46,69 @@
         >
         <TextView android:id="@+id/item1"
             android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:width="20dip"
             android:height="30dip"
-            android:textAlignment="gravity"
             android:gravity="center_vertical"
             android:textStyle="bold"
             android:textSize="15sp"
             android:textColor="#ffffff"
-            android:text="" />
+            android:text="Balise"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:background="@android:color/holo_red_dark" />
         <TextView android:id="@+id/item2"
             android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
-            android:text="Balise"
-            android:width="100dip"
-            android:height="30dip"
-            android:textAlignment="gravity"
-            android:gravity="center_vertical"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:textColor="#ffffff" />
-        <TextView android:id="@+id/item3"
-            android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:text="Temps"
             android:width="100dip"
             android:height="30dip"
-            android:textAlignment="gravity"
             android:gravity="center_vertical"
             android:textStyle="bold"
             android:textSize="15sp"
-            android:textColor="#ffffff" />
-        <TextView android:id="@+id/item4"
+            android:textColor="#ffffff"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:background="@color/zxing_possible_result_points" />
+        <TextView android:id="@+id/item3"
             android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:width="100dip"
             android:height="30dip"
-            android:textAlignment="gravity"
             android:gravity="center_vertical"
             android:textStyle="bold"
             android:textSize="15sp"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:layout_weight="1"
+            android:paddingLeft="10dp" />
+        <TextView android:id="@+id/item4"
+            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:width="100dip"
+            android:height="30dip"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#ffffff"
+            android:layout_weight="1"
+            android:paddingLeft="10dp" />
     </LinearLayout>
 
     <!-- List Divider
     <View android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="?android:attr/listDivider" />-->
+        android:background="?android:attr/listDivider" /> -->
 
     <!-- ListView (grid_items) -->
     <LinearLayout android:id="@+id/layout"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <ListView android:id="@+id/listview"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
-            android:background="@drawable/bg_listview">
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
         </ListView>
+
     </LinearLayout>
 </LinearLayout>
+
+</RelativeLayout>

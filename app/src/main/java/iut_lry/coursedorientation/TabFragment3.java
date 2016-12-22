@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -21,6 +22,9 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
 
     DBController controller;
+    LinearLayout interfaceMain;
+    TextView noParcours;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,10 +34,13 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     }
 
     public void updateList() {
+        //TEST
+        interfaceMain = (LinearLayout) getActivity().findViewById(R.id.main);
+        noParcours = (TextView) getActivity().findViewById(R.id.noParcours);
 
         controller = new DBController(getActivity());
         // create the grid item mapping
-        String[] from = new String[] {"RIEN", "balise", "temps", "RIEN"};
+        String[] from = new String[] {"balise", "temps", "RIEN", "RIEN"};
         int[] to = new int[] { R.id.item1, R.id.item2, R.id.item3, R.id.item4 };
 
         ArrayList<HashMap<String, String>> userList;
@@ -43,11 +50,21 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         // If users exists in SQLite DB
         if (userList.size() != 0) {
 
+            //Test
+            interfaceMain.setVisibility(LinearLayout.VISIBLE);
+            noParcours.setVisibility(LinearLayout.GONE);
+
             // Set the User Array list in ListView
             ListAdapter adapter = new SpecialAdapter(getActivity(), userList, R.layout.grid_item, from, to);
             ListView myList = (ListView) getActivity().findViewById(R.id.listview);
             myList.setAdapter(adapter);
             registerForContextMenu(myList);
+        }
+        else
+        {
+            //Test
+            interfaceMain.setVisibility(LinearLayout.GONE);
+            noParcours.setVisibility(LinearLayout.VISIBLE);
         }
     }
 

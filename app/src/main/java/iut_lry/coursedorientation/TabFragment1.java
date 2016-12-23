@@ -340,6 +340,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         ArrayList<HashMap<String, String>> usersynclist;
         usersynclist = new ArrayList<HashMap<String, String>>();
+
         // Create GSON object
         Gson gson = new GsonBuilder().create();
         try {

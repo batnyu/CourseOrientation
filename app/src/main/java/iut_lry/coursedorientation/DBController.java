@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 public class DBController  extends SQLiteOpenHelper {
@@ -62,7 +63,7 @@ public class DBController  extends SQLiteOpenHelper {
 
         ArrayList<HashMap<String, String>> usersList;
         usersList = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT * FROM parcoursLite";
+        String selectQuery = "SELECT * FROM parcoursLite ORDER BY temps";
 
         String test;
 
@@ -77,7 +78,57 @@ public class DBController  extends SQLiteOpenHelper {
                 usersList.add(map);
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
+
         database.close();
+
         return usersList;
     }
+
+    public int checkBaliseUpdateTemps(String balise, String temps, boolean departOK) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT balise,temps FROM parcoursLite WHERE balise = ?", new String[]{balise});
+
+        if(cursor.moveToFirst()){
+
+            String colonne2 = cursor.getString(1);
+            if(colonne2.equals("null"))
+            {
+                if(cursor.getString(0).equals("1"))
+                {
+                    database.execSQL("UPDATE parcoursLite SET temps = ? WHERE balise = ?", new String[]{temps,balise});
+                    cursor.close();
+                    database.close();
+                    return 3;
+                }
+                else if(departOK)
+                {
+                    database.execSQL("UPDATE parcoursLite SET temps = ? WHERE balise = ?", new String[]{temps,balise});
+                    cursor.close();
+                    database.close();
+                    return 1;
+                }
+                else
+                {
+                    return 4;
+                }
+            }
+            else //Quand la balise a déjà été scanné
+            {
+                cursor.close();
+                database.close();
+                return 2;
+            }
+        }
+        else
+        {
+            cursor.close();
+            database.close();
+            return 0;
+        }
+    }
+
 }

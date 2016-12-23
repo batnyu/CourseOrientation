@@ -1,8 +1,12 @@
 package iut_lry.coursedorientation;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +15,7 @@ import android.view.ViewGroup;
 
 import android.content.Context;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,8 +33,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     private Button scanButton;
     IntentIntegrator integrator;
     Calendar rightNow;
-    baliseHeureAdapter adapter;
-    ListView listView;
+    Chronometer timeElapsed;
+
+    DBController controller;
+
+    boolean departOK;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,15 +46,30 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         scanButton = (Button) view.findViewById(R.id.scan_button);
         scanButton.setOnClickListener(this);
 
-        // Construct the data source
-        ArrayList<baliseHeure> arrayOfbaliseHeure = new ArrayList<baliseHeure>();
-        // Create the adapter to convert the array to views
-        adapter = new baliseHeureAdapter(getActivity(), arrayOfbaliseHeure);
-        // Attach the adapter to a ListView
-        listView = (ListView) view.findViewById(R.id.listView);
-        listView.setAdapter(adapter);
-
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        timeElapsed  = (Chronometer) getActivity().findViewById(R.id.chronometer1);
+        timeElapsed.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener(){
+            @Override
+            public void onChronometerTick(Chronometer cArg) {
+                long time = SystemClock.elapsedRealtime() - cArg.getBase();
+                int h   = (int)(time /3600000);
+                int m = (int)(time - h*3600000)/60000;
+                int s= (int)(time - h*3600000- m*60000)/1000 ;
+                String hh = h < 10 ? "0"+h: h+"";
+                String mm = m < 10 ? "0"+m: m+"";
+                String ss = s < 10 ? "0"+s: s+"";
+                cArg.setText(hh+":"+mm+":"+ss);
+            }
+        });
+        timeElapsed.setText("00:00:00");
+        departOK = false;
+
     }
 
     @Override
@@ -88,21 +111,40 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 rightNow = Calendar.getInstance();
                 SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
                 String temps = format.format(rightNow.getTime());
+                temps = timeElapsed.getText().toString();
 
-                baliseHeure baliseHeure = new baliseHeure(scanContent,temps);
+                controller = new DBController(getActivity());
+                int resultat = controller.checkBaliseUpdateTemps(scanContent, temps, departOK);
 
-                //Ajout dans la liste et refresh
-                adapter.add(baliseHeure);
-                listView.setAdapter(adapter);
+                if(resultat == 1 || resultat == 3)
+                {
+                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné !", Toast.LENGTH_LONG).show();
+                    //Update l'affichage de la liste du fragment 3
+                    mCallback.communicateToFragment3();
+                    if(resultat == 3)
+                    {
+                        timeElapsed.setBase(SystemClock.elapsedRealtime());
+                        timeElapsed.start();
+                        departOK = true;
+                    }
+                }
+                else if(resultat == 2)
+                {
+                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
+                }
+                else if(resultat == 4)
+                {
+                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
+                }
 
-
-                Toast.makeText(getActivity(), "Scanné : " + result.getContents(), Toast.LENGTH_LONG).show();
-
-
-                //Joué un son -> BUG
+                /*//Joué un son -> BUG
                 final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.zxing_beep);
                 mp.setVolume(10,10);
-                mp.start();
+                mp.start();*/
 
             }
         } else {

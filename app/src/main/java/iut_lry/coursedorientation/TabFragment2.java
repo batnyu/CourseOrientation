@@ -107,26 +107,47 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 scan_format.setText("FORMAT: " + scanFormat);
                 scan_content.setText("CONTENT: " + scanContent);
 
-                //récupère le temps actuel
+                //récupère le temps actuel SERT PLUS A RIEN
                 rightNow = Calendar.getInstance();
                 SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
                 String temps = format.format(rightNow.getTime());
-                temps = timeElapsed.getText().toString();
 
                 controller = new DBController(getActivity());
                 int resultat = controller.checkBaliseUpdateTemps(scanContent, temps, departOK);
 
-                if(resultat == 1 || resultat == 3)
+                if(resultat == 1)
                 {
-                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné !", Toast.LENGTH_LONG).show();
+                    //Si on fait ca, on a le temps quand on appuie sur le bouton SCAN
+                    //et pas quand on obtient le résultat
+                    //temps = timeElapsed.getText().toString();
+                    //Donc obligé de refaire ça :
+                    long time = SystemClock.elapsedRealtime() - timeElapsed.getBase();
+                    int h   = (int)(time /3600000);
+                    int m = (int)(time - h*3600000)/60000;
+                    int s= (int)(time - h*3600000- m*60000)/1000 ;
+                    String hh = h < 10 ? "0"+h: h+"";
+                    String mm = m < 10 ? "0"+m: m+"";
+                    String ss = s < 10 ? "0"+s: s+"";
+                    temps = hh+":"+mm+":"+ss;
+
+
+                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
+                    //Update de le temps dans la base de données
+                    controller.UpdateTemps(scanContent,temps);
                     //Update l'affichage de la liste du fragment 3
                     mCallback.communicateToFragment3();
-                    if(resultat == 3)
-                    {
-                        timeElapsed.setBase(SystemClock.elapsedRealtime());
-                        timeElapsed.start();
-                        departOK = true;
-                    }
+                }
+                else if(resultat == 3)
+                {
+                    temps = timeElapsed.getText().toString();
+                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
+                    //Update de le temps dans la base de données
+                    controller.UpdateTemps(scanContent,temps);
+                    //Update l'affichage de la liste du fragment 3
+                    mCallback.communicateToFragment3();
+                    timeElapsed.setBase(SystemClock.elapsedRealtime());
+                    timeElapsed.start();
+                    departOK = true;
                 }
                 else if(resultat == 2)
                 {

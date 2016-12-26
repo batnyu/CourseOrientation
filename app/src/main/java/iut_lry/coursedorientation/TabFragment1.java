@@ -57,6 +57,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     EditText numCourse;
     EditText numEquipe;
 
+    String numCourseStr;
+    String numEquipeStr;
+
     String ipServer;
     TextView adresseIP;
     Button test;
@@ -275,7 +278,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
         // Make Http call to getusers.php
-        client.post("http://192.168.1.12/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
+        client.post("http://192.168.1.13/testProjetV2/getusersPDO.php", params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onStart() {
@@ -293,6 +296,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
 
                 // Update SQLite DB with response sent by getusers.php
+                //Convertir byte[] en String
                 String responseString = null;
                 try {
                     responseString = new String(response, "UTF-8");
@@ -354,12 +358,18 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     // Get JSON object
                     JSONObject obj = (JSONObject) arr.get(i);
                     System.out.println(obj.get("id"));
+                    System.out.println(obj.get("numCourse"));
+                    System.out.println(obj.get("numEquipe"));
                     System.out.println(obj.get("balise"));
                     System.out.println(obj.get("temps"));
                     // DB QueryValues Object to insert into SQLite
                     queryValues = new HashMap<String, String>();
                     // Add userID extracted from Object
                     queryValues.put("id", obj.get("id").toString());
+                    // Add userName extracted from Object
+                    queryValues.put("numCourse", obj.get("numCourse").toString());
+                    // Add userName extracted from Object
+                    queryValues.put("numEquipe", obj.get("numEquipe").toString());
                     // Add userName extracted from Object
                     queryValues.put("balise", obj.get("balise").toString());
                     // Add temps extracted from Object
@@ -376,6 +386,15 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
                 // Inform Remote MySQL DB about the completion of Sync activity by passing Sync status of Users
                 //updateMySQLSyncSts(gson.toJson(usersynclist));
+
+                //On récupère la course et l'équipe
+                numCourse = (EditText) getActivity().findViewById(R.id.numCourse);
+                numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
+
+                numCourseStr = numCourse.getText().toString();
+                numEquipeStr = numEquipe.getText().toString();
+
+                controller.updateCourseEquipe(numCourseStr, numEquipeStr);
 
                 //On update la listView du fragment 3 (onglet parcours)
                 mCallback.communicateToFragment3();

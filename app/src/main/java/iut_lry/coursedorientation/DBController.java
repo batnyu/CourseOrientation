@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 public class DBController  extends SQLiteOpenHelper {
 
@@ -23,7 +26,7 @@ public class DBController  extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         String query;
-        query = "CREATE TABLE parcoursLite ( id INTEGER, balise INTEGER, temps INTEGER)";
+        query = "CREATE TABLE parcoursLite ( id INTEGER, numCourse INTEGER, numEquipe INTEGER, balise INTEGER, temps INTEGER)";
         database.execSQL(query);
 
     }
@@ -49,6 +52,8 @@ public class DBController  extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("id", queryValues.get("id"));
+        values.put("numCourse", queryValues.get("numCourse"));
+        values.put("numEquipe", queryValues.get("numEquipe"));
         values.put("balise", queryValues.get("balise"));
         values.put("temps", queryValues.get("temps"));
         database.insert("parcoursLite", null, values);
@@ -73,8 +78,10 @@ public class DBController  extends SQLiteOpenHelper {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put("id", cursor.getString(0));
-                map.put("balise", cursor.getString(1));
-                map.put("temps", cursor.getString(2));
+                map.put("numCourse", cursor.getString(1));
+                map.put("numEquipe", cursor.getString(2));
+                map.put("balise", cursor.getString(3));
+                map.put("temps", cursor.getString(4));
                 usersList.add(map);
             } while (cursor.moveToNext());
         }
@@ -99,20 +106,20 @@ public class DBController  extends SQLiteOpenHelper {
             {
                 if(cursor.getString(0).equals("1"))
                 {
-                    database.execSQL("UPDATE parcoursLite SET temps = ? WHERE balise = ?", new String[]{temps,balise});
                     cursor.close();
                     database.close();
                     return 3;
                 }
                 else if(departOK)
                 {
-                    database.execSQL("UPDATE parcoursLite SET temps = ? WHERE balise = ?", new String[]{temps,balise});
                     cursor.close();
                     database.close();
                     return 1;
                 }
                 else
                 {
+                    cursor.close();
+                    database.close();
                     return 4;
                 }
             }
@@ -129,6 +136,72 @@ public class DBController  extends SQLiteOpenHelper {
             database.close();
             return 0;
         }
+    }
+
+    public void UpdateTemps(String balise, String temps) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT balise,temps FROM parcoursLite WHERE balise = ?", new String[]{balise});
+
+        if(cursor.moveToFirst()) {
+
+            //Version plus safe
+            ContentValues newValues = new ContentValues();
+            newValues.put("temps", temps);
+            String[] args = new String[]{balise};
+            database.update("parcoursLite", newValues, "balise=?", args);
+            //database.execSQL("UPDATE parcoursLite SET temps = ? WHERE balise = ?", new String[]{temps,balise});
+
+        }
+        cursor.close();
+        database.close();
+    }
+
+    public void updateCourseEquipe(String numCourse, String numEquipe) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT numCourse, numEquipe FROM parcoursLite ", null);
+        if(cursor.moveToFirst()){
+            do {
+                ContentValues newValues = new ContentValues();
+                newValues.put("numCourse",numCourse);
+                database.update("parcoursLite",newValues, null, null);
+
+                newValues.put("numEquipe",numEquipe);
+                database.update("parcoursLite",newValues, null, null);
+
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        database.close();
+    }
+
+    /**
+     * Compose JSON out of SQLite records
+     * @return
+     */
+    public String composeJSONfromSQLite(){
+        ArrayList<HashMap<String, String>> wordList;
+        wordList = new ArrayList<HashMap<String, String>>();
+        String selectQuery = "SELECT * FROM parcoursLite";
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("id", cursor.getString(0));
+                map.put("numCourse", cursor.getString(1));
+                map.put("numEquipe", cursor.getString(2));
+                map.put("balise", cursor.getString(3));
+                map.put("temps", cursor.getString(4));
+                wordList.add(map);
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        Gson gson = new GsonBuilder().create();
+        //Use GSON to serialize Array List to JSON
+        return gson.toJson(wordList);
     }
 
 }

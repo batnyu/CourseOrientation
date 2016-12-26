@@ -19,7 +19,7 @@
     <LinearLayout android:id="@+id/main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_height="fill_parent"
+    android:layout_height="match_parent"
     android:layout_width="fill_parent"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
@@ -39,7 +39,15 @@
         android:textAlignment="center"
         android:textColor="@android:color/background_dark" />
 
-    <LinearLayout android:id="@+id/header"
+        <Button
+            android:text="Envoyer le parcours"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/button5"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:elevation="0dp" />
+
+        <LinearLayout android:id="@+id/header"
         android:background="#9b9b9b"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
@@ -100,15 +108,18 @@
         android:background="?android:attr/listDivider" /> -->
 
     <!-- ListView (grid_items) -->
-    <LinearLayout android:id="@+id/layout"
+
+        <LinearLayout android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <ListView android:id="@+id/listview"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
         </ListView>
 
     </LinearLayout>
-</LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

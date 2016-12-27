@@ -52,7 +52,8 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
 
         //Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(getActivity());
-        prgDialog.setMessage("Synching SQLite Data with Remote MySQL DB. Please wait...");
+        prgDialog.setMessage("Envoi en cours de votre parcours vers le serveur.\n" +
+                "Patientez svp...");
         prgDialog.setCancelable(false);
 
         return view;
@@ -162,7 +163,7 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
 
                 params.put("resultatsJSON", controller.composeJSONfromSQLite());
                 Log.d("tag", controller.composeJSONfromSQLite().toString());
-                client.post("http://192.168.1.13:80/testProjetV2/insertuserPDONEW.php",params ,new AsyncHttpResponseHandler() {
+                client.post("http://192.168.1.12:80/testProjet/insertuserPDONEW.php",params ,new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                         System.out.println(response);

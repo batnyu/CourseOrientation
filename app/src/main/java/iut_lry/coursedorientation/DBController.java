@@ -184,13 +184,13 @@ public class DBController  extends SQLiteOpenHelper {
     public String composeJSONfromSQLite(){
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT * FROM parcoursLite";
+        String selectQuery = "SELECT * FROM parcoursLite ORDER BY temps";
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put("id", cursor.getString(0));
+                //map.put("id", cursor.getString(0));
                 map.put("numCourse", cursor.getString(1));
                 map.put("numEquipe", cursor.getString(2));
                 map.put("balise", cursor.getString(3));

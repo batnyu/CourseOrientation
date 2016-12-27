@@ -126,7 +126,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         // Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(getActivity());
         //prgDialog.setMessage("Transferring Data from Remote MySQL DB and Syncing SQLite. Please wait...");
-        prgDialog.setMessage("Transfert en cours du parcours présent sur le serveur.\nPatientez svp...");
+        prgDialog.setMessage("Réception en cours du parcours présent sur le serveur.\nPatientez svp...");
         prgDialog.setCancelable(false);
 
         /*// BroadCase Receiver Intent Object
@@ -278,7 +278,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
         // Make Http call to getusers.php, Ne pas oublier le port sinon ca bug
-        client.post("http://192.168.1.13:80/testProjetV2/getusersPDO.php", params, new AsyncHttpResponseHandler() {
+        client.post("http://192.168.1.12:80/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
         //http://192.168.1.13/testProjetV2/getusersPDO.php
             @Override
             public void onStart() {

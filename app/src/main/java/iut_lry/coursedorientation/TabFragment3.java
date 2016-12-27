@@ -162,7 +162,7 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
 
                 params.put("resultatsJSON", controller.composeJSONfromSQLite());
                 Log.d("tag", controller.composeJSONfromSQLite().toString());
-                client.post("http://192.168.1.12/testProjet/insertuserPDONEW.php",params ,new AsyncHttpResponseHandler() {
+                client.post("http://192.168.1.13:80/testProjetV2/insertuserPDONEW.php",params ,new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                         System.out.println(response);

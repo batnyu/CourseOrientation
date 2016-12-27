@@ -277,9 +277,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setTimeout(5000); // both connection and socket timeout
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
-        // Make Http call to getusers.php
-        client.post("http://192.168.1.13/testProjetV2/getusersPDO.php", params, new AsyncHttpResponseHandler() {
-
+        // Make Http call to getusers.php, Ne pas oublier le port sinon ca bug
+        client.post("http://192.168.1.13:80/testProjetV2/getusersPDO.php", params, new AsyncHttpResponseHandler() {
+        //http://192.168.1.13/testProjetV2/getusersPDO.php
             @Override
             public void onStart() {
                 // called before request is started

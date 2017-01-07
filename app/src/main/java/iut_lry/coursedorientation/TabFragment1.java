@@ -61,8 +61,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     String numEquipeStr;
 
     String ipServer;
-    TextView adresseIP;
-    Button test;
+    TextView infosWifi;
+    Button buttonWifi;
     private Button dllParkour;
 
     // DB Class to perform DB related operations
@@ -111,14 +111,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             }
         });
 
-        btnFtoA = (Button) view.findViewById(R.id.button);
-        btnFtoF = (Button) view.findViewById(R.id.button2);
-        btnFtoA.setOnClickListener(this);
-        btnFtoF.setOnClickListener(this);
-
-        adresseIP = (TextView) view.findViewById(R.id.textView3);
-        test = (Button) view.findViewById(R.id.button3);
-        test.setOnClickListener(this);
+        infosWifi = (TextView) view.findViewById(R.id.infosWifi);
+        buttonWifi = (Button) view.findViewById(R.id.buttonWifi);
+        buttonWifi.setOnClickListener(this);
 
         dllParkour = (Button) view.findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
@@ -197,6 +192,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            /*
             case R.id.button:
                 mCallback.showToast("Hello from Fragment 1");
                 break;
@@ -204,12 +200,14 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             case R.id.button2:
                 mCallback.communicateToFragment2();
                 break;
+                */
 
-            case R.id.button3:
+            case R.id.buttonWifi:
                 afficherInfoWifi();
                 break;
 
             case R.id.dllParkour:
+                dllParkour.setEnabled(false);
                 syncSQLiteMySQLDB();
                 break;
         }
@@ -247,12 +245,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         String nameServer = getWifiNetworkName();
         if(ipServer != null)
         {
-            adresseIP.setText("Vous êtes connecté au réseau Wifi " + nameServer +
+            infosWifi.setText("Vous êtes connecté au réseau Wifi " + nameServer +
                     " situé à l'adresse IP " + ipServer);
         }
         else
         {
-            adresseIP.setText("Vous n'êtes connecté à aucun réseau wifi !");
+            infosWifi.setText("Vous n'êtes connecté à aucun réseau wifi !");
         }
     }
 
@@ -267,7 +265,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         //prgDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         //prgDialog.setProgressNumberFormat("");
         //prgDialog.setTitle("Téléchargement du parcours");
-        prgDialog.show();
+        //j'ai enlevé ca
+        //prgDialog.show();
+        mCallback.afficherProgressBar();
 
         client.setConnectTimeout(5000);
         //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
@@ -278,7 +278,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
         // Make Http call to getusers.php, Ne pas oublier le port sinon ca bug
-        client.post("http://192.168.1.12:80/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
+        client.post("http://192.168.1.52:80/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
         //http://192.168.1.13/testProjetV2/getusersPDO.php
             @Override
             public void onStart() {
@@ -292,8 +292,16 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 //prgDialog.setMessage("Le parcours a été téléchargé !");
                 //prgDialog.setCancelable(true);
                 //prgDialog.setCanceledOnTouchOutside(true);
-                prgDialog.hide();
-                Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
+
+                //j'ai enlevé ca
+                //prgDialog.hide();
+
+                mCallback.cacherProgressBar();
+                dllParkour.setEnabled(true);
+
+                //je sais pas encore lequel choisir
+                //Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
+                mCallback.showToast("Le parcours a bien été téléchargé !");
 
                 // Update SQLite DB with response sent by getusers.php
                 //Convertir byte[] en String
@@ -303,6 +311,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+
+                //mettre ca dans un thread ?
                 updateSQLite(responseString);
             }
 
@@ -310,14 +320,19 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                 // Hide ProgressBar
-                prgDialog.hide();
+                //j'ai enlevé ca
+                //prgDialog.hide();
+
+                mCallback.cacherProgressBar();
+                dllParkour.setEnabled(true);
+
                 if (statusCode == 404) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nRequested resource not found");
                 } else if (statusCode == 500) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nSomething went wrong at server end");
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
-                            Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nUnexpected Error occcured! " +
+                            "[Most common Error: Device might not be connected to Internet]");
                 }
             }
 
@@ -399,22 +414,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 //On update la listView du fragment 3 (onglet parcours)
                 mCallback.communicateToFragment3();
 
-                // Reload the Fragment
-                reloadFragment();
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    // Reload MainActivity
-    public void reloadFragment() {
-        //pour reload l'activité
-        //Intent objIntent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-        //startActivity(objIntent);
-        //CA MARCHE qu'avec un reload du fragment! c'est plus fluide a lecran
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
     }
 }

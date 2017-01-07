@@ -39,14 +39,6 @@
         android:textAlignment="center"
         android:textColor="@android:color/background_dark" />
 
-        <Button
-            android:text="Envoyer le parcours"
-            android:layout_width="212dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/button5"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:elevation="0dp" />
-
         <LinearLayout android:id="@+id/header"
         android:background="#9b9b9b"
         android:layout_height="wrap_content"
@@ -102,16 +94,10 @@
             android:paddingLeft="10dp" />
     </LinearLayout>
 
-    <!-- List Divider
-    <View android:layout_width="fill_parent"
-        android:layout_height="1dip"
-        android:background="?android:attr/listDivider" /> -->
-
-    <!-- ListView (grid_items) -->
-
         <LinearLayout android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+            android:layout_weight="1">
 
         <ListView android:id="@+id/listview"
             android:layout_height="match_parent"
@@ -119,6 +105,21 @@
         </ListView>
 
     </LinearLayout>
+
+        <Button
+            android:text="Envoyer le parcours"
+            android:layout_width="212dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonSend"
+            android:elevation="0dp"
+            android:layout_gravity="center" />
+
+        <!-- List Divider
+    <View android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="?android:attr/listDivider" /> -->
+
+    <!-- ListView (grid_items) -->
 
     </LinearLayout>
 

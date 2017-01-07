@@ -2,9 +2,11 @@ package iut_lry.coursedorientation;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +40,7 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     LinearLayout interfaceMain;
     TextView noParcours;
 
-    Button btnSendParcours;
+    Button buttonSend;
     //Progress Dialog Object
     ProgressDialog prgDialog;
 
@@ -47,8 +49,8 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_3, container, false);
 
-        btnSendParcours = (Button) view.findViewById(R.id.button5);
-        btnSendParcours.setOnClickListener(this);
+        buttonSend = (Button) view.findViewById(R.id.buttonSend);
+        buttonSend.setOnClickListener(this);
 
         //Initialize Progress Dialog properties
         prgDialog = new ProgressDialog(getActivity());
@@ -135,11 +137,19 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button:
-                mCallback.showToast("Hello from Fragment 2");
-                break;
-            case R.id.button5:
-                syncSQLiteMySQLDB();
+            case R.id.buttonSend:
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Etes-vous sur ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Envoyer le parcours", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                buttonSend.setEnabled(false);
+                                syncSQLiteMySQLDB();
+                            }
+                        })
+                        .setNegativeButton("Annuler", null)
+                        .show();
+                //syncSQLiteMySQLDB();
                 break;
         }
     }
@@ -163,11 +173,12 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
 
                 params.put("resultatsJSON", controller.composeJSONfromSQLite());
                 Log.d("tag", controller.composeJSONfromSQLite().toString());
-                client.post("http://192.168.1.12:80/testProjet/insertuserPDONEW.php",params ,new AsyncHttpResponseHandler() {
+                client.post("http://192.168.1.52:80/testProjet/insertuserPDONEW.php",params ,new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                         System.out.println(response);
                         prgDialog.hide();
+                        buttonSend.setEnabled(true);
                         Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été envoyé !", Toast.LENGTH_LONG).show();
 /*
                         //Convertir byte[] en String
@@ -200,6 +211,7 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
                         // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                         // Hide ProgressBar
                         prgDialog.hide();
+                        buttonSend.setEnabled(true);
                         if (statusCode == 404) {
                             Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
                         } else if (statusCode == 500) {

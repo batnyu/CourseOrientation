@@ -8,6 +8,9 @@ import android.content.Intent;
 public interface IFragmentToActivity {
     void showToast(String msg);
 
+    void afficherProgressBar();
+    void cacherProgressBar();
+
     void communicateToFragment2();
 
     void communicateToFragment3();

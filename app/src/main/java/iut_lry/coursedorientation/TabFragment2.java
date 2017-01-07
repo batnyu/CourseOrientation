@@ -113,7 +113,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 String temps = format.format(rightNow.getTime());
 
                 controller = new DBController(getActivity());
-                int resultat = controller.checkBaliseUpdateTemps(scanContent, temps, departOK);
+                int resultat = controller.checkBalise(scanContent, temps, departOK);
 
                 if(resultat == 1)
                 {

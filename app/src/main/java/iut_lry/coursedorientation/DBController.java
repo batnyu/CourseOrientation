@@ -28,8 +28,8 @@ public class DBController  extends SQLiteOpenHelper {
         String query;
         query = "CREATE TABLE parcoursLite ( id INTEGER, numCourse INTEGER, numEquipe INTEGER, balise INTEGER, temps INTEGER)";
         database.execSQL(query);
-
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase database, int version_old, int current_version) {
         String query;
@@ -68,7 +68,7 @@ public class DBController  extends SQLiteOpenHelper {
 
         ArrayList<HashMap<String, String>> usersList;
         usersList = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT * FROM parcoursLite ORDER BY temps";
+        String selectQuery = "SELECT * FROM parcoursLite ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
 
         String test;
 
@@ -93,7 +93,7 @@ public class DBController  extends SQLiteOpenHelper {
         return usersList;
     }
 
-    public int checkBaliseUpdateTemps(String balise, String temps, boolean departOK) {
+    public int checkBalise(String balise, String temps, boolean departOK) {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
@@ -102,9 +102,9 @@ public class DBController  extends SQLiteOpenHelper {
         if(cursor.moveToFirst()){
 
             String colonne2 = cursor.getString(1);
-            if(colonne2.equals("null"))
+            if(colonne2.equals(""))
             {
-                if(cursor.getString(0).equals("1"))
+                if(cursor.getString(0).equals("1"))//changer pour la balise de départ
                 {
                     cursor.close();
                     database.close();

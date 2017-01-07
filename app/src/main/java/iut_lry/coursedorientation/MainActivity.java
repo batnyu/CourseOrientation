@@ -1,15 +1,19 @@
 package iut_lry.coursedorientation;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -18,6 +22,8 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
     private final String LOG_TAG = "MainActivity";
     private PagerAdapter adapter;
     private TabLayout tabLayout;
+
+    ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +46,16 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 
+        spinner = (ProgressBar) findViewById(R.id.progressBar);
+        spinner.getIndeterminateDrawable().setColorFilter(0xFFFFFFFF, android.graphics.PorterDuff.Mode.MULTIPLY);
+        spinner.setVisibility(View.GONE);
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //j'ai enlevé le menu pour l'instant
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -78,7 +89,18 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
 
     @Override
     public void showToast(String msg) {
+
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void afficherProgressBar() {
+        spinner.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void cacherProgressBar() {
+        spinner.setVisibility(View.GONE);
     }
 
     @Override
@@ -107,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         // in order to receive the result inside onActivityResult from the fragment.
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
 
 }

@@ -1,8 +1,6 @@
 package iut_lry.coursedorientation;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -10,9 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,9 +16,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,9 +34,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.Key;
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
@@ -67,12 +56,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     // DB Class to perform DB related operations
     DBController controller;
-    // Progress Dialog Object
-    ProgressDialog prgDialog;
-    HashMap<String, String> queryValues;
 
-    public boolean activiteCreated = false;
-    DrawerLayout mDrawer;
+    HashMap<String, String> queryValues;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -118,23 +103,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         dllParkour = (Button) view.findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
 
-        // Initialize Progress Dialog properties
-        prgDialog = new ProgressDialog(getActivity());
-        //prgDialog.setMessage("Transferring Data from Remote MySQL DB and Syncing SQLite. Please wait...");
-        prgDialog.setMessage("Réception en cours du parcours présent sur le serveur.\nPatientez svp...");
-        prgDialog.setCancelable(false);
-
-        /*// BroadCase Receiver Intent Object
-        Intent alarmIntent = new Intent(getActivity().getApplicationContext(), SampleBC.class);
-        // Pending Intent Object
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getApplicationContext(), 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        // Alarm Manager Object
-        AlarmManager alarmManager = (AlarmManager) getActivity().getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        // Alarm Manager calls BroadCast for every Ten seconds (10 * 1000), BroadCase further calls service to check if new records are inserted in
-        // Remote MySQL DB
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 5000, 10 * 1000, pendingIntent);
-        */
-
         return view;
     }
 
@@ -143,29 +111,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         controller = new DBController(getActivity());
 
-        activiteCreated = true;
-
         afficherInfoWifi();
 
     }
-
-
-    /* La flemme de faire ça
-    //mettre à jour les infos wifi quand l'application est repris sans avoir été arreté
-    @Override
-    public void onResume() {
-        afficherInfoWifi();
-        super.onResume();
-    }
-
-    //update les infos wifi quand on active l'onglet
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && activiteCreated) {
-            afficherInfoWifi();
-        }
-    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -208,6 +156,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             case R.id.dllParkour:
                 dllParkour.setEnabled(false);
+                dllParkour.setText("Téléchargement en cours");
                 syncSQLiteMySQLDB();
                 break;
         }
@@ -261,12 +210,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         AsyncHttpClient client = new AsyncHttpClient();
         // Http Request Params Object
         RequestParams params = new RequestParams();
-        // Show ProgressBar
-        //prgDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        //prgDialog.setProgressNumberFormat("");
-        //prgDialog.setTitle("Téléchargement du parcours");
-        //j'ai enlevé ca
-        //prgDialog.show();
+
         mCallback.afficherProgressBar();
 
         client.setConnectTimeout(5000);
@@ -279,7 +223,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         // Make Http call to getusers.php, Ne pas oublier le port sinon ca bug
         client.post("http://192.168.1.52:80/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
-        //http://192.168.1.13/testProjetV2/getusersPDO.php
+            //http://192.168.1.13/testProjetV2/getusersPDO.php
             @Override
             public void onStart() {
                 // called before request is started
@@ -288,16 +232,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
-                // Hide ProgressBar
-                //prgDialog.setMessage("Le parcours a été téléchargé !");
-                //prgDialog.setCancelable(true);
-                //prgDialog.setCanceledOnTouchOutside(true);
-
-                //j'ai enlevé ca
-                //prgDialog.hide();
 
                 mCallback.cacherProgressBar();
+                dllParkour.setText("Télécharger le parcours");
                 dllParkour.setEnabled(true);
+                afficherInfoWifi();
 
                 //je sais pas encore lequel choisir
                 //Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
@@ -312,19 +251,19 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
 
-                //mettre ca dans un thread ?
-                updateSQLite(responseString);
+                ReceiveData test = new ReceiveData();
+                test.execute(responseString);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                // Hide ProgressBar
-                //j'ai enlevé ca
-                //prgDialog.hide();
 
                 mCallback.cacherProgressBar();
                 dllParkour.setEnabled(true);
+                dllParkour.setText("Télécharger le parcours");
+                //pour mettre à jour les trucs wifi
+                afficherInfoWifi();
 
                 if (statusCode == 404) {
                     mCallback.showToast("Error " + statusCode + "\nRequested resource not found");
@@ -353,12 +292,54 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     }
 
+    public class ReceiveData extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+        /*
+         *    do things before doInBackground() code runs
+         *    such as preparing and showing a Dialog or ProgressBar
+        */
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        /*
+         *    updating data
+         *    such a Dialog or ProgressBar
+        */
+
+        }
+
+        @Override
+        protected Void doInBackground(String... parametres) {
+            //do your work here
+
+            String responseStringThread = parametres[0];
+
+            updateSQLite(responseStringThread);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+        /*
+         *    do something with data here
+         *    display it or send to mainactivity
+         *    close any dialogs/ProgressBars/etc...
+        */
+            //On update la listView du fragment 3 (onglet parcours)
+            mCallback.communicateToFragment3();
+        }
+
+    }
+
+
     public void updateSQLite(String response){
+
         //test pour reset table qd télécharge le parcours
         controller.deleteTable("parcoursLite");
-
-        ArrayList<HashMap<String, String>> usersynclist;
-        usersynclist = new ArrayList<HashMap<String, String>>();
 
         // Create GSON object
         Gson gson = new GsonBuilder().create();
@@ -391,16 +372,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     queryValues.put("temps", obj.get("temps").toString());
                     // Insert User into SQLite DB
                     controller.insertUser(queryValues);
-                    /*
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    // Add status for each User in Hashmap
-                    map.put("Id", obj.get("id").toString());
-                    map.put("status", "1");
-                    usersynclist.add(map);
-                    */
                 }
-                // Inform Remote MySQL DB about the completion of Sync activity by passing Sync status of Users
-                //updateMySQLSyncSts(gson.toJson(usersynclist));
 
                 //On récupère la course et l'équipe
                 numCourse = (EditText) getActivity().findViewById(R.id.numCourse);
@@ -411,13 +383,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 controller.updateCourseEquipe(numCourseStr, numEquipeStr);
 
-                //On update la listView du fragment 3 (onglet parcours)
-                mCallback.communicateToFragment3();
-
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
+
 }

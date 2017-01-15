@@ -79,13 +79,15 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
 
         controller = new DBController(getActivity());
         // create the grid item mapping
-        String[] from = new String[] {"balise", "temps", "numCourse", "numEquipe"};
+        String[] from = new String[] {"num_balise", "temps", "suivante", "points"};
         int[] to = new int[] { R.id.item1, R.id.item2, R.id.item3, R.id.item4 };
 
         ArrayList<HashMap<String, String>> userList;
         // Get User records from SQLite DB
 
         userList = controller.getAllUsers();
+
+        System.out.println("nombre de ligne de la table à afficher : " + userList.size());
         // If users exists in SQLite DB
         if (userList.size() != 0) {
 
@@ -149,7 +151,6 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
                         })
                         .setNegativeButton("Annuler", null)
                         .show();
-                //syncSQLiteMySQLDB();
                 break;
         }
     }

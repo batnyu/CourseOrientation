@@ -77,9 +77,6 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
                     case 2:
                         ((TabFragment3) fragment).onRefresh();
                         break;
-                    /*case 3:
-                        ((TabFragment4) fragment).onRefresh();
-                        break;*/
                 }
             }
             return true;

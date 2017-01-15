@@ -43,10 +43,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     private Button btnFtoA;
     private Button btnFtoF;
 
-    EditText numCourse;
     EditText numEquipe;
 
-    String numCourseStr;
     String numEquipeStr;
 
     String ipServer;
@@ -63,25 +61,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_1, container, false);
 
-        numCourse = (EditText) view.findViewById(R.id.numCourse);
         numEquipe = (EditText) view.findViewById(R.id.numEquipe);
 
-
         //A completer pour enlever le focus quand on enleve le truc ou alors quand on appuie sur le bouton
-        numCourse.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View view, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(numCourse.getWindowToken(), 0);
-                    numCourse.setFocusable(false);
-                    numCourse.setFocusableInTouchMode(true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
         numEquipe.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View view, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -222,7 +204,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
         // Make Http call to getusers.php, Ne pas oublier le port sinon ca bug
-        client.post("http://192.168.1.52:80/testProjet/getusersPDO.php", params, new AsyncHttpResponseHandler() {
+        client.post("http://192.168.1.52:80/testProjet/getParcours.php", params, new AsyncHttpResponseHandler() {
             //http://192.168.1.13/testProjetV2/getusersPDO.php
             @Override
             public void onStart() {
@@ -317,7 +299,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             String responseStringThread = parametres[0];
 
-            updateSQLite(responseStringThread);
+            updateParcours(responseStringThread);
 
             return null;
         }
@@ -335,11 +317,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     }
 
-
-    public void updateSQLite(String response){
+    public void updateJoueurEquipeCourse(String response){
 
         //test pour reset table qd télécharge le parcours
-        controller.deleteTable("parcoursLite");
+        controller.deleteTable("joueur");
+        controller.deleteTable("equipe");
+        controller.deleteTable("course");
 
         // Create GSON object
         Gson gson = new GsonBuilder().create();
@@ -353,35 +336,139 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 for (int i = 0; i < arr.length(); i++) {
                     // Get JSON object
                     JSONObject obj = (JSONObject) arr.get(i);
-                    System.out.println(obj.get("id"));
-                    System.out.println(obj.get("numCourse"));
-                    System.out.println(obj.get("numEquipe"));
-                    System.out.println(obj.get("balise"));
-                    System.out.println(obj.get("temps"));
+                    //System.out.println(obj.get("id"));
+                    //System.out.println(obj.get("balise"));
                     // DB QueryValues Object to insert into SQLite
                     queryValues = new HashMap<String, String>();
-                    // Add userID extracted from Object
-                    queryValues.put("id", obj.get("id").toString());
-                    // Add userName extracted from Object
-                    queryValues.put("numCourse", obj.get("numCourse").toString());
-                    // Add userName extracted from Object
-                    queryValues.put("numEquipe", obj.get("numEquipe").toString());
-                    // Add userName extracted from Object
-                    queryValues.put("balise", obj.get("balise").toString());
-                    // Add temps extracted from Object
-                    queryValues.put("temps", obj.get("temps").toString());
+
+                    // Add id extracted from Object
+                    queryValues.put("joueurs.id", obj.get("joueurs.id").toString());
+                    queryValues.put("joueurs.prenom", obj.get("joueurs.prenom").toString());
+                    queryValues.put("joueurs.nom", obj.get("joueurs.nom").toString());
+                    queryValues.put("joueurs.date_naissance", obj.get("joueurs.date_naissance").toString());
+                    queryValues.put("joueurs.num_equipe", obj.get("joueurs.num_equipe").toString());
+
+                    queryValues.put("equipe.id", obj.get("equipe.id").toString());
+                    queryValues.put("equipe.nom_equipe", obj.get("equipe.nom_equipe").toString());
+                    queryValues.put("equipe.categorie", obj.get("equipe.categorie").toString());
+                    queryValues.put("equipe.num_course", obj.get("equipe.num_course").toString());
+
                     // Insert User into SQLite DB
-                    controller.insertUser(queryValues);
+                    controller.insertDataEquipe(queryValues);
                 }
 
                 //On récupère la course et l'équipe
-                numCourse = (EditText) getActivity().findViewById(R.id.numCourse);
                 numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
-
-                numCourseStr = numCourse.getText().toString();
                 numEquipeStr = numEquipe.getText().toString();
 
-                controller.updateCourseEquipe(numCourseStr, numEquipeStr);
+                controller.updateNumEquipe(numEquipeStr);
+
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
+    public void updateParcours(String response){
+
+        //test pour reset table qd télécharge le parcours
+        controller.deleteTable("parcours");
+        controller.deleteTable("liste_balises");
+        controller.deleteTable("balise");
+        controller.deleteTable("groupe");
+        controller.deleteTable("liste_liaisons");
+        controller.deleteTable("liaison");
+
+        // Create GSON object
+        Gson gson = new GsonBuilder().create();
+        try {
+            // Extract JSON array from the response
+            JSONArray arr = new JSONArray(response);
+            System.out.println(arr.length());
+            System.out.println(arr);
+            // If no of array elements is not zero
+            if(arr.length() != 0){
+                // Loop through each array element, get JSON object which has userid and username
+                for (int i = 0; i < arr.length(); i++) {
+                    // Get JSON object
+                    JSONObject obj = (JSONObject) arr.get(i);
+                    System.out.println(obj);
+                    //System.out.println(obj.get("id"));
+                    //System.out.println(obj.get("balise"));
+
+                    // DB QueryValues Object to insert into SQLite
+                    queryValues = new HashMap<String, String>();
+
+                    // Add parcours.id extracted from Object
+
+                    try
+                    {
+
+                        queryValues.put("liste_balises.id", obj.get("liste_balises.id").toString());
+                        queryValues.put("liste_balises.num_parcours", obj.get("liste_balises.num_parcours").toString());
+                        queryValues.put("liste_balises.num_balise", obj.get("liste_balises.num_balise").toString());
+                        queryValues.put("liste_balises.suivante", obj.get("liste_balises.suivante").toString());
+                        queryValues.put("liste_balises.azimut", obj.get("liste_balises.azimut").toString());
+                        queryValues.put("liste_balises.azimut_distance", obj.get("liste_balises.azimut_distance").toString());
+                        queryValues.put("liste_balises.azimut_degree", obj.get("liste_balises.azimut_degree").toString());
+                        queryValues.put("liste_balises.depart", obj.get("liste_balises.depart").toString());
+                        queryValues.put("liste_balises.arrivee", obj.get("liste_balises.arrivee").toString());
+                        queryValues.put("liste_balises.liaison", obj.get("liste_balises.liaison").toString());
+                        queryValues.put("liste_balises.groupe", obj.get("liste_balises.groupe").toString());
+                        queryValues.put("liste_balises.points", obj.get("liste_balises.points").toString());
+
+
+                    queryValues.put("parcours.id", obj.get("parcours.id").toString());
+                    queryValues.put("parcours.categorie", obj.get("parcours.categorie").toString());
+                    queryValues.put("parcours.description", obj.get("parcours.description").toString());
+                    queryValues.put("parcours.date", obj.get("parcours.date").toString());
+
+                    queryValues.put("liste_balises.id", obj.get("liste_balises.id").toString());
+                    queryValues.put("liste_balises.num_parcours", obj.get("liste_balises.num_parcours").toString());
+                    queryValues.put("liste_balises.num_balise", obj.get("liste_balises.num_balise").toString());
+                    queryValues.put("liste_balises.suivante", obj.get("liste_balises.suivante").toString());
+                    queryValues.put("liste_balises.azimut", obj.get("liste_balises.azimut").toString());
+                    queryValues.put("liste_balises.azimut_distance", obj.get("liste_balises.azimut_distance").toString());
+                    queryValues.put("liste_balises.azimut_degree", obj.get("liste_balises.azimut_degree").toString());
+                    queryValues.put("liste_balises.depart", obj.get("liste_balises.depart").toString());
+                    queryValues.put("liste_balises.arrivee", obj.get("liste_balises.arrivee").toString());
+                    queryValues.put("liste_balises.liaison", obj.get("liste_balises.liaison").toString());
+                    queryValues.put("liste_balises.groupe", obj.get("liste_balises.groupe").toString());
+                    queryValues.put("liste_balises.points", obj.get("liste_balises.points").toString());
+
+                    queryValues.put("balise.num", obj.get("balise.num").toString());
+                    queryValues.put("balise.coord_gps", obj.get("balise.coord_gps").toString());
+                    queryValues.put("balise.poste", obj.get("balise.poste").toString());
+
+                    queryValues.put("groupe.nom_groupe", obj.get("groupe.nom_groupe").toString());
+                    queryValues.put("groupe.balise_entree", obj.get("groupe.balise_entree").toString());
+                    queryValues.put("groupe.balise_sortie", obj.get("groupe.balise_sortie").toString());
+                    queryValues.put("groupe.points_bonus", obj.get("groupe.points_bonus").toString());
+
+                    queryValues.put("liste_liaisons.num", obj.get("liste_liaisons.num").toString());
+                    queryValues.put("liste_liaisons.description", obj.get("liste_liaisons.description").toString());
+                    queryValues.put("liste_liaisons.points", obj.get("liste_liaisons.points").toString());
+
+                    queryValues.put("liaison.num", obj.get("liste_liaisons.num").toString());
+                    queryValues.put("liaison.balise", obj.get("liste_liaisons.balise").toString());
+                    queryValues.put("liaison.ordre", obj.get("liste_liaisons.ordre").toString());
+                    }
+                    catch(Exception E)
+                    {
+
+                    }
+                    System.out.println("query : "+queryValues);
+                    // Insert User into SQLite DB
+                    controller.insertDataParcours(queryValues);
+                }
+
+                //On récupère la course et l'équipe
+                numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
+                numEquipeStr = numEquipe.getText().toString();
+
+                //controller.updateNumEquipe(numEquipeStr);
 
             }
         } catch (JSONException e) {

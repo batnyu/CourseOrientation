@@ -17,71 +17,237 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
-public class DBController  extends SQLiteOpenHelper {
+public class DBController extends SQLiteOpenHelper {
+
+    private static final String CREATE_TABLE_JOUEURS = "CREATE TABLE" +
+            " joueurs ( id INTEGER PRIMARY KEY, prenom TEXT, nom TEXT" +
+            " date_naissance TEXT, num_equipe INTEGER )";
+
+    private static final String CREATE_TABLE_EQUIPE = "CREATE TABLE" +
+            " equipe ( id INTEGER PRIMARY KEY, nom_equipe TEXT, categorie TEXT" +
+            " num_course INTEGER )";
+
+    private static final String CREATE_TABLE_COURSE = "CREATE TABLE" +
+            " course ( id INTEGER PRIMARY KEY, parcours INTEGER, date TEXT" +
+            " temps TEXT )";
+
+    private static final String CREATE_TABLE_PARCOURS = "CREATE TABLE" +
+            " parcours ( id INTEGER PRIMARY KEY, categorie TEXT," +
+            " description TEXT, date TEXT )";
+
+    private static final String CREATE_TABLE_LISTE_BALISES = "CREATE TABLE" +
+            " liste_balises ( id INTEGER PRIMARY KEY, num_parcours INTEGER," +
+            " num_balise INTEGER," +
+            " suivante INTEGER, azimut TEXT, azimut_distance INTEGER," +
+            " azimut_degre INTEGER," +
+            " depart INTEGER, arrivee INTEGER, liaison TEXT," +
+            " groupe TEXT, points INTEGER, temps TEXT )";
+
+    private static final String CREATE_TABLE_BALISE = "CREATE TABLE" +
+            " balise ( num INTEGER PRIMARY KEY, coord_gps INTEGER," +
+            " poste TEXT )";
+
+    private static final String CREATE_TABLE_GROUPE = "CREATE TABLE" +
+            " groupe ( nom_groupe TEXT PRIMARY KEY, balise_entree INTEGER," +
+            " balise_sortie INTEGER, points_bonus INTEGER )";
+
+    private static final String CREATE_TABLE_LISTE_LIAISONS = "CREATE TABLE" +
+            " liste_liaisons (  num INTEGER PRIMARY KEY, description TEXT," +
+            " points INTEGER )";
+
+    private static final String CREATE_TABLE_LIAISON = "CREATE TABLE" +
+            " liaison (  num INTEGER, balise INTEGER," +
+            " ordre INTEGER )";
+
+    private static final String CREATE_TABLE_RESULTATS = "CREATE TABLE" +
+            " resultats (  id INTEGER PRIMARY KEY, course INTEGER," +
+            " equipe INTEGER, balise INTEGER, temps TEXT )";
 
     public DBController(Context applicationcontext) {
         super(applicationcontext, "course.db", null, 1);
     }
+
     //Creates Table
     @Override
     public void onCreate(SQLiteDatabase database) {
-        String query;
-        query = "CREATE TABLE parcoursLite ( id INTEGER, numCourse INTEGER, numEquipe INTEGER, balise INTEGER, temps INTEGER)";
-        database.execSQL(query);
+
+        database.execSQL(CREATE_TABLE_JOUEURS);
+        database.execSQL(CREATE_TABLE_EQUIPE);
+        database.execSQL(CREATE_TABLE_COURSE);
+        database.execSQL(CREATE_TABLE_PARCOURS);
+        database.execSQL(CREATE_TABLE_LISTE_BALISES);
+        database.execSQL(CREATE_TABLE_BALISE);
+        database.execSQL(CREATE_TABLE_GROUPE);
+        database.execSQL(CREATE_TABLE_LISTE_LIAISONS);
+        database.execSQL(CREATE_TABLE_LIAISON);
+        database.execSQL(CREATE_TABLE_RESULTATS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int version_old, int current_version) {
         String query;
-        query = "DROP TABLE IF EXISTS parcoursLite";
+        query = "DROP TABLE IF EXISTS joueurs, equipe, course, parcours," +
+                " liste_balises, balise, groupe, liste_liaisons, liaison," +
+                " resultats";
         database.execSQL(query);
         onCreate(database);
     }
 
     public void deleteTable(String TABLE_NAME) {
         SQLiteDatabase database = this.getWritableDatabase();
-        String query;
-        database.execSQL("delete from "+ TABLE_NAME);
+        database.execSQL("delete from " + TABLE_NAME);
     }
 
     /**
      * Inserts User into SQLite DB
+     *
      * @param queryValues
      */
-    public void insertUser(HashMap<String, String> queryValues) {
+    public void insertDataEquipe(HashMap<String, String> queryValues) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        //joueurs
+        values.put("id", queryValues.get("joueurs.id"));
+        values.put("prenom", queryValues.get("joueurs.prenom"));
+        values.put("nom", queryValues.get("joueurs.nom"));
+        values.put("date_naissance", queryValues.get("joueurs.date_naissance"));
+        values.put("num_equipe", queryValues.get("joueurs.num_equipe"));
+        database.insert("joueurs", null, values);
+
+        //equipe
+        values = new ContentValues();
+        values.put("id", queryValues.get("equipe.id"));
+        values.put("nom_equipe", queryValues.get("equipe.nom_equipe"));
+        values.put("categorie", queryValues.get("equipe.categorie"));
+        values.put("num_course", queryValues.get("equipe.num_course"));
+        database.insert("equipe", null, values);
+
+        //course
+        values = new ContentValues();
+        values.put("id", queryValues.get("course.id"));
+        values.put("parcours", queryValues.get("course.parcours"));
+        values.put("date", queryValues.get("course.date"));
+        values.put("temps", queryValues.get("course.temps"));
+        database.insert("course", null, values);
+
+        database.close();
+    }
+
+    public void insertDataParcours(HashMap<String, String> queryValues) {
+
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        //System.out.println(queryValues.get("parcours.id"));
+
+        if(queryValues.get("parcours.id") != null)
+        {
+            System.out.println("parcours");
+            //parcours
+            values.put("id", queryValues.get("parcours.id"));
+            values.put("categorie", queryValues.get("parcours.categorie"));
+            values.put("description", queryValues.get("parcours.description"));
+            values.put("date", queryValues.get("parcours.date"));
+            database.insert("parcours", null, values);
+        }
+        else if(queryValues.get("liste_balises.id") != null)
+        {
+            System.out.println("liste_balises");
+            //liste_balises
+            values = new ContentValues();
+            values.put("id", queryValues.get("liste_balises.id"));
+            values.put("num_parcours", queryValues.get("liste_balises.num_parcours"));
+            values.put("num_balise", queryValues.get("liste_balises.num_balise"));
+            values.put("suivante", queryValues.get("liste_balises.suivante"));
+            values.put("azimut", queryValues.get("liste_balises.azimut"));
+            values.put("azimut_distance", queryValues.get("liste_balises.azimut_distance"));
+            values.put("azimut_degre", queryValues.get("liste_balises.azimut_degre"));
+            values.put("depart", queryValues.get("liste_balises.depart"));
+            values.put("arrivee", queryValues.get("liste_balises.arrivee"));
+            values.put("liaison", queryValues.get("liste_balises.liaison"));
+            values.put("groupe", queryValues.get("liste_balises.groupe"));
+            values.put("points", queryValues.get("liste_balises.points"));
+            values.put("temps", "");
+            database.insert("liste_balises", null, values);
+        }
+        else if(queryValues.get("balise.num") != null)
+        {
+            System.out.println("balise");
+            //balise
+            values = new ContentValues();
+            values.put("num", queryValues.get("balise.num"));
+            values.put("coord_gps", queryValues.get("balise.coord_gps"));
+            values.put("poste", queryValues.get("balise.poste"));
+            database.insert("balise", null, values);
+        }
+        else if(queryValues.get("groupe.nom_groupe") != null)
+        {
+            System.out.println("groupe");
+            //groupe
+            values = new ContentValues();
+            values.put("nom_groupe", queryValues.get("groupe.nom_groupe"));
+            values.put("balise_entree", queryValues.get("groupe.balise_entree"));
+            values.put("balise_sortie", queryValues.get("groupe.balise_sortie"));
+            values.put("points_bonus", queryValues.get("groupe.points_bonus"));
+            database.insert("groupe", null, values);
+        }
+        else if(queryValues.get("liste_liaisons.num") != null)
+        {
+            System.out.println("liste_liaisons");
+            //liste_liaisons
+            values = new ContentValues();
+            values.put("num", queryValues.get("liste_liaisons.num"));
+            values.put("description", queryValues.get("liste_liaisons.description"));
+            values.put("points", queryValues.get("liste_liaisons.points"));
+            database.insert("liste_liaisons", null, values);
+        }
+        else if(queryValues.get("liaison.num") != null)
+        {
+            System.out.println("liaison");
+            //liaison
+            values = new ContentValues();
+            values.put("num", queryValues.get("liaison.num"));
+            values.put("balise", queryValues.get("liaison.balise"));
+            values.put("ordre", queryValues.get("liaison.ordre"));
+            database.insert("liaison", null, values);
+        }
+
+        database.close();
+    }
+
+    public void insertData(HashMap<String, String> queryValues) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("id", queryValues.get("id"));
-        values.put("numCourse", queryValues.get("numCourse"));
-        values.put("numEquipe", queryValues.get("numEquipe"));
+        values.put("numEquipe", "");
         values.put("balise", queryValues.get("balise"));
-        values.put("temps", queryValues.get("temps"));
-        database.insert("parcoursLite", null, values);
+        values.put("temps", "");
+        database.insert("parcours", null, values);
         database.close();
     }
 
     /**
      * Get list of Users from SQLite DB as Array List
+     *
      * @return
      */
     public ArrayList<HashMap<String, String>> getAllUsers() {
 
         ArrayList<HashMap<String, String>> usersList;
         usersList = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT * FROM parcoursLite ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
-
-        String test;
+        //String selectQuery = "SELECT * FROM parcours ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
+        String selectQuery = "SELECT * FROM liste_balises ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
 
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put("id", cursor.getString(0));
-                map.put("numCourse", cursor.getString(1));
-                map.put("numEquipe", cursor.getString(2));
-                map.put("balise", cursor.getString(3));
-                map.put("temps", cursor.getString(4));
+                map.put("num_balise", cursor.getString(2));
+                map.put("suivante", cursor.getString(3));
+                map.put("points", cursor.getString(7));
+                map.put("temps", cursor.getString(12));
                 usersList.add(map);
             } while (cursor.moveToNext());
         }
@@ -97,41 +263,33 @@ public class DBController  extends SQLiteOpenHelper {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT balise,temps FROM parcoursLite WHERE balise = ?", new String[]{balise});
+        Cursor cursor = database.rawQuery("SELECT balise,temps FROM parcours WHERE balise = ?", new String[]{balise});
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
 
             String colonne2 = cursor.getString(1);
-            if(colonne2.equals(""))
-            {
-                if(cursor.getString(0).equals("1"))//changer pour la balise de départ
+            if (colonne2.equals("")) {
+                if (cursor.getString(0).equals("1"))//changer pour la balise de départ
                 {
                     cursor.close();
                     database.close();
                     return 3;
-                }
-                else if(departOK)
-                {
+                } else if (departOK) {
                     cursor.close();
                     database.close();
                     return 1;
-                }
-                else
-                {
+                } else {
                     cursor.close();
                     database.close();
                     return 4;
                 }
-            }
-            else //Quand la balise a déjà été scanné
+            } else //Quand la balise a déjà été scanné
             {
                 cursor.close();
                 database.close();
                 return 2;
             }
-        }
-        else
-        {
+        } else {
             cursor.close();
             database.close();
             return 0;
@@ -142,36 +300,33 @@ public class DBController  extends SQLiteOpenHelper {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT balise,temps FROM parcoursLite WHERE balise = ?", new String[]{balise});
+        Cursor cursor = database.rawQuery("SELECT balise,temps FROM parcours WHERE balise = ?", new String[]{balise});
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
 
             //Version plus safe
             ContentValues newValues = new ContentValues();
             newValues.put("temps", temps);
             String[] args = new String[]{balise};
-            database.update("parcoursLite", newValues, "balise=?", args);
-            //database.execSQL("UPDATE parcoursLite SET temps = ? WHERE balise = ?", new String[]{temps,balise});
+            database.update("parcours", newValues, "balise=?", args);
+            //database.execSQL("UPDATE parcours SET temps = ? WHERE balise = ?", new String[]{temps,balise});
 
         }
         cursor.close();
         database.close();
     }
 
-    public void updateCourseEquipe(String numCourse, String numEquipe) {
+    public void updateNumEquipe(String numEquipe) {
 
         SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT numCourse, numEquipe FROM parcoursLite ", null);
-        if(cursor.moveToFirst()){
+        Cursor cursor = database.rawQuery("SELECT numEquipe FROM parcours ", null);
+        if (cursor.moveToFirst()) {
             do {
                 ContentValues newValues = new ContentValues();
-                newValues.put("numCourse",numCourse);
-                database.update("parcoursLite",newValues, null, null);
+                newValues.put("numEquipe", numEquipe);
+                database.update("parcours", newValues, null, null);
 
-                newValues.put("numEquipe",numEquipe);
-                database.update("parcoursLite",newValues, null, null);
-
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         cursor.close();
         database.close();
@@ -179,22 +334,22 @@ public class DBController  extends SQLiteOpenHelper {
 
     /**
      * Compose JSON out of SQLite records
+     *
      * @return
      */
-    public String composeJSONfromSQLite(){
+    public String composeJSONfromSQLite() {
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT * FROM parcoursLite ORDER BY temps";
+        String selectQuery = "SELECT * FROM parcours ORDER BY temps";
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
                 //map.put("id", cursor.getString(0));
-                map.put("numCourse", cursor.getString(1));
-                map.put("numEquipe", cursor.getString(2));
-                map.put("balise", cursor.getString(3));
-                map.put("temps", cursor.getString(4));
+                map.put("numEquipe", cursor.getString(1));
+                map.put("balise", cursor.getString(2));
+                map.put("temps", cursor.getString(3));
                 wordList.add(map);
             } while (cursor.moveToNext());
         }

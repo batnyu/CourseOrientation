@@ -79,7 +79,7 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
 
         controller = new DBController(getActivity());
         // create the grid item mapping
-        String[] from = new String[] {"num_balise", "temps", "suivante", "points"};
+        String[] from = new String[] {"num_balise", "temps", "suivante", "poste"};
         int[] to = new int[] { R.id.item1, R.id.item2, R.id.item3, R.id.item4 };
 
         ArrayList<HashMap<String, String>> userList;

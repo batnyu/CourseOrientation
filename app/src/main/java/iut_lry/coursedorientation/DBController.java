@@ -237,17 +237,21 @@ public class DBController extends SQLiteOpenHelper {
         ArrayList<HashMap<String, String>> usersList;
         usersList = new ArrayList<HashMap<String, String>>();
         //String selectQuery = "SELECT * FROM parcours ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
-        String selectQuery = "SELECT * FROM liste_balises ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
+        //String selectQuery = "SELECT * FROM liste_balises ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
+        String selectQuery = "SELECT liste_balises.num_balise,liste_balises.temps,liste_balises.suivante,balise.poste " +
+                             "FROM liste_balises INNER JOIN balise ON liste_balises.num_balise = balise.num " +
+                             "ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
+
 
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put("num_balise", cursor.getString(2));
-                map.put("suivante", cursor.getString(3));
-                map.put("points", cursor.getString(7));
-                map.put("temps", cursor.getString(12));
+                map.put("num_balise", cursor.getString(0));
+                map.put("temps", cursor.getString(1));
+                map.put("suivante", cursor.getString(2));
+                map.put("poste", cursor.getString(3));
                 usersList.add(map);
             } while (cursor.moveToNext());
         }

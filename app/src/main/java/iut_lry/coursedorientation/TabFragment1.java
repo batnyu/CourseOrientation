@@ -403,62 +403,55 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                     // Add parcours.id extracted from Object
 
-                    try
+                    if(!obj.isNull("parcours.id"))
                     {
-
+                        queryValues.put("parcours.id", obj.get("parcours.id").toString());
+                        queryValues.put("parcours.categorie", obj.get("parcours.categorie").toString());
+                        queryValues.put("parcours.description", obj.get("parcours.description").toString());
+                        queryValues.put("parcours.date", obj.get("parcours.date").toString());
+                    }
+                    else if(!obj.isNull("liste_balises.id"))
+                    {
                         queryValues.put("liste_balises.id", obj.get("liste_balises.id").toString());
                         queryValues.put("liste_balises.num_parcours", obj.get("liste_balises.num_parcours").toString());
                         queryValues.put("liste_balises.num_balise", obj.get("liste_balises.num_balise").toString());
                         queryValues.put("liste_balises.suivante", obj.get("liste_balises.suivante").toString());
                         queryValues.put("liste_balises.azimut", obj.get("liste_balises.azimut").toString());
                         queryValues.put("liste_balises.azimut_distance", obj.get("liste_balises.azimut_distance").toString());
-                        queryValues.put("liste_balises.azimut_degree", obj.get("liste_balises.azimut_degree").toString());
+                        queryValues.put("liste_balises.azimut_degre", obj.get("liste_balises.azimut_degre").toString());
                         queryValues.put("liste_balises.depart", obj.get("liste_balises.depart").toString());
                         queryValues.put("liste_balises.arrivee", obj.get("liste_balises.arrivee").toString());
                         queryValues.put("liste_balises.liaison", obj.get("liste_balises.liaison").toString());
                         queryValues.put("liste_balises.groupe", obj.get("liste_balises.groupe").toString());
                         queryValues.put("liste_balises.points", obj.get("liste_balises.points").toString());
-
-
-                    queryValues.put("parcours.id", obj.get("parcours.id").toString());
-                    queryValues.put("parcours.categorie", obj.get("parcours.categorie").toString());
-                    queryValues.put("parcours.description", obj.get("parcours.description").toString());
-                    queryValues.put("parcours.date", obj.get("parcours.date").toString());
-
-                    queryValues.put("liste_balises.id", obj.get("liste_balises.id").toString());
-                    queryValues.put("liste_balises.num_parcours", obj.get("liste_balises.num_parcours").toString());
-                    queryValues.put("liste_balises.num_balise", obj.get("liste_balises.num_balise").toString());
-                    queryValues.put("liste_balises.suivante", obj.get("liste_balises.suivante").toString());
-                    queryValues.put("liste_balises.azimut", obj.get("liste_balises.azimut").toString());
-                    queryValues.put("liste_balises.azimut_distance", obj.get("liste_balises.azimut_distance").toString());
-                    queryValues.put("liste_balises.azimut_degree", obj.get("liste_balises.azimut_degree").toString());
-                    queryValues.put("liste_balises.depart", obj.get("liste_balises.depart").toString());
-                    queryValues.put("liste_balises.arrivee", obj.get("liste_balises.arrivee").toString());
-                    queryValues.put("liste_balises.liaison", obj.get("liste_balises.liaison").toString());
-                    queryValues.put("liste_balises.groupe", obj.get("liste_balises.groupe").toString());
-                    queryValues.put("liste_balises.points", obj.get("liste_balises.points").toString());
-
-                    queryValues.put("balise.num", obj.get("balise.num").toString());
-                    queryValues.put("balise.coord_gps", obj.get("balise.coord_gps").toString());
-                    queryValues.put("balise.poste", obj.get("balise.poste").toString());
-
-                    queryValues.put("groupe.nom_groupe", obj.get("groupe.nom_groupe").toString());
-                    queryValues.put("groupe.balise_entree", obj.get("groupe.balise_entree").toString());
-                    queryValues.put("groupe.balise_sortie", obj.get("groupe.balise_sortie").toString());
-                    queryValues.put("groupe.points_bonus", obj.get("groupe.points_bonus").toString());
-
-                    queryValues.put("liste_liaisons.num", obj.get("liste_liaisons.num").toString());
-                    queryValues.put("liste_liaisons.description", obj.get("liste_liaisons.description").toString());
-                    queryValues.put("liste_liaisons.points", obj.get("liste_liaisons.points").toString());
-
-                    queryValues.put("liaison.num", obj.get("liste_liaisons.num").toString());
-                    queryValues.put("liaison.balise", obj.get("liste_liaisons.balise").toString());
-                    queryValues.put("liaison.ordre", obj.get("liste_liaisons.ordre").toString());
                     }
-                    catch(Exception E)
+                    else if(!obj.isNull("balise.num"))
                     {
-
+                        queryValues.put("balise.num", obj.get("balise.num").toString());
+                        queryValues.put("balise.coord_gps", obj.get("balise.coord_gps").toString());
+                        queryValues.put("balise.poste", obj.get("balise.poste").toString());
                     }
+                    else if(!obj.isNull("groupe.nom_groupe"))
+                    {
+                        queryValues.put("groupe.nom_groupe", obj.get("groupe.nom_groupe").toString());
+                        queryValues.put("groupe.balise_entree", obj.get("groupe.balise_entree").toString());
+                        queryValues.put("groupe.balise_sortie", obj.get("groupe.balise_sortie").toString());
+                        queryValues.put("groupe.points_bonus", obj.get("groupe.points_bonus").toString());
+                    }
+                    else if(!obj.isNull("liste_liaisons.num"))
+                    {
+                        queryValues.put("liste_liaisons.num", obj.get("liste_liaisons.num").toString());
+                        queryValues.put("liste_liaisons.description", obj.get("liste_liaisons.description").toString());
+                        queryValues.put("liste_liaisons.points", obj.get("liste_liaisons.points").toString());
+                    }
+                    else if(!obj.isNull("liaisons.num"))
+                    {
+                        queryValues.put("liaison.num", obj.get("liaison.num").toString());
+                        queryValues.put("liaison.balise", obj.get("liaison.balise").toString());
+                        queryValues.put("liaison.ordre", obj.get("liaison.ordre").toString());
+                    }
+
+
                     System.out.println("query : "+queryValues);
                     // Insert User into SQLite DB
                     controller.insertDataParcours(queryValues);

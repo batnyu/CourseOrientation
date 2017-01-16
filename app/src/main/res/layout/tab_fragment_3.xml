@@ -94,7 +94,7 @@
             android:textColor="#ffffff"
             android:layout_weight="1"
             android:paddingLeft="10dp"
-            android:text="Points"
+            android:text="Poste"
             android:background="@android:color/holo_green_light" />
     </LinearLayout>
 

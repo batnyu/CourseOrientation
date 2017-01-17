@@ -267,7 +267,7 @@ public class DBController extends SQLiteOpenHelper {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT balise,temps FROM parcours WHERE balise = ?", new String[]{balise});
+        Cursor cursor = database.rawQuery("SELECT num_balise,temps FROM liste_balises WHERE num_balise = ?", new String[]{balise});
 
         if (cursor.moveToFirst()) {
 
@@ -304,7 +304,7 @@ public class DBController extends SQLiteOpenHelper {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT balise,temps FROM parcours WHERE balise = ?", new String[]{balise});
+        Cursor cursor = database.rawQuery("SELECT num_balise,temps FROM liste_balises WHERE num_balise = ?", new String[]{balise});
 
         if (cursor.moveToFirst()) {
 
@@ -312,7 +312,7 @@ public class DBController extends SQLiteOpenHelper {
             ContentValues newValues = new ContentValues();
             newValues.put("temps", temps);
             String[] args = new String[]{balise};
-            database.update("parcours", newValues, "balise=?", args);
+            database.update("liste_balises", newValues, "num_balise=?", args);
             //database.execSQL("UPDATE parcours SET temps = ? WHERE balise = ?", new String[]{temps,balise});
 
         }

@@ -31,7 +31,7 @@ public class SpecialAdapter extends SimpleAdapter {
         return view;
     }*/
 
-    @Override
+    /*@Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View v = convertView;
@@ -46,5 +46,5 @@ public class SpecialAdapter extends SimpleAdapter {
         }
 
         return super.getView(position, convertView, parent);
-    }
+    }*/
 }

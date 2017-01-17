@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -38,6 +39,12 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     DBController controller;
 
     boolean departOK;
+
+    IntentResult result;
+    String scanContent;
+    String scanFormat;
+    String temps;
+    int resultat;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,72 +102,26 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
                 //TODO jouez son echec scan
 
-            } else {
+            }
+            else {
+
+                controller = new DBController(getActivity());
+
                 //Récupération du contenu du scan
-                String scanContent = result.getContents();
-                String scanFormat = result.getFormatName();
+                scanContent = result.getContents();
+                scanFormat = result.getFormatName();
 
-                //Affichage dans les TextViews
-                TextView scan_format = (TextView) getActivity().findViewById(R.id.scan_format);
-                TextView scan_content = (TextView) getActivity().findViewById(R.id.scan_content);
-
-                scan_format.setText("FORMAT: " + scanFormat);
-                scan_content.setText("CONTENT: " + scanContent);
-
+                /*
                 //récupère le temps actuel SERT PLUS A RIEN
                 rightNow = Calendar.getInstance();
                 SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-                String temps = format.format(rightNow.getTime());
+                temps = format.format(rightNow.getTime());
+                */
 
-                controller = new DBController(getActivity());
-                int resultat = controller.checkBalise(scanContent, temps, departOK);
-
-                if(resultat == 1)
-                {
-                    //Si on fait ca, on a le temps quand on appuie sur le bouton SCAN
-                    //et pas quand on obtient le résultat
-                    //temps = timeElapsed.getText().toString();
-                    //Donc obligé de refaire ça :
-                    long time = SystemClock.elapsedRealtime() - timeElapsed.getBase();
-                    int h   = (int)(time /3600000);
-                    int m = (int)(time - h*3600000)/60000;
-                    int s= (int)(time - h*3600000- m*60000)/1000 ;
-                    String hh = h < 10 ? "0"+h: h+"";
-                    String mm = m < 10 ? "0"+m: m+"";
-                    String ss = s < 10 ? "0"+s: s+"";
-                    temps = hh+":"+mm+":"+ss;
+                ReceiveData test = new ReceiveData();
+                test.execute();
 
 
-                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
-                    //Update de le temps dans la base de données
-                    controller.UpdateTemps(scanContent,temps);
-                    //Update l'affichage de la liste du fragment 3
-                    mCallback.communicateToFragment3();
-                }
-                else if(resultat == 3)
-                {
-                    temps = timeElapsed.getText().toString();
-                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
-                    //Update de le temps dans la base de données
-                    controller.UpdateTemps(scanContent,temps);
-                    //Update l'affichage de la liste du fragment 3
-                    mCallback.communicateToFragment3();
-                    timeElapsed.setBase(SystemClock.elapsedRealtime());
-                    timeElapsed.start();
-                    departOK = true;
-                }
-                else if(resultat == 2)
-                {
-                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
-                }
-                else if(resultat == 4)
-                {
-                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
-                }
 
                 /*//Joué un son -> BUG
                 final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.zxing_beep);
@@ -182,6 +143,118 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             throw new ClassCastException(context.toString()
                     + " must implement IFragmentToActivity");
         }
+    }
+
+    public class ReceiveData extends AsyncTask<String, Integer, Void> {
+
+        @Override
+        protected void onPreExecute() {
+        /*
+         *    do things before doInBackground() code runs
+         *    such as preparing and showing a Dialog or ProgressBar
+        */
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+        /*
+         *    updating data
+         *    such a Dialog or ProgressBar
+        */
+            if(values[0] == 1) {
+                //Si on fait ca, on a le temps quand on appuie sur le bouton SCAN
+                //et pas quand on obtient le résultat
+                //temps = timeElapsed.getText().toString();
+                //Donc obligé de refaire ça :
+                long time = SystemClock.elapsedRealtime() - timeElapsed.getBase();
+                int h   = (int)(time /3600000);
+                int m = (int)(time - h*3600000)/60000;
+                int s= (int)(time - h*3600000- m*60000)/1000 ;
+                String hh = h < 10 ? "0"+h: h+"";
+                String mm = m < 10 ? "0"+m: m+"";
+                String ss = s < 10 ? "0"+s: s+"";
+                temps = hh+":"+mm+":"+ss;
+
+                Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
+            }
+            else if(values[0] == 3)
+            {
+                temps = timeElapsed.getText().toString();
+                Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
+
+                timeElapsed.setBase(SystemClock.elapsedRealtime());
+                timeElapsed.start();
+                departOK = true;
+            }
+            else if(values[0] == 2)
+            {
+                Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
+            }
+            else if(values[0] == 4)
+            {
+                Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
+            }
+
+        }
+
+        @Override
+        protected Void doInBackground(String... parametres) {
+            //do your work here
+
+
+
+            resultat = controller.checkBalise(scanContent, temps, departOK);
+
+            publishProgress(resultat);
+
+            //On doit attendre pour que le programme ait le temps de mettre à jour la variable temps dans onProgressUpdate
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if(resultat == 1)
+            {
+                //Update du temps dans la base de données
+                controller.UpdateTemps(scanContent,temps);
+            }
+            else if(resultat == 3)
+            {
+                //Update du temps dans la base de données
+                controller.UpdateTemps(scanContent,temps);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+        /*
+         *    do something with data here
+         *    display it or send to mainactivity
+         *    close any dialogs/ProgressBars/etc...
+        */
+            //Affichage dans les TextViews
+            TextView scan_format = (TextView) getActivity().findViewById(R.id.scan_format);
+            TextView scan_content = (TextView) getActivity().findViewById(R.id.scan_content);
+
+            scan_format.setText("FORMAT: " + scanFormat);
+            scan_content.setText("CONTENT: " + scanContent);
+
+            if(resultat == 1 || resultat == 3)
+            {
+                //On update la listView du fragment 3 (onglet parcours)
+                mCallback.communicateToFragment3();
+            }
+            resultat = 54;
+
+        }
+
     }
 
     @Override

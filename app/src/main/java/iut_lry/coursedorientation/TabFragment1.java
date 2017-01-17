@@ -134,6 +134,18 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             case R.id.buttonWifi:
                 afficherInfoWifi();
+                /*
+                //A enlever;
+                //test pour reset table qd télécharge le parcours
+                controller.deleteTable("parcours");
+                controller.deleteTable("liste_balises");
+                controller.deleteTable("balise");
+                controller.deleteTable("groupe");
+                controller.deleteTable("liste_liaisons");
+                controller.deleteTable("liaison");
+                mCallback.communicateToFragment3();
+                */
+
                 break;
 
             case R.id.dllParkour:

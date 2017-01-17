@@ -13,7 +13,9 @@
         android:background="@drawable/bg_first_item"
         android:paddingLeft="10dp"
         android:layout_weight="1"
-        android:layout_height="30dip" />
+        android:layout_height="match_parent"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp" />
 
     <TextView android:id="@+id/item2"
         android:text="col_2"
@@ -23,7 +25,9 @@
         android:background="@drawable/bg_item"
         android:paddingLeft="10dp"
         android:layout_weight="1"
-        android:layout_height="30dip" />
+        android:layout_height="match_parent"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp" />
 
     <TextView android:id="@+id/item3"
         android:text="col_3"
@@ -33,7 +37,9 @@
         android:background="@drawable/bg_item"
         android:paddingLeft="10dp"
         android:layout_weight="1"
-        android:layout_height="30dip" />
+        android:layout_height="match_parent"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp" />
 
     <TextView android:id="@+id/item4"
         android:text="col_4"
@@ -44,6 +50,8 @@
         android:background="@drawable/bg_item"
         android:paddingLeft="10dp"
         android:layout_weight="1"
-        android:layout_height="30dip" />
+        android:layout_height="match_parent"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp" />
 
 </LinearLayout>

@@ -325,6 +325,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         */
             //On update la listView du fragment 3 (onglet parcours)
             mCallback.communicateToFragment3();
+            //Changer affichage de l'onglet 2
+            mCallback.communicateToFragment2();
         }
 
     }

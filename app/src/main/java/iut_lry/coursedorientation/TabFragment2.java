@@ -46,12 +46,18 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     String temps;
     int resultat;
 
+    TextView nbBalises;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_2, container, false);
 
         scanButton = (Button) view.findViewById(R.id.scan_button);
         scanButton.setOnClickListener(this);
+
+        controller = new DBController(getActivity());
+
+        nbBalises = (TextView) view.findViewById(R.id.textView_balises_pointees_nb);
 
         return view;
     }
@@ -76,6 +82,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         });
         timeElapsed.setText("00:00:00");
         departOK = false;
+
+        fragmentCommunication2();
 
     }
 
@@ -104,8 +112,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
             }
             else {
-
-                controller = new DBController(getActivity());
 
                 //Récupération du contenu du scan
                 scanContent = result.getContents();
@@ -250,11 +256,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 //On update la listView du fragment 3 (onglet parcours)
                 mCallback.communicateToFragment3();
+                fragmentCommunication2();
             }
             resultat = 54;
 
         }
-
     }
 
     @Override
@@ -269,7 +275,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     }
 
     public void fragmentCommunication2() {
-        //mTextView1.setText("Hello from Tab Fragment 1");
+
+        nbBalises.setText(controller.getNbCheckpoints());
 
     }
 }

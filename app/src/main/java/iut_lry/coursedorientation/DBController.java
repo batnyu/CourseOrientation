@@ -336,6 +336,46 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
     }
 
+    public String getNbCheckpoints() {
+
+        String nb;
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        /*Cursor cursor1 = database.rawQuery("SELECT COUNT(*) FROM liste_balises", null);
+        int nbBalisesPointeess = cursor1.getCount();
+        cursor1.close();
+
+        Cursor cursor2 = database.rawQuery("SELECT COUNT(*) FROM liste_balises", null);
+        int nbBalisesTotala = cursor2.getCount();
+        cursor2.close();
+
+        database.close();*/
+
+        int nbBalisesPointees = 0;
+        int nbBalisesTotal = 0;
+
+        Cursor cursor = database.rawQuery("SELECT temps FROM liste_balises", null);
+
+        if (cursor.moveToFirst()) {
+
+            do {
+                String colonne = cursor.getString(0);
+                if (!colonne.equals("")) {
+                    nbBalisesPointees++;
+                }
+            } while (cursor.moveToNext());
+        }
+
+        nbBalisesTotal = cursor.getCount();
+
+        cursor.close();
+        database.close();
+
+        nb = nbBalisesPointees + "/" + nbBalisesTotal;
+
+        return nb;
+    }
+
     /**
      * Compose JSON out of SQLite records
      *

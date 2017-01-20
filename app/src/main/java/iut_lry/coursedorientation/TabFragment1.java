@@ -51,6 +51,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     TextView infosWifi;
     Button buttonWifi;
     private Button dllParkour;
+    Button buttonDel;
 
     // DB Class to perform DB related operations
     DBController controller;
@@ -84,6 +85,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         dllParkour = (Button) view.findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
+
+        buttonDel = (Button) view.findViewById(R.id.buttonDel);
+        buttonDel.setOnClickListener(this);
 
         return view;
     }
@@ -134,8 +138,15 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             case R.id.buttonWifi:
                 afficherInfoWifi();
-                /*
-                //A enlever;
+                break;
+
+            case R.id.dllParkour:
+                dllParkour.setEnabled(false);
+                dllParkour.setText("Téléchargement en cours");
+                syncSQLiteMySQLDB();
+                break;
+
+            case R.id.buttonDel:
                 //test pour reset table qd télécharge le parcours
                 controller.deleteTable("parcours");
                 controller.deleteTable("liste_balises");
@@ -144,14 +155,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 controller.deleteTable("liste_liaisons");
                 controller.deleteTable("liaison");
                 mCallback.communicateToFragment3();
-                */
-
-                break;
-
-            case R.id.dllParkour:
-                dllParkour.setEnabled(false);
-                dllParkour.setText("Téléchargement en cours");
-                syncSQLiteMySQLDB();
+                mCallback.communicateToFragment21();
                 break;
         }
     }

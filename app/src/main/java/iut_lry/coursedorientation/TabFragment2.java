@@ -279,4 +279,12 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         nbBalises.setText(controller.getNbCheckpoints());
 
     }
+
+    public void fragmentCommunication21() {
+
+        timeElapsed.stop();
+        timeElapsed.setText("00:00:00");
+        departOK = false;
+        fragmentCommunication2();
+    }
 }

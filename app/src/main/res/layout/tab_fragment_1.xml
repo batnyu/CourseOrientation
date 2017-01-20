@@ -91,6 +91,13 @@
             android:text=""
             android:layout_gravity="center_vertical|center_horizontal"/>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Supprimer le parcours"
+            android:id="@+id/buttonDel"
+            android:layout_gravity="center_vertical|center_horizontal"/>
+
     </LinearLayout>
 
 </RelativeLayout>

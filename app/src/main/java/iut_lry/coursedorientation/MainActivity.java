@@ -111,6 +111,16 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
     }
 
     @Override
+    public void communicateToFragment21() {
+        TabFragment2 fragment = (TabFragment2) adapter.getFragment(1);
+        if (fragment != null) {
+            fragment.fragmentCommunication21();
+        } else {
+            Log.i(LOG_TAG, "Fragment 2 is not initialized");
+        }
+    }
+
+    @Override
     public void communicateToFragment3() {
         TabFragment3 fragment = (TabFragment3) adapter.getFragment(2);
         if (fragment != null) {

@@ -13,5 +13,7 @@ public interface IFragmentToActivity {
 
     void communicateToFragment2();
 
+    void communicateToFragment21();
+
     void communicateToFragment3();
 }

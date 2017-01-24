@@ -171,7 +171,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 controller.deleteTable("liste_liaisons");
                 controller.deleteTable("liaison");
                 mCallback.communicateToFragment3();
-                mCallback.communicateToFragment21();
+                mCallback.communicateToFragment2();
                 break;
         }
     }

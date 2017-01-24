@@ -308,14 +308,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //cacher l'interface du deuxieme onglet et afficher la phrase
             interface2.setVisibility(LinearLayout.GONE);
             noParcours2.setVisibility(LinearLayout.VISIBLE);
+
+            timeElapsed.stop();
+            timeElapsed.setText("00:00:00");
+            departOK = false;
         }
     }
 
-    public void fragmentCommunication21() {
-
-        timeElapsed.stop();
-        timeElapsed.setText("00:00:00");
-        departOK = false;
-        fragmentCommunication2();
-    }
 }

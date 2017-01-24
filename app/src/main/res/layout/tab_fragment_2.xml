@@ -6,13 +6,25 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="#e7e7e7">
 
+    <TextView
+        android:text="Vous n'avez téléchargé aucun parcours !"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/noParcours2"
+        android:layout_weight="1"
+        android:gravity="center_vertical|center"
+        android:textColor="@android:color/background_dark"
+        android:textAllCaps="false"
+        android:textSize="18sp" />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:id="@+id/interface2">
 
         <TextView
             android:text="Chronomètre"
@@ -33,6 +45,32 @@
             android:fontFamily="sans-serif"
             android:textSize="25sp"
             android:textAlignment="center" />
+
+
+        <TextView
+            android:text="Balise départ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/numEquipe"
+            android:layout_alignStart="@+id/numEquipe"
+            android:id="@+id/textView_balise_depart"
+            android:layout_marginTop="2dp"
+            android:textAllCaps="false"
+            android:textSize="14sp" />
+
+        <TextView
+            android:text=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/numEquipe"
+            android:layout_alignStart="@+id/numEquipe"
+            android:id="@+id/textView_balise_depart_nb"
+            android:layout_marginTop="2dp"
+            android:textAllCaps="false"
+            android:textSize="25sp"
+            android:textColor="@android:color/background_dark" />
 
 
         <TextView
@@ -73,6 +111,19 @@
             android:textSize="14sp" />
 
         <TextView
+            android:text=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/numEquipe"
+            android:layout_alignStart="@+id/numEquipe"
+            android:id="@+id/textView_balise_suivante_nb"
+            android:layout_marginTop="2dp"
+            android:textAllCaps="false"
+            android:textSize="25sp"
+            android:textColor="@android:color/background_dark" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scan_format"
@@ -90,20 +141,18 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:id="@+id/scan_button"
+            android:layout_gravity="center_vertical"
+            android:text="SCAN"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:textSize="20sp" />
+
     </LinearLayout>
-
-
-    <Button
-        android:layout_width="180dp"
-        android:layout_height="75dp"
-        android:id="@+id/scan_button"
-        android:layout_gravity="center_vertical"
-        android:text="SCAN"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
-        android:textSize="20sp" />
-
 
 
 </RelativeLayout>

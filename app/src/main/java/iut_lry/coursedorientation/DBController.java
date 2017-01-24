@@ -232,7 +232,7 @@ public class DBController extends SQLiteOpenHelper {
      *
      * @return
      */
-    public ArrayList<HashMap<String, String>> getAllUsers() {
+    public ArrayList<HashMap<String, String>> getAllBalises() {
 
         ArrayList<HashMap<String, String>> usersList;
         usersList = new ArrayList<HashMap<String, String>>();
@@ -263,31 +263,38 @@ public class DBController extends SQLiteOpenHelper {
         return usersList;
     }
 
-    public int checkBalise(String balise, String temps, boolean departOK) {
+    public int checkBalise(String balise, String temps, boolean departOK, String baliseDepart) {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
         Cursor cursor = database.rawQuery("SELECT num_balise,temps FROM liste_balises WHERE num_balise = ?", new String[]{balise});
 
-        if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst())
+        {
 
             String colonne2 = cursor.getString(1);
-            if (colonne2.equals("")) {
-                if (cursor.getString(0).equals("1"))//changer pour la balise de départ
+            if (colonne2.equals(""))
+            {
+                if (cursor.getString(0).equals(baliseDepart))//si la balise de depart est scanné
                 {
                     cursor.close();
                     database.close();
                     return 3;
-                } else if (departOK) {
+                }
+                else if (departOK) //si la première balise a déjà été scanné
+                {
                     cursor.close();
                     database.close();
                     return 1;
-                } else {
+                }
+                else
+                {
                     cursor.close();
                     database.close();
                     return 4;
                 }
-            } else //Quand la balise a déjà été scanné
+            }
+            else //Quand la balise a déjà été scanné
             {
                 cursor.close();
                 database.close();
@@ -374,6 +381,25 @@ public class DBController extends SQLiteOpenHelper {
         nb = nbBalisesPointees + "/" + nbBalisesTotal;
 
         return nb;
+    }
+
+    public String getFirstBalise() {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String baliseDepart = "0";
+
+        Cursor cursor = database.rawQuery("SELECT num_balise,depart FROM liste_balises WHERE depart=1", null);
+
+        if (cursor.moveToFirst()) {
+
+            baliseDepart = cursor.getString(0);
+        }
+
+        cursor.close();
+        database.close();
+
+        return baliseDepart;
     }
 
     /**

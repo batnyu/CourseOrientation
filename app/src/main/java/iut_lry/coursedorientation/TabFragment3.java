@@ -82,21 +82,21 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         String[] from = new String[] {"num_balise", "temps", "suivante", "poste"};
         int[] to = new int[] { R.id.item1, R.id.item2, R.id.item3, R.id.item4 };
 
-        ArrayList<HashMap<String, String>> userList;
+        ArrayList<HashMap<String, String>> baliseList;
         // Get User records from SQLite DB
 
-        userList = controller.getAllUsers();
+        baliseList = controller.getAllBalises();
 
-        System.out.println("nombre de ligne de la table à afficher : " + userList.size());
+        System.out.println("nombre de ligne de la table à afficher : " + baliseList.size());
         // If users exists in SQLite DB
-        if (userList.size() != 0) {
+        if (baliseList.size() != 0) {
 
             //Test
             interfaceMain.setVisibility(LinearLayout.VISIBLE);
             noParcours.setVisibility(LinearLayout.GONE);
 
             // Set the User Array list in ListView
-            ListAdapter adapter = new SpecialAdapter(getActivity(), userList, R.layout.grid_item, from, to);
+            ListAdapter adapter = new SpecialAdapter(getActivity(), baliseList, R.layout.grid_item, from, to);
             ListView myList = (ListView) getActivity().findViewById(R.id.listview);
             myList.setAdapter(adapter);
             registerForContextMenu(myList);
@@ -159,8 +159,8 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         //Create AsycHttpClient object
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-        ArrayList<HashMap<String, String>> userList =  controller.getAllUsers();
-        if(userList.size()!=0){
+        ArrayList<HashMap<String, String>> baliseList =  controller.getAllBalises();
+        if(baliseList.size()!=0){
             //if(controller.dbSyncCount() != 0){
                 prgDialog.show();
 

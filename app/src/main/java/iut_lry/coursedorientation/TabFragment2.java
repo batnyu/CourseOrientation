@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.content.Context;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class TabFragment2 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
@@ -47,6 +50,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     int resultat;
 
     TextView nbBalises;
+    TextView baliseDepart;
+    String nbBaliseDepart;
+
+    LinearLayout interface2;
+    TextView noParcours2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +66,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         controller = new DBController(getActivity());
 
         nbBalises = (TextView) view.findViewById(R.id.textView_balises_pointees_nb);
+        baliseDepart = (TextView) view.findViewById(R.id.textView_balise_depart_nb);
+
+        interface2 = (LinearLayout) view.findViewById(R.id.interface2);
+        noParcours2 = (TextView) view.findViewById(R.id.noParcours2);
 
         return view;
     }
@@ -126,8 +138,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
                 ReceiveData test = new ReceiveData();
                 test.execute();
-
-
 
                 /*//Joué un son -> BUG
                 final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.zxing_beep);
@@ -213,7 +223,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
 
 
-            resultat = controller.checkBalise(scanContent, temps, departOK);
+            resultat = controller.checkBalise(scanContent, temps, departOK, nbBaliseDepart);
 
             publishProgress(resultat);
 
@@ -276,8 +286,29 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     public void fragmentCommunication2() {
 
-        nbBalises.setText(controller.getNbCheckpoints());
+        ArrayList<HashMap<String, String>> baliseList;
+        // Get User records from SQLite DB
 
+        baliseList = controller.getAllBalises();
+
+        if (baliseList.size() != 0) {
+
+            //afficher l'interface du deuxieme onglet et cacher la phrase
+            interface2.setVisibility(LinearLayout.VISIBLE);
+            noParcours2.setVisibility(LinearLayout.GONE);
+
+            //mettre à jour le nombre de checkpoints
+            nbBalises.setText(controller.getNbCheckpoints());
+
+            nbBaliseDepart = controller.getFirstBalise();
+            baliseDepart.setText(nbBaliseDepart);
+        }
+        else
+        {
+            //cacher l'interface du deuxieme onglet et afficher la phrase
+            interface2.setVisibility(LinearLayout.GONE);
+            noParcours2.setVisibility(LinearLayout.VISIBLE);
+        }
     }
 
     public void fragmentCommunication21() {

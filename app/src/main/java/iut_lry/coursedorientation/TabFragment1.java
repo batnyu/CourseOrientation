@@ -1,6 +1,8 @@
 package iut_lry.coursedorientation;
 
 import android.content.Context;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -16,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +42,9 @@ import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
+import static android.graphics.Color.WHITE;
+import static android.graphics.Color.rgb;
+
 public class TabFragment1 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
     private Button btnFtoA;
@@ -52,6 +59,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     Button buttonWifi;
     private Button dllParkour;
     Button buttonDel;
+    ProgressBar spinner;
 
     // DB Class to perform DB related operations
     DBController controller;
@@ -82,12 +90,22 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         infosWifi = (TextView) view.findViewById(R.id.infosWifi);
         buttonWifi = (Button) view.findViewById(R.id.buttonWifi);
         buttonWifi.setOnClickListener(this);
+        //buttonWifi.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
+        //buttonWifi.setTextColor(WHITE);
 
         dllParkour = (Button) view.findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
+        dllParkour.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
+        dllParkour.setTextColor(WHITE);
 
         buttonDel = (Button) view.findViewById(R.id.buttonDel);
         buttonDel.setOnClickListener(this);
+        buttonDel.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
+        buttonDel.setTextColor(WHITE);
+
+        spinner = (ProgressBar) view.findViewById(R.id.progressBar2);
+        spinner.getIndeterminateDrawable().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
+        spinner.setVisibility(View.GONE);
 
         return view;
     }
@@ -141,8 +159,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.dllParkour:
-                dllParkour.setEnabled(false);
-                dllParkour.setText("Téléchargement en cours");
                 syncSQLiteMySQLDB();
                 break;
 
@@ -209,7 +225,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         // Http Request Params Object
         RequestParams params = new RequestParams();
 
-        mCallback.afficherProgressBar();
+        //cacher le bouton et afficher le spinner
+        spinner.setVisibility(View.VISIBLE);
+        dllParkour.setVisibility(View.INVISIBLE);
 
         client.setConnectTimeout(5000);
         //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
@@ -231,9 +249,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
 
-                mCallback.cacherProgressBar();
-                dllParkour.setText("Télécharger le parcours");
-                dllParkour.setEnabled(true);
+                //cacher le spinner et afficher le bouton
+                spinner.setVisibility(View.GONE);
+                dllParkour.setVisibility(View.VISIBLE);
+
                 afficherInfoWifi();
 
                 //je sais pas encore lequel choisir
@@ -257,9 +276,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
-                mCallback.cacherProgressBar();
-                dllParkour.setEnabled(true);
-                dllParkour.setText("Télécharger le parcours");
+                //cacher le spinner et afficher le bouton
+                spinner.setVisibility(View.GONE);
+                dllParkour.setVisibility(View.VISIBLE);
+
                 //pour mettre à jour les trucs wifi
                 afficherInfoWifi();
 
@@ -281,10 +301,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             /*@Override
             public void onProgress(long bytesWritten, long totalSize) {
                 long progressPercentage = (long)100*bytesWritten/totalSize;
-                NumberFormat percentage = NumberFormat.getPercentInstance();
-                prgDialog.setProgress((int)progressPercentage);
-                prgDialog.setProgressPercentFormat(percentage);
-                //a revoir si on veut la barre de progression mais galere
+                spinner.setProgress((int)progressPercentage);;
             }*/
         });
 

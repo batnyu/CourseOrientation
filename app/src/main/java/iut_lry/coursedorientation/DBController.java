@@ -381,10 +381,10 @@ public class DBController extends SQLiteOpenHelper {
      *
      * @return
      */
-    public String composeJSONfromSQLite() {
+    public String composeJSONfromSQLite() { //a modifier
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT * FROM parcours ORDER BY temps";
+        String selectQuery = "SELECT * FROM liste_balises ORDER BY temps";
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {

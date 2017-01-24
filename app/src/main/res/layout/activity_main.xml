@@ -20,14 +20,6 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             android:paddingRight="20dp">
 
-            <ProgressBar
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:id="@+id/progressBar"
-                android:layout_gravity="right" />
-
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout xmlns:app="http://schemas.android.com/apk/res-auto"

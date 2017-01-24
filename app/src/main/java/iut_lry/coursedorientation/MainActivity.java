@@ -23,8 +23,6 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
     private PagerAdapter adapter;
     private TabLayout tabLayout;
 
-    ProgressBar spinner;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +43,6 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         adapter = new PagerAdapter(getSupportFragmentManager(), tabs);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-
-        spinner = (ProgressBar) findViewById(R.id.progressBar);
-        spinner.getIndeterminateDrawable().setColorFilter(0xFFFFFFFF, android.graphics.PorterDuff.Mode.MULTIPLY);
-        spinner.setVisibility(View.GONE);
-
     }
 
     @Override
@@ -88,16 +81,6 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
     public void showToast(String msg) {
 
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void afficherProgressBar() {
-        spinner.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void cacherProgressBar() {
-        spinner.setVisibility(View.GONE);
     }
 
     @Override

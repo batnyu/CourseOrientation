@@ -70,12 +70,35 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ProgressBar
-                style="@style/Widget.AppCompat.ProgressBar"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/progressBar2"
-                android:layout_gravity="center_vertical|center_horizontal" />
+                android:id="@+id/chargement"
+                android:layout_gravity="center_vertical|center_horizontal">
+
+                <ProgressBar
+                    style="@style/Widget.AppCompat.ProgressBar"
+                    android:id="@+id/progressBar2"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_height="20dp" />
+
+                <TextView
+                    android:text="Téléchargement en cours..."
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView3"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/progressBar2" />
+
+            </RelativeLayout>
 
             <Button
                 android:layout_width="match_parent"
@@ -87,6 +110,7 @@
                 android:paddingBottom="25dp"
                 android:paddingTop="25dp"
                 android:layout_height="wrap_content" />
+
         </FrameLayout>
 
         <Button

@@ -263,7 +263,7 @@ public class DBController extends SQLiteOpenHelper {
         return usersList;
     }
 
-    public int checkBalise(String balise, String temps, boolean departOK, String baliseDepart) {
+    public int checkBalise(String balise, String temps, boolean departOK, String baliseDepart, String baliseSuivante) {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
@@ -281,11 +281,17 @@ public class DBController extends SQLiteOpenHelper {
                     database.close();
                     return 3;
                 }
-                else if (departOK) //si la première balise a déjà été scanné
+                else if (departOK && (balise.equals(baliseSuivante) || baliseSuivante.equals("0"))) //si la première balise a déjà été scanné
                 {
                     cursor.close();
                     database.close();
                     return 1;
+                }
+                else if(!balise.equals(baliseSuivante) && departOK)
+                {
+                    cursor.close();
+                    database.close();
+                    return 5;
                 }
                 else
                 {
@@ -400,6 +406,32 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
 
         return baliseDepart;
+    }
+
+    public String[] getBaliseActuelle() {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] balise = new String[2];
+
+        Cursor cursor = database.rawQuery("SELECT num_balise,suivante FROM liste_balises " +
+                "WHERE temps != '' AND temps=(SELECT max(temps) FROM liste_balises) ", null);
+
+        if (cursor.moveToFirst()) {
+
+            balise[0] = cursor.getString(0);
+            balise[1] = cursor.getString(1);
+        }
+        else
+        {
+            balise[0] = "";
+            balise[1] = "";
+        }
+
+        cursor.close();
+        database.close();
+
+        return balise;
     }
 
     /**

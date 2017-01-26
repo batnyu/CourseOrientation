@@ -18,7 +18,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +62,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     private Button dllParkour;
     Button buttonDel;
     ProgressBar spinner;
+    RelativeLayout chargement;
 
     // DB Class to perform DB related operations
     DBController controller;
@@ -105,7 +108,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         spinner = (ProgressBar) view.findViewById(R.id.progressBar2);
         spinner.getIndeterminateDrawable().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
-        spinner.setVisibility(View.GONE);
+        chargement = (RelativeLayout) view.findViewById(R.id.chargement);
+        chargement.setVisibility(View.GONE);
 
         return view;
     }
@@ -226,7 +230,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         RequestParams params = new RequestParams();
 
         //cacher le bouton et afficher le spinner
-        spinner.setVisibility(View.VISIBLE);
+        chargement.setVisibility(View.VISIBLE);
         dllParkour.setVisibility(View.INVISIBLE);
 
         client.setConnectTimeout(5000);
@@ -250,7 +254,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 // called when response HTTP status is "200 OK"
 
                 //cacher le spinner et afficher le bouton
-                spinner.setVisibility(View.GONE);
+                chargement.setVisibility(View.GONE);
                 dllParkour.setVisibility(View.VISIBLE);
 
                 afficherInfoWifi();
@@ -277,7 +281,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
                 //cacher le spinner et afficher le bouton
-                spinner.setVisibility(View.GONE);
+                chargement.setVisibility(View.GONE);
                 dllParkour.setVisibility(View.VISIBLE);
 
                 //pour mettre à jour les trucs wifi

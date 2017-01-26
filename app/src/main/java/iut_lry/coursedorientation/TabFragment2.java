@@ -1,9 +1,6 @@
 package iut_lry.coursedorientation;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -18,15 +15,14 @@ import android.content.Context;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.text.SimpleDateFormat;
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -49,9 +45,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     String temps;
     int resultat;
 
-    TextView nbBalises;
+    TextView totalBalises;
     TextView baliseDepart;
     String nbBaliseDepart;
+    TextView balisePointee;
+    String nbBalisePointee;
+    TextView baliseSuivante;
+    String nbBaliseSuivante;
 
     LinearLayout interface2;
     TextView noParcours2;
@@ -65,8 +65,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         controller = new DBController(getActivity());
 
-        nbBalises = (TextView) view.findViewById(R.id.textView_balises_pointees_nb);
+        totalBalises = (TextView) view.findViewById(R.id.textView_total_balises_nb);
         baliseDepart = (TextView) view.findViewById(R.id.textView_balise_depart_nb);
+        balisePointee = (TextView) view.findViewById(R.id.textView_balise_pointee_nb);
+        baliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
 
         interface2 = (LinearLayout) view.findViewById(R.id.interface2);
         noParcours2 = (TextView) view.findViewById(R.id.noParcours2);
@@ -210,6 +212,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
             }
+            else if(values[0] == 5)
+            {
+                Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise suivante !", Toast.LENGTH_LONG).show();
+            }
             else
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
@@ -223,7 +229,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
 
 
-            resultat = controller.checkBalise(scanContent, temps, departOK, nbBaliseDepart);
+            resultat = controller.checkBalise(scanContent, temps, departOK, nbBaliseDepart, nbBaliseSuivante);
 
             publishProgress(resultat);
 
@@ -234,12 +240,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 e.printStackTrace();
             }
 
-            if(resultat == 1)
-            {
-                //Update du temps dans la base de données
-                controller.UpdateTemps(scanContent,temps);
-            }
-            else if(resultat == 3)
+            if(resultat == 1 || resultat == 3)
             {
                 //Update du temps dans la base de données
                 controller.UpdateTemps(scanContent,temps);
@@ -267,6 +268,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 //On update la listView du fragment 3 (onglet parcours)
                 mCallback.communicateToFragment3();
                 fragmentCommunication2();
+
             }
             resultat = 54;
 
@@ -298,10 +300,20 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             noParcours2.setVisibility(LinearLayout.GONE);
 
             //mettre à jour le nombre de checkpoints
-            nbBalises.setText(controller.getNbCheckpoints());
+            totalBalises.setText(controller.getNbCheckpoints());
 
+            //mettre à jour la balise de départ
             nbBaliseDepart = controller.getFirstBalise();
             baliseDepart.setText(nbBaliseDepart);
+
+            //mettre à jour la dernière balise pointée et sa suivante
+            String[] baliseActuelle;
+            baliseActuelle = controller.getBaliseActuelle();
+
+            balisePointee.setText(baliseActuelle[0]);
+            baliseSuivante.setText(baliseActuelle[1]);
+
+            nbBaliseSuivante = baliseActuelle[1];
         }
         else
         {

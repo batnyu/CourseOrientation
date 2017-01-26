@@ -74,13 +74,13 @@
 
 
         <TextView
-            android:text="Balises pointées"
+            android:text="Total balises"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignLeft="@+id/numEquipe"
             android:layout_alignStart="@+id/numEquipe"
-            android:id="@+id/textView_balises_pointees"
+            android:id="@+id/textView_total_balises"
             android:layout_marginTop="2dp"
             android:textAllCaps="false"
             android:textSize="14sp" />
@@ -92,7 +92,32 @@
             android:layout_alignParentTop="true"
             android:layout_alignLeft="@+id/numEquipe"
             android:layout_alignStart="@+id/numEquipe"
-            android:id="@+id/textView_balises_pointees_nb"
+            android:id="@+id/textView_total_balises_nb"
+            android:layout_marginTop="2dp"
+            android:textAllCaps="false"
+            android:textSize="25sp"
+            android:textColor="@android:color/background_dark" />
+
+        <TextView
+            android:text="Dernière balise pointée"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/numEquipe"
+            android:layout_alignStart="@+id/numEquipe"
+            android:id="@+id/textView_balise_pointee"
+            android:layout_marginTop="2dp"
+            android:textAllCaps="false"
+            android:textSize="14sp" />
+
+        <TextView
+            android:text=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/numEquipe"
+            android:layout_alignStart="@+id/numEquipe"
+            android:id="@+id/textView_balise_pointee_nb"
             android:layout_marginTop="2dp"
             android:textAllCaps="false"
             android:textSize="25sp"

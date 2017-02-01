@@ -20,7 +20,8 @@
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
-        android:id="@+id/linearLayout">
+        android:id="@+id/linearLayout"
+        android:weightSum="1">
 
         <TextView
             android:layout_width="match_parent"
@@ -57,14 +58,38 @@
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp" />
 
-        <Button
-            android:text="Vérifier la course et l'équipe"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/linearLayout3"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:id="@+id/button4" />
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:id="@+id/progressBar3"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_height="25dp" />
+
+            <Button
+                android:text="Vérifier la course et l'équipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:id="@+id/dllPlayers"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp" />
+
+        </FrameLayout>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:id="@+id/listViewPlayers"
+            android:layout_weight="6.92"
+            android:layout_height="wrap_content" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -74,29 +99,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chargement"
+                android:layout_marginRight="20dp"
                 android:layout_gravity="center_vertical|center_horizontal">
 
                 <ProgressBar
                     style="@style/Widget.AppCompat.ProgressBar"
                     android:id="@+id/progressBar2"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_height="20dp" />
+                    android:layout_height="20dp"
+                    android:layout_width="wrap_content" />
 
                 <TextView
                     android:text="Téléchargement en cours..."
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/progressBar2"
                     android:id="@+id/textView3"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:textAllCaps="false"
                     android:textSize="16sp"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/progressBar2" />
+
+                    android:layout_gravity="center_vertical|center_horizontal" />
 
             </RelativeLayout>
 

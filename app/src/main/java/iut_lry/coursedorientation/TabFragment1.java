@@ -16,9 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -40,7 +42,9 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -58,11 +62,14 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     String ipServer;
     TextView infosWifi;
+    private Button dllPlayers;
     Button buttonWifi;
     private Button dllParkour;
     Button buttonDel;
     ProgressBar spinner;
+    ProgressBar spinnerCheckPlayers;
     RelativeLayout chargement;
+    ListView listViewPlayers;
 
     // DB Class to perform DB related operations
     DBController controller;
@@ -89,6 +96,14 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
             }
         });
+
+        dllPlayers = (Button) view.findViewById(R.id.dllPlayers);
+        dllPlayers.setOnClickListener(this);
+
+        spinnerCheckPlayers = (ProgressBar) view.findViewById(R.id.progressBar3);
+        spinnerCheckPlayers.setVisibility(View.INVISIBLE);
+
+        listViewPlayers = (ListView) view.findViewById(R.id.listViewPlayers);
 
         infosWifi = (TextView) view.findViewById(R.id.infosWifi);
         buttonWifi = (Button) view.findViewById(R.id.buttonWifi);
@@ -157,6 +172,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 mCallback.communicateToFragment2();
                 break;
                 */
+
+            case R.id.dllPlayers:
+                getPlayersAndRace();
+                break;
 
             case R.id.buttonWifi:
                 afficherInfoWifi();
@@ -356,60 +375,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     }
 
-    public void updateJoueurEquipeCourse(String response){
-
-        //test pour reset table qd télécharge le parcours
-        controller.deleteTable("joueur");
-        controller.deleteTable("equipe");
-        controller.deleteTable("course");
-
-        // Create GSON object
-        Gson gson = new GsonBuilder().create();
-        try {
-            // Extract JSON array from the response
-            JSONArray arr = new JSONArray(response);
-            System.out.println(arr.length());
-            // If no of array elements is not zero
-            if(arr.length() != 0){
-                // Loop through each array element, get JSON object which has userid and username
-                for (int i = 0; i < arr.length(); i++) {
-                    // Get JSON object
-                    JSONObject obj = (JSONObject) arr.get(i);
-                    //System.out.println(obj.get("id"));
-                    //System.out.println(obj.get("balise"));
-                    // DB QueryValues Object to insert into SQLite
-                    queryValues = new HashMap<String, String>();
-
-                    // Add id extracted from Object
-                    queryValues.put("joueurs.id", obj.get("joueurs.id").toString());
-                    queryValues.put("joueurs.prenom", obj.get("joueurs.prenom").toString());
-                    queryValues.put("joueurs.nom", obj.get("joueurs.nom").toString());
-                    queryValues.put("joueurs.date_naissance", obj.get("joueurs.date_naissance").toString());
-                    queryValues.put("joueurs.num_equipe", obj.get("joueurs.num_equipe").toString());
-
-                    queryValues.put("equipe.id", obj.get("equipe.id").toString());
-                    queryValues.put("equipe.nom_equipe", obj.get("equipe.nom_equipe").toString());
-                    queryValues.put("equipe.categorie", obj.get("equipe.categorie").toString());
-                    queryValues.put("equipe.num_course", obj.get("equipe.num_course").toString());
-
-                    // Insert User into SQLite DB
-                    controller.insertDataEquipe(queryValues);
-                }
-
-                //On récupère la course et l'équipe
-                numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
-                numEquipeStr = numEquipe.getText().toString();
-
-                controller.updateNumEquipe(numEquipeStr);
-
-            }
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-
     public void updateParcours(String response){
 
         //test pour reset table qd télécharge le parcours
@@ -495,6 +460,116 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     // Insert User into SQLite DB
                     controller.insertDataParcours(queryValues);
                 }
+
+                //On récupère la course et l'équipe
+                numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
+                numEquipeStr = numEquipe.getText().toString();
+
+                //controller.updateNumEquipe(numEquipeStr);
+
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void getPlayersAndRace()
+    {
+        //Create AsycHttpClient object
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+
+        client.setConnectTimeout(5000);
+        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
+        // est repéré par onFailure contrairement à host unreachable
+        // à étudié c'est relou
+        client.setResponseTimeout(5000); // as above
+        client.setTimeout(5000); // both connection and socket timeout
+        client.setMaxRetriesAndTimeout(1, 100); // times, delay
+
+        spinnerCheckPlayers.setVisibility(View.VISIBLE);
+        dllPlayers.setVisibility(View.INVISIBLE);
+
+        numEquipeStr = numEquipe.getText().toString();
+        System.out.println(numEquipeStr);
+
+        params.put("numEquipe", numEquipeStr);
+        //Log.d("tag", controller.composeJSONfromSQLite().toString());
+        client.post("http://192.168.1.52:80/testProjet/getPlayersTeamRace.php",params ,new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+
+                //Convertir byte[] en String
+                String responseString = null;
+                try {
+                    responseString = new String(response, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(responseString);
+
+                spinnerCheckPlayers.setVisibility(View.GONE);
+                dllPlayers.setVisibility(View.VISIBLE);
+
+                if(!responseString.equals("erreur")) {
+                    afficherJoueurs(responseString);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Erreur, l'équipe est introuvable", Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                if (statusCode == 404) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+                } else if (statusCode == 500) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                spinnerCheckPlayers.setVisibility(View.GONE);
+                dllPlayers.setVisibility(View.VISIBLE);
+            }
+        });
+
+    }
+
+    public void afficherJoueurs(String response){
+
+        try {
+            // Extract JSON array from the response
+            JSONArray arr = new JSONArray(response);
+            System.out.println(arr.length());
+
+            // Instanciating an array list
+            List<String> listPlayers = new ArrayList<String>();
+
+            // If no of array elements is not zero
+            if(arr.length() != 0){
+                // Loop through each array element, get JSON object which has userid and username
+                for (int i = 0; i < arr.length(); i++) {
+                    // Get JSON object
+                    JSONObject obj = (JSONObject) arr.get(i);
+
+                    listPlayers.add(obj.get("prenom").toString() + " " + obj.get("nom").toString());
+
+                }
+
+                // This is the array adapter, it takes the context of the activity as a
+                // first parameter, the type of list view as a second parameter and your
+                // array as a third parameter.
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                        getActivity(),
+                        android.R.layout.simple_list_item_1,
+                        listPlayers );
+
+                listViewPlayers.setAdapter(arrayAdapter);
 
                 //On récupère la course et l'équipe
                 numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);

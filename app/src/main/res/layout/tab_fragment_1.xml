@@ -7,155 +7,267 @@
     android:layout_marginTop="0dp">
 
     <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
+
     <LinearLayout
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:layout_width="0px"
-        android:layout_height="0px"/>
-
-    <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
-        android:id="@+id/linearLayout"
-        android:weightSum="1">
+        android:layout_height="match_parent"/>
 
-        <TextView
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignLeft="@+id/numEquipe"
-            android:layout_alignStart="@+id/numEquipe"
-            android:id="@+id/textView_course"
-            android:layout_marginTop="2dp"
-            android:textAllCaps="false"
-            android:textSize="14sp"
-            android:text="Numéro d'équipe" />
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/linearLayout"
+            android:weightSum="1">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:layout_below="@+id/textView"
-            android:id="@+id/numEquipe"
-            style="@style/Widget.AppCompat.EditText"
-            android:hint="Entrez votre numéro d'équipe"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:background="@drawable/bg_edittext"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:paddingStart="15dp"
-            android:paddingLeft="15dp"
-            android:textCursorDrawable="@null"
-            android:textColor="#3b3b3b"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ProgressBar
-                style="@style/Widget.AppCompat.ProgressBar"
-                android:id="@+id/progressBar3"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_height="25dp" />
-
-            <Button
-                android:text="Vérifier la course et l'équipe"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/linearLayout3"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
-                android:id="@+id/dllPlayers"
-                android:paddingBottom="20dp"
-                android:paddingTop="20dp" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="5dp">
 
-        </FrameLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignLeft="@+id/numEquipe"
+                    android:layout_alignStart="@+id/numEquipe"
+                    android:id="@+id/textView_course"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    android:text="Numéro d'équipe" />
 
-        <ListView
-            android:layout_width="match_parent"
-            android:id="@+id/listViewPlayers"
-            android:layout_weight="6.92"
-            android:layout_height="wrap_content" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:layout_below="@+id/textView"
+                    android:id="@+id/numEquipe"
+                    style="@style/Widget.AppCompat.EditText"
+                    android:hint="Entrez votre numéro d'équipe"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/bg_edittext"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingStart="15dp"
+                    android:paddingLeft="15dp"
+                    android:textCursorDrawable="@null"
+                    android:textColor="#3b3b3b"
+                    android:layout_marginTop="5dp" />
+            </LinearLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/chargement"
-                android:layout_marginRight="20dp"
-                android:layout_gravity="center_vertical|center_horizontal">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp">
 
                 <ProgressBar
                     style="@style/Widget.AppCompat.ProgressBar"
-                    android:id="@+id/progressBar2"
-                    android:layout_height="20dp"
-                    android:layout_width="wrap_content" />
+                    android:id="@+id/progressBar3"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_height="25dp" />
 
-                <TextView
-                    android:text="Téléchargement en cours..."
+                <Button
+                    android:text="Vérifier la course et l'équipe"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/linearLayout3"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/dllPlayers"
+                    android:paddingBottom="20dp"
+                    android:paddingTop="20dp" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/joueursTab"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp">
+
+                <LinearLayout android:id="@+id/header"
+                    android:background="#9b9b9b"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent">
+
+                    <TextView android:id="@+id/itemHeader"
+                        android:layout_height="fill_parent"
+                        android:layout_width="match_parent"
+                        android:text="Joueurs de l'équipe"
+                        android:width="100dip"
+                        android:height="30dip"
+                        android:gravity="center_vertical"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:textColor="#ffffff"
+                        android:layout_weight="1"
+                        android:paddingLeft="10dp"
+                        android:background="@color/zxing_possible_result_points" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/layoutPlayers">
+
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:id="@+id/listViewPlayers"
+                        android:layout_height="75dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignLeft="@+id/numEquipe"
+                        android:layout_alignStart="@+id/numEquipe"
+                        android:id="@+id/textView_date"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:text="Date de naissance d'un des joueurs" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:ems="10"
+                        android:layout_below="@+id/textView"
+                        android:id="@+id/date"
+                        style="@style/Widget.AppCompat.EditText"
+                        android:hint="Entrez une date correcte pour confirmer"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:background="@drawable/bg_edittext"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingStart="15dp"
+                        android:paddingLeft="15dp"
+                        android:textCursorDrawable="@null"
+                        android:textColor="#3b3b3b"
+                        android:layout_marginTop="5dp" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp">
+
+                        <ProgressBar
+                            style="@style/Widget.AppCompat.ProgressBar"
+                            android:id="@+id/progressBar4"
+                            android:layout_gravity="center_vertical|center_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_height="25dp" />
+
+                        <Button
+                            android:text="Vérifier la date de naissance"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/linearLayout3"
+                            android:layout_centerHorizontal="true"
+                            android:id="@+id/buttonCheckDate"
+                            android:paddingBottom="20dp"
+                            android:paddingTop="20dp" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/progressBar2"
-                    android:id="@+id/textView3"
-                    android:textSize="16sp"
+                    android:id="@+id/chargement"
+                    android:layout_marginRight="20dp"
+                    android:layout_gravity="center_vertical|center_horizontal">
 
-                    android:layout_gravity="center_vertical|center_horizontal" />
+                    <ProgressBar
+                        style="@style/Widget.AppCompat.ProgressBar"
+                        android:id="@+id/progressBar2"
+                        android:layout_height="20dp"
+                        android:layout_width="wrap_content" />
 
-            </RelativeLayout>
+                    <TextView
+                        android:text="Téléchargement en cours..."
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/progressBar2"
+                        android:id="@+id/textView3"
+                        android:textSize="16sp"
+
+                        android:layout_gravity="center_vertical|center_horizontal" />
+
+                </RelativeLayout>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:text="Télécharger le parcours"
+                    android:id="@+id/dllParkour"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:paddingBottom="25dp"
+                    android:paddingTop="25dp"
+                    android:layout_height="wrap_content" />
+
+            </FrameLayout>
 
             <Button
                 android:layout_width="match_parent"
-                android:text="Télécharger le parcours"
-                android:id="@+id/dllParkour"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:paddingBottom="25dp"
-                android:paddingTop="25dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Vérifier le réseau WiFi"
+                android:id="@+id/buttonWifi"
+                android:layout_gravity="center_vertical|center_horizontal" />
 
-        </FrameLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/infosWifi"
+                android:textSize="12sp"
+                android:text=""
+                android:layout_gravity="center_vertical|center_horizontal"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vérifier le réseau WiFi"
-            android:id="@+id/buttonWifi"
-            android:layout_gravity="center_vertical|center_horizontal"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/infosWifi"
-            android:textSize="12sp"
-            android:text=""
-            android:layout_gravity="center_vertical|center_horizontal"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Supprimer le parcours"
-            android:id="@+id/buttonDel"
-            android:layout_gravity="center_vertical|center_horizontal"/>
-
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

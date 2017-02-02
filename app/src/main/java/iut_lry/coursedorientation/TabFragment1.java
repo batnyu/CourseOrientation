@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -37,6 +38,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -62,14 +64,22 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     String ipServer;
     TextView infosWifi;
-    private Button dllPlayers;
     Button buttonWifi;
-    private Button dllParkour;
-    Button buttonDel;
-    ProgressBar spinner;
+
+    private Button dllPlayers;
     ProgressBar spinnerCheckPlayers;
+
     RelativeLayout chargement;
+    private Button dllParkour;
+    ProgressBar spinner;
+
+    LinearLayout joueursTab;
+    TextView header;
     ListView listViewPlayers;
+    String nomEquipe;
+    Button buttonCheckDate;
+    EditText date;
+    ProgressBar spinnerCheckDate;
 
     // DB Class to perform DB related operations
     DBController controller;
@@ -101,9 +111,17 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         dllPlayers.setOnClickListener(this);
 
         spinnerCheckPlayers = (ProgressBar) view.findViewById(R.id.progressBar3);
-        spinnerCheckPlayers.setVisibility(View.INVISIBLE);
+        spinnerCheckPlayers.setVisibility(View.GONE);
 
+        joueursTab = (LinearLayout) view.findViewById(R.id.joueursTab);
+        joueursTab.setVisibility(View.GONE);
+        header = (TextView) view.findViewById(R.id.itemHeader);
         listViewPlayers = (ListView) view.findViewById(R.id.listViewPlayers);
+        buttonCheckDate = (Button) view.findViewById(R.id.buttonCheckDate);
+        buttonCheckDate.setOnClickListener(this);
+        date = (EditText) view.findViewById(R.id.date);
+        spinnerCheckDate = (ProgressBar) view.findViewById(R.id.progressBar4);
+        spinnerCheckDate.setVisibility(View.GONE);
 
         infosWifi = (TextView) view.findViewById(R.id.infosWifi);
         buttonWifi = (Button) view.findViewById(R.id.buttonWifi);
@@ -115,11 +133,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         dllParkour.setOnClickListener(this);
         dllParkour.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
         dllParkour.setTextColor(WHITE);
-
-        buttonDel = (Button) view.findViewById(R.id.buttonDel);
-        buttonDel.setOnClickListener(this);
-        buttonDel.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
-        buttonDel.setTextColor(WHITE);
+        dllParkour.setVisibility(View.GONE);
 
         spinner = (ProgressBar) view.findViewById(R.id.progressBar2);
         spinner.getIndeterminateDrawable().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
@@ -177,6 +191,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 getPlayersAndRace();
                 break;
 
+            case R.id.buttonCheckDate:
+                checkDate();
+                break;
+
             case R.id.buttonWifi:
                 afficherInfoWifi();
                 break;
@@ -184,7 +202,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             case R.id.dllParkour:
                 syncSQLiteMySQLDB();
                 break;
-
+/*
             case R.id.buttonDel:
                 //test pour reset table qd télécharge le parcours
                 controller.deleteTable("parcours");
@@ -195,7 +213,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 controller.deleteTable("liaison");
                 mCallback.communicateToFragment3();
                 mCallback.communicateToFragment2();
-                break;
+                break;*/
         }
     }
 
@@ -547,8 +565,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             JSONArray arr = new JSONArray(response);
             System.out.println(arr.length());
 
-            // Instanciating an array list
-            List<String> listPlayers = new ArrayList<String>();
+            ArrayList<HashMap<String, String>> listPlayers = new ArrayList<HashMap<String, String>>();;
 
             // If no of array elements is not zero
             if(arr.length() != 0){
@@ -557,19 +574,28 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     // Get JSON object
                     JSONObject obj = (JSONObject) arr.get(i);
 
-                    listPlayers.add(obj.get("prenom").toString() + " " + obj.get("nom").toString());
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put("joueurs",obj.get("prenom").toString() + " " + obj.get("nom").toString());
+                    listPlayers.add(map);
 
+                    if(i==0){
+                        nomEquipe = obj.get("nom_equipe").toString();
+                    }
                 }
 
-                // This is the array adapter, it takes the context of the activity as a
-                // first parameter, the type of list view as a second parameter and your
-                // array as a third parameter.
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                        getActivity(),
-                        android.R.layout.simple_list_item_1,
-                        listPlayers );
+                String[] from = new String[] {"joueurs"};
+                int[] to = new int[] { R.id.item1};
 
-                listViewPlayers.setAdapter(arrayAdapter);
+                // Set the User Array list in ListView
+                ListAdapter adapter = new SpecialAdapter(getActivity(), listPlayers, R.layout.grid_item_one, from, to);
+                listViewPlayers.setAdapter(adapter);
+                registerForContextMenu(listViewPlayers);
+
+
+                //changer le header du tableau pour mettre le nom de l'équipe
+                header.setText("Joueurs de l'équipe \""+ nomEquipe +"\"");
+                //afficher le tableau et le truc pr rentrer la date de naissance
+                joueursTab.setVisibility(View.VISIBLE);
 
                 //On récupère la course et l'équipe
                 numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
@@ -582,6 +608,76 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public void checkDate(){
+        //Create AsycHttpClient object
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+
+        client.setConnectTimeout(5000);
+        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
+        // est repéré par onFailure contrairement à host unreachable
+        // à étudié c'est relou
+        client.setResponseTimeout(5000); // as above
+        client.setTimeout(5000); // both connection and socket timeout
+        client.setMaxRetriesAndTimeout(1, 100); // times, delay
+
+        spinnerCheckDate.setVisibility(View.VISIBLE);
+        buttonCheckDate.setVisibility(View.INVISIBLE);
+
+        numEquipeStr = numEquipe.getText().toString();
+        System.out.println(numEquipeStr);
+
+        String dateStr = date.getText().toString();
+
+        params.put("numEquipe", numEquipeStr);
+        params.put("date", dateStr);
+        //Log.d("tag", controller.composeJSONfromSQLite().toString());
+        System.out.println(params);
+        client.post("http://192.168.1.52:80/testProjet/checkDate.php",params ,new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+
+                //Convertir byte[] en String
+                String responseString = null;
+                try {
+                    responseString = new String(response, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(responseString);
+
+                spinnerCheckDate.setVisibility(View.GONE);
+                buttonCheckDate.setVisibility(View.VISIBLE);
+
+                if(!responseString.equals("erreur")) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Date de naissance OK !", Toast.LENGTH_LONG).show();
+                    dllParkour.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Erreur, la date de naissance ne correspond pas.", Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                if (statusCode == 404) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+                } else if (statusCode == 500) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                spinnerCheckDate.setVisibility(View.GONE);
+                buttonCheckDate.setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
 }

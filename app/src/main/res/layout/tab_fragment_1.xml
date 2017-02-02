@@ -4,15 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#e7e7e7"
-    android:layout_marginTop="0dp">
+    android:layout_marginTop="0dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
-    <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
 
-    <LinearLayout
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -27,6 +23,8 @@
             android:layout_marginTop="10dp"
             android:id="@+id/linearLayout"
             android:weightSum="1">
+
+
 
             <LinearLayout
                 android:orientation="vertical"
@@ -45,6 +43,8 @@
                     android:textAllCaps="false"
                     android:textSize="14sp"
                     android:text="Numéro d'équipe" />
+
+
 
                 <EditText
                     android:layout_width="match_parent"
@@ -154,6 +154,8 @@
                         android:textAllCaps="false"
                         android:textSize="14sp"
                         android:text="Date de naissance d'un des joueurs" />
+
+
 
                     <EditText
                         android:layout_width="match_parent"

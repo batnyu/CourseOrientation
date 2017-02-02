@@ -79,6 +79,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     String nomEquipe;
     Button buttonCheckDate;
     EditText date;
+    String dateStr;
     ProgressBar spinnerCheckDate;
 
     // DB Class to perform DB related operations
@@ -91,6 +92,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.tab_fragment_1, container, false);
 
         numEquipe = (EditText) view.findViewById(R.id.numEquipe);
+
 
         //A completer pour enlever le focus quand on enleve le truc ou alors quand on appuie sur le bouton
         numEquipe.setOnKeyListener(new View.OnKeyListener() {
@@ -106,6 +108,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
             }
         });
+
 
         dllPlayers = (Button) view.findViewById(R.id.dllPlayers);
         dllPlayers.setOnClickListener(this);
@@ -188,10 +191,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 */
 
             case R.id.dllPlayers:
+                numEquipe.clearFocus();
                 getPlayersAndRace();
                 break;
 
             case R.id.buttonCheckDate:
+                date.clearFocus();
                 checkDate();
                 break;
 
@@ -364,15 +369,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
          *    updating data
          *    such a Dialog or ProgressBar
         */
-
         }
 
         @Override
         protected Void doInBackground(String... parametres) {
             //do your work here
-
             String responseStringThread = parametres[0];
-
             updateParcours(responseStringThread);
 
             return null;
@@ -589,7 +591,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 // Set the User Array list in ListView
                 ListAdapter adapter = new SpecialAdapter(getActivity(), listPlayers, R.layout.grid_item_one, from, to);
                 listViewPlayers.setAdapter(adapter);
-                registerForContextMenu(listViewPlayers);
+                //registerForContextMenu(listViewPlayers);
 
 
                 //changer le header du tableau pour mettre le nom de l'équipe
@@ -629,12 +631,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         numEquipeStr = numEquipe.getText().toString();
         System.out.println(numEquipeStr);
 
-        String dateStr = date.getText().toString();
+        dateStr = date.getText().toString();
 
         params.put("numEquipe", numEquipeStr);
         params.put("date", dateStr);
-        //Log.d("tag", controller.composeJSONfromSQLite().toString());
         System.out.println(params);
+
         client.post("http://192.168.1.52:80/testProjet/checkDate.php",params ,new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {

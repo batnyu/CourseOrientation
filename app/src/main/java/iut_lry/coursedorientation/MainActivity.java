@@ -1,5 +1,6 @@
 package iut_lry.coursedorientation;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -81,6 +83,15 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
     public void showToast(String msg) {
 
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
+    public void hideKeyboard(){
+        // Check if no view has focus:
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override

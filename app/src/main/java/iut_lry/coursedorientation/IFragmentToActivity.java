@@ -8,6 +8,8 @@ import android.content.Intent;
 public interface IFragmentToActivity {
     void showToast(String msg);
 
+    void hideKeyboard();
+
     void communicateToFragment2();
 
     void communicateToFragment3();

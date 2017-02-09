@@ -61,10 +61,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     EditText numEquipe;
 
     String numEquipeStr;
+    String numEquipeStrActuel;
 
     String ipServer;
-    TextView infosWifi;
-    Button buttonWifi;
 
     private Button dllPlayers;
     ProgressBar spinnerCheckPlayers;
@@ -80,6 +79,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     Button buttonCheckDate;
     EditText date;
     String dateStr;
+    String dateStrActuel;
     ProgressBar spinnerCheckDate;
 
     // DB Class to perform DB related operations
@@ -114,6 +114,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         dllPlayers.setOnClickListener(this);
 
         spinnerCheckPlayers = (ProgressBar) view.findViewById(R.id.progressBar3);
+        spinnerCheckPlayers.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
         spinnerCheckPlayers.setVisibility(View.GONE);
 
         joueursTab = (LinearLayout) view.findViewById(R.id.joueursTab);
@@ -124,13 +125,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         buttonCheckDate.setOnClickListener(this);
         date = (EditText) view.findViewById(R.id.date);
         spinnerCheckDate = (ProgressBar) view.findViewById(R.id.progressBar4);
+        spinnerCheckDate.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
         spinnerCheckDate.setVisibility(View.GONE);
-
-        infosWifi = (TextView) view.findViewById(R.id.infosWifi);
-        buttonWifi = (Button) view.findViewById(R.id.buttonWifi);
-        buttonWifi.setOnClickListener(this);
-        //buttonWifi.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
-        //buttonWifi.setTextColor(WHITE);
 
         dllParkour = (Button) view.findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
@@ -150,8 +146,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         controller = new DBController(getActivity());
-
-        afficherInfoWifi();
 
     }
 
@@ -191,21 +185,49 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 */
 
             case R.id.dllPlayers:
-                numEquipe.clearFocus();
-                getPlayersAndRace();
+                numEquipeStrActuel=numEquipe.getText().toString();
+
+                if(!numEquipeStrActuel.equals(numEquipeStr))
+                {
+                    numEquipe.clearFocus();
+                    mCallback.hideKeyboard();
+                    ipServer = getWifiApIpAddress();
+                    if(!ipServer.equals("erreur"))
+                    {
+                        getPlayersAndRace();
+                    }
+                }
+                else
+                {
+                    //mCallback.showToast("Vous n'avez pas changé de numéro d'équipe !");
+                }
                 break;
 
             case R.id.buttonCheckDate:
-                date.clearFocus();
-                checkDate();
-                break;
+                dateStrActuel=date.getText().toString();
 
-            case R.id.buttonWifi:
-                afficherInfoWifi();
+                if(!dateStrActuel.equals(dateStr))
+                {
+                    date.clearFocus();
+                    mCallback.hideKeyboard();
+                    ipServer = getWifiApIpAddress();
+                    if(!ipServer.equals("erreur"))
+                    {
+                        checkDate();
+                    }
+                }
+                else
+                {
+                    //mCallback.showToast("Vous n'avez pas changé de date de naissance !");
+                }
                 break;
 
             case R.id.dllParkour:
-                syncSQLiteMySQLDB();
+                ipServer = getWifiApIpAddress();
+                if(!ipServer.equals("erreur"))
+                {
+                    syncSQLiteMySQLDB();
+                }
                 break;
 /*
             case R.id.buttonDel:
@@ -237,10 +259,14 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         } catch (UnknownHostException e) {
             e.printStackTrace();
             Log.d("erreur ",e.getMessage());
+            mCallback.showToast("Veuillez activer votre Wi-fi, connectez-vous au réseau de l'organisateur et réessayez.");
+            myIP = "erreur";
         }
 
         return myIP;
     }
+
+
 
     public String getWifiNetworkName() {
         WifiManager wifiMgr = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
@@ -249,18 +275,226 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         return name;
     }
 
-    public void afficherInfoWifi() {
-        ipServer = getWifiApIpAddress();
-        String nameServer = getWifiNetworkName();
-        if(ipServer != null)
-        {
-            infosWifi.setText("Vous êtes connecté au réseau Wifi " + nameServer +
-                    " situé à l'adresse IP " + ipServer);
+    /**** Method for Setting the Height of the ListView dynamically.
+     **** Hack to fix the issue of not showing all the items of the ListView
+     **** when placed inside a ScrollView  ****/
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount() ; i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
         }
-        else
-        {
-            infosWifi.setText("Vous n'êtes connecté à aucun réseau wifi !");
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+    }
+
+    public void getPlayersAndRace()
+    {
+        //Create AsycHttpClient object
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+
+        client.setConnectTimeout(5000);
+        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
+        // est repéré par onFailure contrairement à host unreachable
+        // à étudié c'est relou
+        client.setResponseTimeout(5000); // as above
+        client.setTimeout(5000); // both connection and socket timeout
+        client.setMaxRetriesAndTimeout(1, 100); // times, delay
+
+        spinnerCheckPlayers.setVisibility(View.VISIBLE);
+        //dllPlayers.setVisibility(View.INVISIBLE);
+        dllPlayers.setEnabled(false);
+        dllPlayers.setText("");
+
+        numEquipeStr = numEquipe.getText().toString();
+        System.out.println(numEquipeStr);
+
+        params.put("numEquipe", numEquipeStr);
+        //Log.d("tag", controller.composeJSONfromSQLite().toString());
+        client.post("http://" + ipServer + ":80/testProjet/getPlayersTeamRace.php",params ,new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+
+                //Convertir byte[] en String
+                String responseString = null;
+                try {
+                    responseString = new String(response, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(responseString);
+
+                spinnerCheckPlayers.setVisibility(View.GONE);
+                //dllPlayers.setVisibility(View.VISIBLE);
+                dllPlayers.setEnabled(true);
+                dllPlayers.setText("Vérifier");
+
+                if(!responseString.equals("erreur")) {
+                    afficherJoueurs(responseString);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Erreur, l'équipe est introuvable", Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                if (statusCode == 404) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+                } else if (statusCode == 500) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                spinnerCheckPlayers.setVisibility(View.GONE);
+                //dllPlayers.setVisibility(View.VISIBLE);
+                dllPlayers.setEnabled(true);
+                dllPlayers.setText("Vérifier");
+            }
+        });
+
+    }
+
+    public void afficherJoueurs(String response){
+
+        try {
+            // Extract JSON array from the response
+            JSONArray arr = new JSONArray(response);
+            System.out.println(arr.length());
+
+            ArrayList<HashMap<String, String>> listPlayers = new ArrayList<HashMap<String, String>>();;
+
+            // If no of array elements is not zero
+            if(arr.length() != 0){
+                // Loop through each array element, get JSON object which has userid and username
+                for (int i = 0; i < arr.length(); i++) {
+                    // Get JSON object
+                    JSONObject obj = (JSONObject) arr.get(i);
+
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put("joueurs",obj.get("prenom").toString() + " " + obj.get("nom").toString());
+                    listPlayers.add(map);
+
+                    if(i==0){
+                        nomEquipe = obj.get("nom_equipe").toString();
+                    }
+                }
+
+                String[] from = new String[] {"joueurs"};
+                int[] to = new int[] { R.id.item1};
+
+                // Set the User Array list in ListView
+                ListAdapter adapter = new SpecialAdapter(getActivity(), listPlayers, R.layout.grid_item_one, from, to);
+                listViewPlayers.setAdapter(adapter);
+                setListViewHeightBasedOnChildren(listViewPlayers); //75 height avant ca
+                //registerForContextMenu(listViewPlayers);
+
+
+                //changer le header du tableau pour mettre le nom de l'équipe
+                header.setText("Joueurs de l'équipe \""+ nomEquipe +"\"");
+                //afficher le tableau et le truc pr rentrer la date de naissance
+                joueursTab.setVisibility(View.VISIBLE);
+
+                //On récupère la course et l'équipe
+                numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
+                numEquipeStr = numEquipe.getText().toString();
+
+                //controller.updateNumEquipe(numEquipeStr);
+
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+    }
+
+    public void checkDate(){
+        //Create AsycHttpClient object
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+
+        client.setConnectTimeout(5000);
+        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
+        // est repéré par onFailure contrairement à host unreachable
+        // à étudié c'est relou
+        client.setResponseTimeout(5000); // as above
+        client.setTimeout(5000); // both connection and socket timeout
+        client.setMaxRetriesAndTimeout(1, 100); // times, delay
+
+        spinnerCheckDate.setVisibility(View.VISIBLE);
+        buttonCheckDate.setText("");
+        buttonCheckDate.setEnabled(false);
+
+        numEquipeStr = numEquipe.getText().toString();
+        System.out.println(numEquipeStr);
+
+        dateStr = date.getText().toString();
+
+        params.put("numEquipe", numEquipeStr);
+        params.put("date", dateStr);
+        System.out.println(params);
+
+        client.post("http://" + ipServer + ":80/testProjet/checkDate.php",params ,new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+
+                //Convertir byte[] en String
+                String responseString = null;
+                try {
+                    responseString = new String(response, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(responseString);
+
+                spinnerCheckDate.setVisibility(View.GONE);
+                buttonCheckDate.setText("Vérifier la date de naissance");
+                buttonCheckDate.setEnabled(true);
+
+                if(!responseString.equals("erreur")) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Date de naissance OK !", Toast.LENGTH_LONG).show();
+                    dllParkour.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Erreur, la date de naissance ne correspond pas.", Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                if (statusCode == 404) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+                } else if (statusCode == 500) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                spinnerCheckDate.setVisibility(View.GONE);
+                buttonCheckDate.setText("Vérifier la date de naissance");
+                buttonCheckDate.setEnabled(true);
+            }
+        });
+
     }
 
     // Method to Sync MySQL to SQLite DB
@@ -284,8 +518,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
         // Make Http call to getusers.php, Ne pas oublier le port sinon ca bug
-        client.post("http://192.168.1.52:80/testProjet/getParcours.php", params, new AsyncHttpResponseHandler() {
-            //http://192.168.1.13/testProjetV2/getusersPDO.php
+        client.post("http://" + ipServer + ":80/testProjet/getParcours.php", params, new AsyncHttpResponseHandler() {
             @Override
             public void onStart() {
                 // called before request is started
@@ -298,8 +531,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 //cacher le spinner et afficher le bouton
                 chargement.setVisibility(View.GONE);
                 dllParkour.setVisibility(View.VISIBLE);
-
-                afficherInfoWifi();
 
                 //je sais pas encore lequel choisir
                 //Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
@@ -325,9 +556,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 //cacher le spinner et afficher le bouton
                 chargement.setVisibility(View.GONE);
                 dllParkour.setVisibility(View.VISIBLE);
-
-                //pour mettre à jour les trucs wifi
-                afficherInfoWifi();
 
                 if (statusCode == 404) {
                     mCallback.showToast("Error " + statusCode + "\nRequested resource not found");
@@ -492,194 +720,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    public void getPlayersAndRace()
-    {
-        //Create AsycHttpClient object
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-
-        client.setConnectTimeout(5000);
-        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
-        // est repéré par onFailure contrairement à host unreachable
-        // à étudié c'est relou
-        client.setResponseTimeout(5000); // as above
-        client.setTimeout(5000); // both connection and socket timeout
-        client.setMaxRetriesAndTimeout(1, 100); // times, delay
-
-        spinnerCheckPlayers.setVisibility(View.VISIBLE);
-        dllPlayers.setVisibility(View.INVISIBLE);
-
-        numEquipeStr = numEquipe.getText().toString();
-        System.out.println(numEquipeStr);
-
-        params.put("numEquipe", numEquipeStr);
-        //Log.d("tag", controller.composeJSONfromSQLite().toString());
-        client.post("http://192.168.1.52:80/testProjet/getPlayersTeamRace.php",params ,new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-
-                //Convertir byte[] en String
-                String responseString = null;
-                try {
-                    responseString = new String(response, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                System.out.println(responseString);
-
-                spinnerCheckPlayers.setVisibility(View.GONE);
-                dllPlayers.setVisibility(View.VISIBLE);
-
-                if(!responseString.equals("erreur")) {
-                    afficherJoueurs(responseString);
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Erreur, l'équipe est introuvable", Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                if (statusCode == 404) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
-                } else if (statusCode == 500) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
-                            Toast.LENGTH_LONG).show();
-                }
-
-                spinnerCheckPlayers.setVisibility(View.GONE);
-                dllPlayers.setVisibility(View.VISIBLE);
-            }
-        });
-
-    }
-
-    public void afficherJoueurs(String response){
-
-        try {
-            // Extract JSON array from the response
-            JSONArray arr = new JSONArray(response);
-            System.out.println(arr.length());
-
-            ArrayList<HashMap<String, String>> listPlayers = new ArrayList<HashMap<String, String>>();;
-
-            // If no of array elements is not zero
-            if(arr.length() != 0){
-                // Loop through each array element, get JSON object which has userid and username
-                for (int i = 0; i < arr.length(); i++) {
-                    // Get JSON object
-                    JSONObject obj = (JSONObject) arr.get(i);
-
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("joueurs",obj.get("prenom").toString() + " " + obj.get("nom").toString());
-                    listPlayers.add(map);
-
-                    if(i==0){
-                        nomEquipe = obj.get("nom_equipe").toString();
-                    }
-                }
-
-                String[] from = new String[] {"joueurs"};
-                int[] to = new int[] { R.id.item1};
-
-                // Set the User Array list in ListView
-                ListAdapter adapter = new SpecialAdapter(getActivity(), listPlayers, R.layout.grid_item_one, from, to);
-                listViewPlayers.setAdapter(adapter);
-                //registerForContextMenu(listViewPlayers);
-
-
-                //changer le header du tableau pour mettre le nom de l'équipe
-                header.setText("Joueurs de l'équipe \""+ nomEquipe +"\"");
-                //afficher le tableau et le truc pr rentrer la date de naissance
-                joueursTab.setVisibility(View.VISIBLE);
-
-                //On récupère la course et l'équipe
-                numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
-                numEquipeStr = numEquipe.getText().toString();
-
-                //controller.updateNumEquipe(numEquipeStr);
-
-            }
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public void checkDate(){
-        //Create AsycHttpClient object
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-
-        client.setConnectTimeout(5000);
-        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
-        // est repéré par onFailure contrairement à host unreachable
-        // à étudié c'est relou
-        client.setResponseTimeout(5000); // as above
-        client.setTimeout(5000); // both connection and socket timeout
-        client.setMaxRetriesAndTimeout(1, 100); // times, delay
-
-        spinnerCheckDate.setVisibility(View.VISIBLE);
-        buttonCheckDate.setVisibility(View.INVISIBLE);
-
-        numEquipeStr = numEquipe.getText().toString();
-        System.out.println(numEquipeStr);
-
-        dateStr = date.getText().toString();
-
-        params.put("numEquipe", numEquipeStr);
-        params.put("date", dateStr);
-        System.out.println(params);
-
-        client.post("http://192.168.1.52:80/testProjet/checkDate.php",params ,new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-
-                //Convertir byte[] en String
-                String responseString = null;
-                try {
-                    responseString = new String(response, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                System.out.println(responseString);
-
-                spinnerCheckDate.setVisibility(View.GONE);
-                buttonCheckDate.setVisibility(View.VISIBLE);
-
-                if(!responseString.equals("erreur")) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Date de naissance OK !", Toast.LENGTH_LONG).show();
-                    dllParkour.setVisibility(View.VISIBLE);
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Erreur, la date de naissance ne correspond pas.", Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                if (statusCode == 404) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
-                } else if (statusCode == 500) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
-                            Toast.LENGTH_LONG).show();
-                }
-
-                spinnerCheckDate.setVisibility(View.GONE);
-                buttonCheckDate.setVisibility(View.VISIBLE);
-            }
-        });
-
     }
 
 }

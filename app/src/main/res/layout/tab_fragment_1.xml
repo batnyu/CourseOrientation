@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#e7e7e7"
-    android:layout_marginTop="0dp"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
@@ -12,24 +11,24 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
             android:id="@+id/linearLayout"
-            android:weightSum="1">
+            android:weightSum="1"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="10dp">
 
 
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="5dp">
 
@@ -45,62 +44,74 @@
                     android:text="Numéro d'équipe" />
 
 
-
-                <EditText
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:ems="10"
-                    android:layout_below="@+id/textView"
-                    android:id="@+id/numEquipe"
-                    style="@style/Widget.AppCompat.EditText"
-                    android:hint="Entrez votre numéro d'équipe"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:background="@drawable/bg_edittext"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:paddingStart="15dp"
-                    android:paddingLeft="15dp"
-                    android:textCursorDrawable="@null"
-                    android:textColor="#3b3b3b"
-                    android:layout_marginTop="5dp" />
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp">
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:inputType="number"
+                        android:ems="10"
+                        android:layout_below="@+id/textView"
+                        android:id="@+id/numEquipe"
+                        style="@style/Widget.AppCompat.EditText"
+                        android:hint="Entrez votre numéro d'équipe"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:background="@drawable/bg_edittext"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingStart="15dp"
+                        android:paddingLeft="15dp"
+                        android:textCursorDrawable="@null"
+                        android:textColor="#3b3b3b"
+                        android:layout_weight="148.94"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5dp"
+                        android:textSize="17sp" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <ProgressBar
+                            style="@style/Widget.AppCompat.ProgressBar"
+                            android:id="@+id/progressBar3"
+                            android:layout_gravity="center_vertical|center_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_height="25dp"
+                            android:elevation="7dp"/>
+
+                        <Button
+                            android:text="Vérifier"
+                            android:layout_below="@+id/linearLayout3"
+                            android:layout_centerHorizontal="true"
+                            android:id="@+id/dllPlayers"
+                            android:layout_gravity="center_horizontal"
+                            android:textSize="14sp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_button"
+                            android:textColor="@android:color/background_light"
+                            android:layout_width="105dp" />
+
+                    </FrameLayout>
+                </LinearLayout>
+
             </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp">
-
-                <ProgressBar
-                    style="@style/Widget.AppCompat.ProgressBar"
-                    android:id="@+id/progressBar3"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_height="25dp" />
-
-                <Button
-                    android:text="Vérifier la course et l'équipe"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/linearLayout3"
-                    android:layout_centerHorizontal="true"
-                    android:id="@+id/dllPlayers"
-                    android:paddingBottom="20dp"
-                    android:paddingTop="20dp" />
-
-            </FrameLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/joueursTab"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp">
@@ -135,14 +146,13 @@
                     <ListView
                         android:layout_width="match_parent"
                         android:id="@+id/listViewPlayers"
-                        android:layout_height="75dp" />
+                        android:layout_height="match_parent" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="5dp">
+                    android:layout_height="match_parent">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -160,7 +170,7 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="date"
+                        android:inputType="text|date"
                         android:ems="10"
                         android:layout_below="@+id/textView"
                         android:id="@+id/date"
@@ -193,17 +203,21 @@
                             android:layout_alignParentStart="true"
                             android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
-                            android:layout_height="25dp" />
+                            android:layout_height="25dp"
+                            android:elevation="7dp"/>
 
                         <Button
                             android:text="Vérifier la date de naissance"
-                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/linearLayout3"
                             android:layout_centerHorizontal="true"
                             android:id="@+id/buttonCheckDate"
                             android:paddingBottom="20dp"
-                            android:paddingTop="20dp" />
+                            android:paddingTop="20dp"
+                            android:layout_gravity="center_horizontal"
+                            android:paddingLeft="30dp"
+                            android:paddingRight="30dp"
+                            android:layout_width="280dp" />
 
                     </FrameLayout>
 
@@ -213,7 +227,8 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -252,22 +267,6 @@
                     android:layout_height="wrap_content" />
 
             </FrameLayout>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Vérifier le réseau WiFi"
-                android:id="@+id/buttonWifi"
-                android:layout_gravity="center_vertical|center_horizontal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:id="@+id/infosWifi"
-                android:textSize="12sp"
-                android:text=""
-                android:layout_gravity="center_vertical|center_horizontal"/>
 
         </LinearLayout>
     </ScrollView>

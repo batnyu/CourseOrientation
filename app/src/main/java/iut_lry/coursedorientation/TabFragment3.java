@@ -172,9 +172,12 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
                 client.setTimeout(5000); // both connection and socket timeout
                 client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
+                String ipServer = "192.168.44.1"; //mettre la fonction pour pecho l'adresse dans l'activité pr pouvoir
+            //l'appeller des deux fragments proprement.
+
                 params.put("resultatsJSON", controller.composeJSONfromSQLite());
                 Log.d("tag", controller.composeJSONfromSQLite().toString());
-                client.post("http://192.168.1.52:80/testProjet/insertuserPDONEW.php",params ,new AsyncHttpResponseHandler() {
+                client.post("http://" + ipServer + ":80/testProjet/insertuserPDONEW.php",params ,new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                         System.out.println(response);

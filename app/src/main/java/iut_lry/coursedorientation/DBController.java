@@ -263,6 +263,29 @@ public class DBController extends SQLiteOpenHelper {
         return usersList;
     }
 
+    public void updateNextAlreadyChecked(String baliseSuivante) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT num_balise,temps FROM liste_balises " +
+                                          "WHERE num_balise = ? AND temps != ''", new String[]{baliseSuivante});
+
+        Cursor cursor2 = database.rawQuery("SELECT num_balise,temps,suivante FROM liste_balises " +
+                "WHERE suivante = ?", new String[]{baliseSuivante});
+
+        if(cursor.moveToFirst())
+        {
+            if(cursor2.moveToFirst()){
+                ContentValues newValues = new ContentValues();
+                newValues.put("suivante", "au choix");
+                String[] args = new String[]{baliseSuivante};
+                database.update("liste_balises", newValues, "suivante=?", args);
+                cursor2.close();
+            }
+            cursor.close();
+        }
+        database.close();
+    }
+
     public int checkBalise(String balise, String temps, boolean departOK, String baliseDepart, String baliseSuivante) {
 
         SQLiteDatabase database = this.getReadableDatabase();
@@ -281,7 +304,7 @@ public class DBController extends SQLiteOpenHelper {
                     database.close();
                     return 3;
                 }
-                else if (departOK && (balise.equals(baliseSuivante) || baliseSuivante.equals("0"))) //si la première balise a déjà été scanné
+                else if (departOK && (balise.equals(baliseSuivante) || baliseSuivante.equals("au choix"))) //si la première balise a déjà été scanné
                 {
                     cursor.close();
                     database.close();

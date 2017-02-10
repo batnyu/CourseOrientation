@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,6 +25,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +49,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -81,6 +85,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     String dateStr;
     String dateStrActuel;
     ProgressBar spinnerCheckDate;
+
+    ScrollView scroll;
 
     // DB Class to perform DB related operations
     DBController controller;
@@ -135,10 +141,21 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         dllParkour.setVisibility(View.GONE);
 
         spinner = (ProgressBar) view.findViewById(R.id.progressBar2);
-        spinner.getIndeterminateDrawable().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
-        chargement = (RelativeLayout) view.findViewById(R.id.chargement);
-        chargement.setVisibility(View.GONE);
+        spinner.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
+        spinner.setVisibility(View.GONE);
 
+        //Scroll down quand on appuie sur l'edittext Date
+        scroll = (ScrollView) view.findViewById(R.id.scroll);
+
+        //a faire
+        /*date.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                scroll.smoothScrollTo(0,dllPlayers.getBottom());
+            }
+
+        });*/
         return view;
     }
 
@@ -340,7 +357,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 spinnerCheckPlayers.setVisibility(View.GONE);
                 //dllPlayers.setVisibility(View.VISIBLE);
                 dllPlayers.setEnabled(true);
-                dllPlayers.setText("Vérifier");
+                dllPlayers.setText("Afficher");
 
                 if(!responseString.equals("erreur")) {
                     afficherJoueurs(responseString);
@@ -363,9 +380,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
 
                 spinnerCheckPlayers.setVisibility(View.GONE);
-                //dllPlayers.setVisibility(View.VISIBLE);
                 dllPlayers.setEnabled(true);
-                dllPlayers.setText("Vérifier");
+                dllPlayers.setText("Afficher");
             }
         });
 
@@ -465,7 +481,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 System.out.println(responseString);
 
                 spinnerCheckDate.setVisibility(View.GONE);
-                buttonCheckDate.setText("Vérifier la date de naissance");
+                buttonCheckDate.setText("Vérifier");
                 buttonCheckDate.setEnabled(true);
 
                 if(!responseString.equals("erreur")) {
@@ -490,7 +506,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
 
                 spinnerCheckDate.setVisibility(View.GONE);
-                buttonCheckDate.setText("Vérifier la date de naissance");
+                buttonCheckDate.setText("Vérifier");
                 buttonCheckDate.setEnabled(true);
             }
         });
@@ -506,8 +522,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         RequestParams params = new RequestParams();
 
         //cacher le bouton et afficher le spinner
-        chargement.setVisibility(View.VISIBLE);
-        dllParkour.setVisibility(View.INVISIBLE);
+        spinner.setVisibility(View.VISIBLE);
+        dllParkour.setEnabled(false);
+        dllParkour.setText("Téléchargement en cours");
 
         client.setConnectTimeout(5000);
         //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
@@ -529,8 +546,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 // called when response HTTP status is "200 OK"
 
                 //cacher le spinner et afficher le bouton
-                chargement.setVisibility(View.GONE);
-                dllParkour.setVisibility(View.VISIBLE);
+                spinner.setVisibility(View.GONE);
+                dllParkour.setEnabled(true);
+                dllParkour.setText("Télécharger le parcours");
 
                 //je sais pas encore lequel choisir
                 //Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
@@ -554,8 +572,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
                 //cacher le spinner et afficher le bouton
-                chargement.setVisibility(View.GONE);
-                dllParkour.setVisibility(View.VISIBLE);
+                spinner.setVisibility(View.GONE);
+                dllParkour.setEnabled(true);
+                dllParkour.setText("Télécharger le parcours");
 
                 if (statusCode == 404) {
                     mCallback.showToast("Error " + statusCode + "\nRequested resource not found");

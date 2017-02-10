@@ -53,6 +53,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     TextView baliseSuivante;
     String nbBaliseSuivante;
 
+    String[] baliseActuelle;
+
     LinearLayout interface2;
     TextView noParcours2;
 
@@ -244,6 +246,14 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 //Update du temps dans la base de données
                 controller.UpdateTemps(scanContent,temps);
+
+                //pour pouvoir vérifier si la suivante a déjà été pointé
+                //mettre à jour la dernière balise pointée et sa suivante
+                baliseActuelle = controller.getBaliseActuelle();
+                //stocker la variable pour vérifier quand on scanne.
+                nbBaliseSuivante = baliseActuelle[1];
+
+                controller.updateNextAlreadyChecked(nbBaliseSuivante);
             }
 
             return null;
@@ -267,9 +277,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 //On update la listView du fragment 3 (onglet parcours)
                 mCallback.communicateToFragment3();
-                fragmentCommunication2();
+                //on update les infos de l'onglet "infos"
+                updateInfos();
 
             }
+            //au hasard
             resultat = 54;
 
         }
@@ -286,6 +298,29 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 Toast.LENGTH_SHORT).show();
     }
 
+    public void updateInfos() {
+        ArrayList<HashMap<String, String>> baliseList;
+        // Get User records from SQLite DB
+
+        baliseList = controller.getAllBalises();
+
+        //mettre à jour le nombre de checkpoints
+        totalBalises.setText(controller.getNbCheckpoints());
+
+        //mettre à jour la balise de départ
+        nbBaliseDepart = controller.getFirstBalise();
+        baliseDepart.setText(nbBaliseDepart);
+
+        //mettre à jour la dernière balise pointée et sa suivante
+        baliseActuelle = controller.getBaliseActuelle();
+
+        balisePointee.setText(baliseActuelle[0]);
+        baliseSuivante.setText(baliseActuelle[1]);
+
+        //stocker la variable pour vérifier quand on scanne.
+        nbBaliseSuivante = baliseActuelle[1];
+    }
+
     public void fragmentCommunication2() {
 
         ArrayList<HashMap<String, String>> baliseList;
@@ -293,37 +328,26 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         baliseList = controller.getAllBalises();
 
+        timeElapsed.stop();
+        timeElapsed.setText("00:00:00");
+        departOK = false;
+
         if (baliseList.size() != 0) {
 
             //afficher l'interface du deuxieme onglet et cacher la phrase
             interface2.setVisibility(LinearLayout.VISIBLE);
             noParcours2.setVisibility(LinearLayout.GONE);
 
-            //mettre à jour le nombre de checkpoints
-            totalBalises.setText(controller.getNbCheckpoints());
+            //si la base de données est déjà remplie, on update les infos
+            updateInfos();
 
-            //mettre à jour la balise de départ
-            nbBaliseDepart = controller.getFirstBalise();
-            baliseDepart.setText(nbBaliseDepart);
-
-            //mettre à jour la dernière balise pointée et sa suivante
-            String[] baliseActuelle;
-            baliseActuelle = controller.getBaliseActuelle();
-
-            balisePointee.setText(baliseActuelle[0]);
-            baliseSuivante.setText(baliseActuelle[1]);
-
-            nbBaliseSuivante = baliseActuelle[1];
+            //fonction a mettre en place pour récupérer le bon chrono si l'activité s'arrete.
         }
         else
         {
             //cacher l'interface du deuxieme onglet et afficher la phrase
             interface2.setVisibility(LinearLayout.GONE);
             noParcours2.setVisibility(LinearLayout.VISIBLE);
-
-            timeElapsed.stop();
-            timeElapsed.setText("00:00:00");
-            departOK = false;
         }
     }
 

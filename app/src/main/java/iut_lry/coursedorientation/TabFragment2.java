@@ -188,6 +188,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
          *    do things before doInBackground() code runs
          *    such as preparing and showing a Dialog or ProgressBar
         */
+            //empêcher un autre scan en même temps.
+            scanButton.setEnabled(false);
         }
 
         @Override
@@ -233,6 +235,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise suivante !", Toast.LENGTH_LONG).show();
             }
+            else if(values[0] == 6)
+            {
+                Toast.makeText(getActivity(), "Vous avez déjà fini le parcours!", Toast.LENGTH_LONG).show();
+            }
             else
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
@@ -244,18 +250,19 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         protected Void doInBackground(String... parametres) {
             //do your work here
 
-
-
             resultat = controller.checkBalise(scanContent, temps, departOK, nbBaliseDepart, nbBaliseSuivante);
 
             publishProgress(resultat);
 
+
             //On doit attendre pour que le programme ait le temps de mettre à jour la variable temps dans onProgressUpdate
             try {
-                Thread.sleep(500);
+                Thread.sleep(400);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+
 
             if(resultat == 1 || resultat == 3)
             {
@@ -267,8 +274,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 baliseActuelle = controller.getBaliseActuelle();
                 //stocker la variable pour vérifier quand on scanne.
                 nbBaliseSuivante = baliseActuelle[1];
-
                 controller.updateNextAlreadyChecked(nbBaliseSuivante);
+
             }
 
             return null;
@@ -299,6 +306,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //au hasard
             resultat = 54;
 
+            //réactiver le bouton
+            scanButton.setEnabled(true);
+
         }
     }
 
@@ -326,7 +336,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         //progressTotal.setProgress(scannéSurTotal[0]);
         //avec animation
         ObjectAnimator animation = ObjectAnimator.ofInt(progressTotal, "progress", scannéSurTotal[0]*100);
-        animation.setDuration(1000); // 1.5 second
+        animation.setDuration(600); // 1.5 second
         animation.setInterpolator(new LinearInterpolator());
         animation.start();
 
@@ -336,7 +346,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                   totalBalises.setText(scannéSurTotal[0] + "/" + scannéSurTotal[1]);
               }
         });
-
 
         //mettre à jour la balise de départ
         nbBaliseDepart = controller.getFirstBalise();
@@ -350,6 +359,14 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         //stocker la variable pour vérifier quand on scanne.
         nbBaliseSuivante = baliseActuelle[1];
+
+        //regarder si la balise est la dernière.
+        if(nbBaliseSuivante.equals("fin") && departOK){
+            timeElapsed.stop();
+            departOK=false;
+            mCallback.showToast("Vous avez scanné la balise de fin !","long");
+        }
+
     }
 
     public void fragmentCommunication2() {
@@ -358,6 +375,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         // Get User records from SQLite DB
 
         baliseList = controller.getAllBalises();
+
+        timeElapsed.stop();
+        timeElapsed.setText("00:00:00");
 
         if (baliseList.size() != 0) {
 
@@ -368,14 +388,15 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //si la base de données est déjà remplie, on update les infos
             updateInfos();
 
-            //fonction a mettre en place pour récupérer le bon chrono si l'activité s'arrete.
-            departOK = true;
+            //on check si la balise depart a déjà été scanné, si oui on met departOK a true.
+            departOK = controller.checkFirstBalise();
 
+            //fonction a mettre en place pour récupérer le bon chrono si l'activité s'arrete.
         }
         else
         {
-            timeElapsed.stop();
-            timeElapsed.setText("00:00:00");
+            //timeElapsed.stop();
+            //timeElapsed.setText("00:00:00");
             departOK = false;
 
             //cacher l'interface du deuxieme onglet et afficher la phrase

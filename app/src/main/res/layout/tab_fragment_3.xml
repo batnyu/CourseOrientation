@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:background="#e7e7e7">
+    android:background="@color/fond">
 
     <TextView
         android:text="Vous n'avez téléchargé aucun parcours !"

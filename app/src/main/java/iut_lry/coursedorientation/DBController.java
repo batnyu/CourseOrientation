@@ -310,11 +310,17 @@ public class DBController extends SQLiteOpenHelper {
                     database.close();
                     return 1;
                 }
-                else if(!balise.equals(baliseSuivante) && departOK)
+                else if(!balise.equals(baliseSuivante) && departOK) //si c'est pas la balise suivante
                 {
                     cursor.close();
                     database.close();
                     return 5;
+                }
+                else if(baliseSuivante.equals("fin")) //s'il a scanné la balise de fin
+                {
+                    cursor.close();
+                    database.close();
+                    return 6;
                 }
                 else
                 {
@@ -329,7 +335,7 @@ public class DBController extends SQLiteOpenHelper {
                 database.close();
                 return 2;
             }
-        } else {
+        } else { //si la balise n'est pas trouvé dans la base
             cursor.close();
             database.close();
             return 0;
@@ -399,6 +405,30 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
 
         return scannéSurTotal;
+    }
+
+    public boolean checkFirstBalise(){
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String temps = "";
+
+        Cursor cursor = database.rawQuery("SELECT temps,depart FROM liste_balises WHERE depart=1", null);
+
+        if (cursor.moveToFirst()) {
+
+            temps = cursor.getString(0);
+        }
+
+        cursor.close();
+        database.close();
+
+        if(temps.equals("")){
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     public String getFirstBalise() {

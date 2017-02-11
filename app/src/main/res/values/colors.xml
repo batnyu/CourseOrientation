@@ -4,7 +4,10 @@
     <color name="colorPrimaryDark">#225994</color>
     <color name="colorAccent">#8e8e8e</color>
     <color name="colorMain">#5194d1</color>
-    <color name="colorJaune">#5194d1</color>
+    <color name="colorJaune">#378ad5</color>
+    <color name="colorRouge">#167cd9</color>
     <color name="colorChrono">#5b5d6e</color>
+    <color name="fond">#e7e7e7</color>
+    <color name="fondProgressBar">#e6e6e6</color>
 
 </resources>

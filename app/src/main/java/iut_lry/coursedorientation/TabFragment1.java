@@ -86,6 +86,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     String dateStrActuel;
     ProgressBar spinnerCheckDate;
 
+    int essaiDate;
+
     ScrollView scroll;
 
     // DB Class to perform DB related operations
@@ -156,6 +158,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             }
 
         });*/
+
+        //initialiser les essais de requêtes pour la date.
+        essaiDate = 0;
+
         return view;
     }
 
@@ -216,7 +222,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
                 else
                 {
-                    //mCallback.showToast("Vous n'avez pas changé de numéro d'équipe !");
+                    mCallback.showToast("Veuillez changer de numéro d'équipe avant de refaire une requête.","court");
                 }
                 break;
 
@@ -225,6 +231,15 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 if(!dateStrActuel.equals(dateStr))
                 {
+                    essaiDate = 0;
+                }
+
+                if(essaiDate < 2)
+                {
+                    if(dateStrActuel.equals(dateStr))
+                    {
+                        essaiDate++;
+                    }
                     date.clearFocus();
                     mCallback.hideKeyboard();
                     ipServer = getWifiApIpAddress();
@@ -235,7 +250,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
                 else
                 {
-                    //mCallback.showToast("Vous n'avez pas changé de date de naissance !");
+                    mCallback.showToast("Veuillez changer de date avant de refaire une requête.","court");
                 }
                 break;
 
@@ -276,7 +291,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         } catch (UnknownHostException e) {
             e.printStackTrace();
             Log.d("erreur ",e.getMessage());
-            mCallback.showToast("Veuillez activer votre Wi-fi, connectez-vous au réseau de l'organisateur et réessayez.");
+            mCallback.showToast("Veuillez activer votre Wi-fi, connectez-vous au réseau de l'organisateur et réessayez.","long");
             myIP = "erreur";
         }
 
@@ -371,12 +386,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                 if (statusCode == 404) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nRequested resource not found","long");
                 } else if (statusCode == 500) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nSomething went wrong at server end","long");
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
-                            Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nUnexpected Error occcured! " +
+                            "[Most common Error: Device might not be connected to Internet]","long");
                 }
 
                 spinnerCheckPlayers.setVisibility(View.GONE);
@@ -485,10 +500,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 buttonCheckDate.setEnabled(true);
 
                 if(!responseString.equals("erreur")) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Date de naissance OK !", Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Date de naissance OK !\nVous pouvez télécharger le parcours !","court");
                     dllParkour.setVisibility(View.VISIBLE);
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Erreur, la date de naissance ne correspond pas.", Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Erreur : la date de naissance ne correspond pas.","court");
                 }
 
             }
@@ -497,12 +512,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                 if (statusCode == 404) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nRequested resource not found", Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nRequested resource not found","long");
                 } else if (statusCode == 500) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nSomething went wrong at server end", Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nSomething went wrong at server end","long");
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Error " + statusCode + "\nUnexpected Error occcured! [Most common Error: Device might not be connected to Internet]",
-                            Toast.LENGTH_LONG).show();
+                    mCallback.showToast("Error " + statusCode + "\nUnexpected Error occcured! " +
+                            "[Most common Error: Device might not be connected to Internet]","long");
                 }
 
                 spinnerCheckDate.setVisibility(View.GONE);
@@ -552,7 +567,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 //je sais pas encore lequel choisir
                 //Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
-                mCallback.showToast("Le parcours a bien été téléchargé !");
+                mCallback.showToast("Le parcours a bien été téléchargé !","long");
 
                 // Update SQLite DB with response sent by getusers.php
                 //Convertir byte[] en String
@@ -577,12 +592,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 dllParkour.setText("Télécharger le parcours");
 
                 if (statusCode == 404) {
-                    mCallback.showToast("Error " + statusCode + "\nRequested resource not found");
+                    mCallback.showToast("Error " + statusCode + "\nRequested resource not found","long");
                 } else if (statusCode == 500) {
-                    mCallback.showToast("Error " + statusCode + "\nSomething went wrong at server end");
+                    mCallback.showToast("Error " + statusCode + "\nSomething went wrong at server end","long");
                 } else {
                     mCallback.showToast("Error " + statusCode + "\nUnexpected Error occcured! " +
-                            "[Most common Error: Device might not be connected to Internet]");
+                            "[Most common Error: Device might not be connected to Internet]","long");
                 }
             }
 

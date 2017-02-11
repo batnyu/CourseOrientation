@@ -27,30 +27,142 @@
         android:layout_marginTop="10dp"
         android:id="@+id/interface2">
 
-        <FrameLayout
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp">
+            android:layout_height="wrap_content">
 
-            <ImageView
+            <FrameLayout
                 android:layout_width="match_parent"
-                app:srcCompat="@mipmap/chrono"
-                android:id="@+id/imageView"
-                android:layout_height="200dp" />
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1">
 
-            <Chronometer
+                <ImageView
+                    android:layout_width="wrap_content"
+                    app:srcCompat="@mipmap/chrono"
+                    android:id="@+id/imageView"
+                    android:layout_height="200dp" />
+
+                <Chronometer
+                    android:layout_width="115dp"
+                    android:layout_height="110dp"
+                    android:id="@+id/chronometer1"
+                    android:fontFamily="sans-serif"
+                    android:textSize="18sp"
+                    android:textAlignment="center"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:paddingTop="64dp"
+                    android:textColor="#5b5d6e" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/chronometer1"
-                android:fontFamily="sans-serif"
-                android:textSize="18sp"
-                android:textAlignment="center"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:paddingTop="42dp"
-                android:textColor="#5b5d6e" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1">
 
-        </FrameLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_tuile">
 
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_tuile"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginRight="2dp"
+                        android:id="@+id/startBalise"
+                        android:layout_gravity="center_horizontal">
+
+                        <TextView
+                            android:text="Départ"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignLeft="@+id/numEquipe"
+                            android:layout_alignStart="@+id/numEquipe"
+                            android:id="@+id/textView_balise_depart"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:text=""
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignLeft="@+id/numEquipe"
+                            android:layout_alignStart="@+id/numEquipe"
+                            android:id="@+id/textView_balise_depart_nb"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="25sp"
+                            android:textColor="@color/zxing_result_view" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_tuile"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginRight="2dp"
+                        android:id="@+id/endBalise"
+                        android:layout_gravity="center_horizontal">
+
+                        <TextView
+                            android:text="Arrivée"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignLeft="@+id/numEquipe"
+                            android:layout_alignStart="@+id/numEquipe"
+                            android:id="@+id/textView_balise_fin"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:text=""
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignLeft="@+id/numEquipe"
+                            android:layout_alignStart="@+id/numEquipe"
+                            android:id="@+id/textView_balise_fin_nb"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="25sp"
+                            android:textColor="@color/zxing_result_view" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
@@ -61,10 +173,8 @@
             android:paddingRight="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            android:layout_marginRight="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
             android:id="@+id/totalBalise">
 
             <LinearLayout
@@ -92,26 +202,27 @@
                     android:layout_alignLeft="@+id/numEquipe"
                     android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_total_balises_nb"
-                    android:layout_marginTop="2dp"
                     android:textAllCaps="false"
                     android:textSize="18sp"
-                    android:textColor="@android:color/background_dark" />
+                    android:textColor="@color/zxing_custom_result_view" />
             </LinearLayout>
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/progressBarTotal"
-                android:theme="@style/AppTheme.ProgressBar"/>
+                android:progressDrawable="@drawable/bg_progressbar"
+                android:layout_height="3dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="5dp" />
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -119,105 +230,12 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_tuile"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingRight="5dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
-                android:id="@+id/startBalise">
-
-                <TextView
-                    android:text="Balise départ"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
-                    android:id="@+id/textView_balise_depart"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:text=""
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
-                    android:id="@+id/textView_balise_depart_nb"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="25sp"
-                    android:textColor="@android:color/background_dark" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_tuile"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
-                android:id="@+id/endBalise">
-
-                <TextView
-                    android:text="Balise arrivée"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
-                    android:id="@+id/textView_balise_fin"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:text=""
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
-                    android:id="@+id/textView_balise_fin_nb"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="25sp"
-                    android:textColor="@android:color/background_dark" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_tuile"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
-                android:id="@+id/lastBalise">
+                android:id="@+id/lastBalise"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp">
 
                 <TextView
                     android:text="Dernière balise pointée"
@@ -227,9 +245,9 @@
                     android:layout_alignLeft="@+id/numEquipe"
                     android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_balise_pointee"
-                    android:layout_marginTop="2dp"
                     android:textAllCaps="false"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:paddingTop="2dp" />
 
                 <TextView
                     android:text=""
@@ -242,7 +260,7 @@
                     android:layout_marginTop="2dp"
                     android:textAllCaps="false"
                     android:textSize="25sp"
-                    android:textColor="@android:color/background_dark" />
+                    android:textColor="@color/zxing_result_view" />
             </LinearLayout>
 
             <LinearLayout
@@ -251,14 +269,12 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_tuile"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingRight="5dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
-                android:id="@+id/suivante">
+                android:id="@+id/suivante"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp">
 
                 <TextView
                     android:text="Balise suivante à pointer"
@@ -268,9 +284,9 @@
                     android:layout_alignLeft="@+id/numEquipe"
                     android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_balise_suivante"
-                    android:layout_marginTop="2dp"
                     android:textAllCaps="false"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:paddingTop="2dp" />
 
                 <TextView
                     android:text=""
@@ -283,9 +299,20 @@
                     android:layout_marginTop="2dp"
                     android:textAllCaps="false"
                     android:textSize="25sp"
-                    android:textColor="@android:color/background_dark" />
+                    android:textColor="@color/zxing_result_view" />
             </LinearLayout>
         </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:id="@+id/scan_button"
+            android:layout_gravity="center_vertical"
+            android:text="SCAN"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -304,17 +331,6 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:id="@+id/scan_button"
-            android:layout_gravity="center_vertical"
-            android:text="SCAN"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp"
-            android:textSize="20sp" />
 
     </LinearLayout>
 

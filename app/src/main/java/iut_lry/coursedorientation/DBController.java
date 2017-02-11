@@ -372,23 +372,14 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
     }
 
-    public String getNbCheckpoints() {
+    public int[] getNbCheckpoints() {
 
-        String nb;
         SQLiteDatabase database = this.getReadableDatabase();
 
-        /*Cursor cursor1 = database.rawQuery("SELECT COUNT(*) FROM liste_balises", null);
-        int nbBalisesPointeess = cursor1.getCount();
-        cursor1.close();
+        int[] scannéSurTotal = new int[2];
 
-        Cursor cursor2 = database.rawQuery("SELECT COUNT(*) FROM liste_balises", null);
-        int nbBalisesTotala = cursor2.getCount();
-        cursor2.close();
-
-        database.close();*/
-
-        int nbBalisesPointees = 0;
-        int nbBalisesTotal = 0;
+        scannéSurTotal[0] = 0;
+        scannéSurTotal[1] = 0;
 
         Cursor cursor = database.rawQuery("SELECT temps FROM liste_balises", null);
 
@@ -397,19 +388,17 @@ public class DBController extends SQLiteOpenHelper {
             do {
                 String colonne = cursor.getString(0);
                 if (!colonne.equals("")) {
-                    nbBalisesPointees++;
+                    scannéSurTotal[0]++;
                 }
             } while (cursor.moveToNext());
         }
 
-        nbBalisesTotal = cursor.getCount();
+        scannéSurTotal[1] = cursor.getCount();
 
         cursor.close();
         database.close();
 
-        nb = nbBalisesPointees + "/" + nbBalisesTotal;
-
-        return nb;
+        return scannéSurTotal;
     }
 
     public String getFirstBalise() {

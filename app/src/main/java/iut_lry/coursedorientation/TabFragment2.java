@@ -1,5 +1,8 @@
 package iut_lry.coursedorientation;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,9 +15,13 @@ import android.view.ViewGroup;
 
 
 import android.content.Context;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +33,8 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import static android.R.id.progress;
 
 public class TabFragment2 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
@@ -46,6 +55,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     int resultat;
 
     TextView totalBalises;
+    ProgressBar progressTotal;
+    int[] scannéSurTotal;
+
     TextView baliseDepart;
     String nbBaliseDepart;
     TextView balisePointee;
@@ -68,6 +80,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         controller = new DBController(getActivity());
 
         totalBalises = (TextView) view.findViewById(R.id.textView_total_balises_nb);
+        progressTotal = (ProgressBar) view.findViewById(R.id.progressBarTotal);
+
         baliseDepart = (TextView) view.findViewById(R.id.textView_balise_depart_nb);
         balisePointee = (TextView) view.findViewById(R.id.textView_balise_pointee_nb);
         baliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
@@ -100,6 +114,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         departOK = false;
 
         fragmentCommunication2();
+        //vérif tableau.
 
     }
 
@@ -299,13 +314,29 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     }
 
     public void updateInfos() {
-        ArrayList<HashMap<String, String>> baliseList;
-        // Get User records from SQLite DB
 
-        baliseList = controller.getAllBalises();
+        //faire un thread
 
-        //mettre à jour le nombre de checkpoints
-        totalBalises.setText(controller.getNbCheckpoints());
+        //on récupère les données dans la base
+        scannéSurTotal = controller.getNbCheckpoints();
+
+        //on met *100 pour voir l'animation
+        progressTotal.setMax(scannéSurTotal[1] * 100);
+        //sans animation
+        //progressTotal.setProgress(scannéSurTotal[0]);
+        //avec animation
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressTotal, "progress", scannéSurTotal[0]*100);
+        animation.setDuration(1000); // 1.5 second
+        animation.setInterpolator(new LinearInterpolator());
+        animation.start();
+
+        //pour mettre à jour le numéro à la fin de l'animation
+        animation.addListener(new AnimatorListenerAdapter() {
+              public void onAnimationEnd(Animator animation) {
+                  totalBalises.setText(scannéSurTotal[0] + "/" + scannéSurTotal[1]);
+              }
+        });
+
 
         //mettre à jour la balise de départ
         nbBaliseDepart = controller.getFirstBalise();
@@ -328,10 +359,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         baliseList = controller.getAllBalises();
 
-        timeElapsed.stop();
-        timeElapsed.setText("00:00:00");
-        departOK = false;
-
         if (baliseList.size() != 0) {
 
             //afficher l'interface du deuxieme onglet et cacher la phrase
@@ -342,9 +369,15 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             updateInfos();
 
             //fonction a mettre en place pour récupérer le bon chrono si l'activité s'arrete.
+            departOK = true;
+
         }
         else
         {
+            timeElapsed.stop();
+            timeElapsed.setText("00:00:00");
+            departOK = false;
+
             //cacher l'interface du deuxieme onglet et afficher la phrase
             interface2.setVisibility(LinearLayout.GONE);
             noParcours2.setVisibility(LinearLayout.VISIBLE);

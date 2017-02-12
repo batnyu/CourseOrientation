@@ -316,7 +316,7 @@ public class DBController extends SQLiteOpenHelper {
                     database.close();
                     return 5;
                 }
-                else if(baliseSuivante.equals("fin")) //s'il a scanné la balise de fin
+                else if(baliseSuivante.equals("aucune")) //s'il a scanné la balise de fin
                 {
                     cursor.close();
                     database.close();
@@ -454,20 +454,31 @@ public class DBController extends SQLiteOpenHelper {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
-        String[] balise = new String[2];
+        String[] balise = new String[4];
 
-        Cursor cursor = database.rawQuery("SELECT num_balise,suivante FROM liste_balises " +
+        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,azimut_distance,azimut_degre FROM liste_balises " +
                 "WHERE temps != '' AND temps=(SELECT max(temps) FROM liste_balises) ", null);
 
         if (cursor.moveToFirst()) {
 
-            balise[0] = cursor.getString(0);
-            balise[1] = cursor.getString(1);
+            for(int i=0;i<4;i++)
+            {
+                if(cursor.getString(i).equals("0"))
+                {
+                    balise[i] = "";
+                }
+                else
+                {
+                    balise[i] = cursor.getString(i);
+                }
+            }
         }
         else
         {
-            balise[0] = "";
-            balise[1] = "";
+            for(int i=0;i<4;i++)
+            {
+                balise[i] = "";
+            }
         }
 
         cursor.close();

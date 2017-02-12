@@ -64,6 +64,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     String nbBalisePointee;
     TextView baliseSuivante;
     String nbBaliseSuivante;
+    TextView baliseAzimut;
 
     String[] baliseActuelle;
 
@@ -85,6 +86,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         baliseDepart = (TextView) view.findViewById(R.id.textView_balise_depart_nb);
         balisePointee = (TextView) view.findViewById(R.id.textView_balise_pointee_nb);
         baliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
+        baliseAzimut = (TextView) view.findViewById(R.id.textView_azimut_nb);
 
         interface2 = (LinearLayout) view.findViewById(R.id.interface2);
         noParcours2 = (TextView) view.findViewById(R.id.noParcours2);
@@ -356,12 +358,15 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         balisePointee.setText(baliseActuelle[0]);
         baliseSuivante.setText(baliseActuelle[1]);
+        //azimut
+        baliseAzimut.setText(baliseActuelle[2] + "m " + baliseActuelle[3] + "°");
+
 
         //stocker la variable pour vérifier quand on scanne.
         nbBaliseSuivante = baliseActuelle[1];
 
         //regarder si la balise est la dernière.
-        if(nbBaliseSuivante.equals("fin") && departOK){
+        if(nbBaliseSuivante.equals("aucune") && departOK){
             timeElapsed.stop();
             departOK=false;
             mCallback.showToast("Vous avez scanné la balise de fin !","long");

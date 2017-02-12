@@ -68,16 +68,16 @@
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_tuile">
+                    android:background="@drawable/bg_tuile"
+                    android:layout_marginBottom="3dp">
 
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/bg_tuile"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
                         android:paddingTop="10dp"
@@ -87,7 +87,8 @@
                         android:layout_marginBottom="2dp"
                         android:layout_marginRight="2dp"
                         android:id="@+id/startBalise"
-                        android:layout_gravity="center_horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1">
 
                         <TextView
                             android:text="Départ"
@@ -120,7 +121,6 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/bg_tuile"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
                         android:paddingTop="10dp"
@@ -130,7 +130,8 @@
                         android:layout_marginBottom="2dp"
                         android:layout_marginRight="2dp"
                         android:id="@+id/endBalise"
-                        android:layout_gravity="center_horizontal">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1">
 
                         <TextView
                             android:text="Arrivée"
@@ -158,6 +159,47 @@
                             android:textColor="@color/zxing_result_view" />
 
                     </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:id="@+id/azimutBalise"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_tuile">
+
+                    <TextView
+                        android:text="Azimut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignLeft="@+id/numEquipe"
+                        android:layout_alignStart="@+id/numEquipe"
+                        android:id="@+id/textView_azimut"
+                        android:layout_marginTop="2dp"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:text=""
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignLeft="@+id/numEquipe"
+                        android:layout_alignStart="@+id/numEquipe"
+                        android:id="@+id/textView_azimut_nb"
+                        android:layout_marginTop="2dp"
+                        android:textAllCaps="false"
+                        android:textSize="25sp"
+                        android:textColor="@color/zxing_result_view" />
+
                 </LinearLayout>
 
             </LinearLayout>

@@ -161,6 +161,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         //initialiser les essais de requêtes pour la date.
         essaiDate = 0;
+        //initialisation
+        numEquipeStrActuel = "aucune";
+        dateStrActuel = "aucune";
 
         return view;
     }
@@ -197,17 +200,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            /*
-            case R.id.button:
-                mCallback.showToast("Hello from Fragment 1");
-                break;
-
-            case R.id.button2:
-                mCallback.communicateToFragment2();
-                break;
-                */
 
             case R.id.dllPlayers:
+
                 numEquipeStrActuel=numEquipe.getText().toString();
 
                 if(!numEquipeStrActuel.equals(numEquipeStr))
@@ -227,6 +222,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.buttonCheckDate:
+
                 dateStrActuel=date.getText().toString();
 
                 if(!dateStrActuel.equals(dateStr))
@@ -236,10 +232,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 if(essaiDate < 2)
                 {
-                    if(dateStrActuel.equals(dateStr))
-                    {
-                        essaiDate++;
-                    }
                     date.clearFocus();
                     mCallback.hideKeyboard();
                     ipServer = getWifiApIpAddress();
@@ -397,6 +389,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 spinnerCheckPlayers.setVisibility(View.GONE);
                 dllPlayers.setEnabled(true);
                 dllPlayers.setText("Afficher");
+
+                //on ré-initialise le numEquipe si fail pour pouvoir redemander.
+                numEquipeStr="aucune";
             }
         });
 
@@ -505,7 +500,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 } else {
                     mCallback.showToast("Erreur : la date de naissance ne correspond pas.","court");
                 }
-
+                //on incrémente l'essai date pour limiter à 3 essais pr la meme date.
+                if(dateStrActuel.equals(dateStr))
+                {
+                    essaiDate++;
+                }
             }
 
             @Override
@@ -523,6 +522,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 spinnerCheckDate.setVisibility(View.GONE);
                 buttonCheckDate.setText("Vérifier");
                 buttonCheckDate.setEnabled(true);
+
+                //on ré-initialise la date enregistré si fail pour pouvoir redemander.
+                dateStr = "aucune";
             }
         });
 

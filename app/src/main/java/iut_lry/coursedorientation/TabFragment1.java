@@ -3,6 +3,7 @@ package iut_lry.coursedorientation;
 import android.content.Context;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -78,7 +79,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     LinearLayout joueursTab;
     TextView header;
-    ListView listViewPlayers;
     String nomEquipe;
     Button buttonCheckDate;
     EditText date;
@@ -89,6 +89,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     int essaiDate;
 
     ScrollView scroll;
+    LinearLayout layoutPlayers;
 
     // DB Class to perform DB related operations
     DBController controller;
@@ -128,7 +129,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         joueursTab = (LinearLayout) view.findViewById(R.id.joueursTab);
         joueursTab.setVisibility(View.GONE);
         header = (TextView) view.findViewById(R.id.itemHeader);
-        listViewPlayers = (ListView) view.findViewById(R.id.listViewPlayers);
         buttonCheckDate = (Button) view.findViewById(R.id.buttonCheckDate);
         buttonCheckDate.setOnClickListener(this);
         date = (EditText) view.findViewById(R.id.date);
@@ -148,6 +148,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         //Scroll down quand on appuie sur l'edittext Date
         scroll = (ScrollView) view.findViewById(R.id.scroll);
+        layoutPlayers = (LinearLayout) view.findViewById(R.id.layoutPlayers);
 
         //a faire
         /*date.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -299,30 +300,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         return name;
     }
 
-    /**** Method for Setting the Height of the ListView dynamically.
-     **** Hack to fix the issue of not showing all the items of the ListView
-     **** when placed inside a ScrollView  ****/
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount() ; i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-    }
-
     public void getPlayersAndRace()
     {
         //Create AsycHttpClient object
@@ -369,6 +346,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 if(!responseString.equals("erreur")) {
                     afficherJoueurs(responseString);
                 } else {
+                    //on vide la liste des joueurs et on cache tout
+                    if(layoutPlayers.getChildCount() > 0){
+                        layoutPlayers.removeAllViews();
+                        joueursTab.setVisibility(View.GONE);
+                    }
                     Toast.makeText(getActivity().getApplicationContext(), "Erreur, l'équipe est introuvable", Toast.LENGTH_LONG).show();
                 }
 
@@ -400,6 +382,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public void afficherJoueurs(String response){
 
         try {
+            //vider la liste des joueurs
+            if(layoutPlayers.getChildCount() > 0){
+                layoutPlayers.removeAllViews();
+            }
+
+
             // Extract JSON array from the response
             JSONArray arr = new JSONArray(response);
             System.out.println(arr.length());
@@ -413,24 +401,19 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     // Get JSON object
                     JSONObject obj = (JSONObject) arr.get(i);
 
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("joueurs",obj.get("prenom").toString() + " " + obj.get("nom").toString());
-                    listPlayers.add(map);
-
                     if(i==0){
                         nomEquipe = obj.get("nom_equipe").toString();
                     }
+
+                    TextView joueur = new TextView(getActivity());
+                    joueur.setText(obj.get("prenom").toString() + " " + obj.get("nom").toString());
+                    joueur.setPadding(20,10,0,10);
+                    joueur.setBackgroundResource(R.drawable.bg_players);
+                    joueur.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                    layoutPlayers.addView(joueur);
+
                 }
-
-                String[] from = new String[] {"joueurs"};
-                int[] to = new int[] { R.id.item1};
-
-                // Set the User Array list in ListView
-                ListAdapter adapter = new SpecialAdapter(getActivity(), listPlayers, R.layout.grid_item_one, from, to);
-                listViewPlayers.setAdapter(adapter);
-                setListViewHeightBasedOnChildren(listViewPlayers); //75 height avant ca
-                //registerForContextMenu(listViewPlayers);
-
 
                 //changer le header du tableau pour mettre le nom de l'équipe
                 header.setText("Joueurs de l'équipe \""+ nomEquipe +"\"");
@@ -694,9 +677,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     if(!obj.isNull("parcours.id"))
                     {
                         queryValues.put("parcours.id", obj.get("parcours.id").toString());
+                        queryValues.put("parcours.num_course", obj.get("parcours.num_course").toString());
                         queryValues.put("parcours.categorie", obj.get("parcours.categorie").toString());
                         queryValues.put("parcours.description", obj.get("parcours.description").toString());
-                        queryValues.put("parcours.date", obj.get("parcours.date").toString());
                     }
                     else if(!obj.isNull("liste_balises.id"))
                     {

@@ -359,7 +359,14 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         balisePointee.setText(baliseActuelle[0]);
         baliseSuivante.setText(baliseActuelle[1]);
         //azimut
-        baliseAzimut.setText(baliseActuelle[2] + "m " + baliseActuelle[3] + "°");
+        if(!baliseActuelle[2].equals("") && !baliseActuelle[3].equals("")){
+            baliseAzimut.setText(baliseActuelle[2] + "° " + baliseActuelle[3] + "m");
+        }
+        else
+        {
+            baliseAzimut.setText("");
+        }
+
 
 
         //stocker la variable pour vérifier quand on scanne.

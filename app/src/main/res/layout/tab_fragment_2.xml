@@ -31,48 +31,73 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    app:srcCompat="@mipmap/chrono"
-                    android:id="@+id/imageView"
-                    android:layout_height="200dp" />
-
-                <Chronometer
-                    android:layout_width="115dp"
-                    android:layout_height="110dp"
-                    android:id="@+id/chronometer1"
-                    android:fontFamily="sans-serif"
-                    android:textSize="18sp"
-                    android:textAlignment="center"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:paddingTop="64dp"
-                    android:textColor="#5b5d6e" />
-
-            </FrameLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1">
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:id="@+id/chrono"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_tuile"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp">
+
+                <TextView
+                    android:text="Chronomètre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_chrono"
+                    android:layout_marginTop="2dp"
+                    android:textAllCaps="false"
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <Chronometer
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/chronometer1"
+                        android:fontFamily="sans-serif"
+                        android:textSize="25sp"
+                        android:textAlignment="center"
+                        android:textColor="#5b5d6e"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        app:srcCompat="@drawable/racingpetit"
+                        android:id="@+id/imageView"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_tuile"
-                    android:layout_marginBottom="3dp">
+                    android:layout_marginBottom="3dp"
+                    android:layout_weight="1">
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -164,16 +189,16 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:layout_marginTop="3dp"
-                    android:layout_marginBottom="3dp"
                     android:id="@+id/azimutBalise"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_tuile">
+                    android:background="@drawable/bg_tuile"
+                    android:layout_weight="1">
 
                     <TextView
                         android:text="Azimut"

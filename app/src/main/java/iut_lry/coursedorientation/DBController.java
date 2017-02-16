@@ -28,11 +28,11 @@ public class DBController extends SQLiteOpenHelper {
             " num_course INTEGER )";
 
     private static final String CREATE_TABLE_COURSE = "CREATE TABLE" +
-            " course ( id INTEGER PRIMARY KEY, parcours INTEGER, date TEXT" +
+            " course ( id INTEGER PRIMARY KEY, date TEXT" +
             " temps TEXT )";
 
     private static final String CREATE_TABLE_PARCOURS = "CREATE TABLE" +
-            " parcours ( id INTEGER PRIMARY KEY, categorie TEXT," +
+            " parcours ( id INTEGER PRIMARY KEY, num_course INTEGER, categorie TEXT," +
             " description TEXT, date TEXT )";
 
     private static final String CREATE_TABLE_LISTE_BALISES = "CREATE TABLE" +
@@ -456,7 +456,7 @@ public class DBController extends SQLiteOpenHelper {
 
         String[] balise = new String[4];
 
-        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,azimut_distance,azimut_degre FROM liste_balises " +
+        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,azimut_degre,azimut_distance FROM liste_balises " +
                 "WHERE temps != '' AND temps=(SELECT max(temps) FROM liste_balises) ", null);
 
         if (cursor.moveToFirst()) {

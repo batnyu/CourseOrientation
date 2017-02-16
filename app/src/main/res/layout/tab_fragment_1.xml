@@ -24,45 +24,34 @@
             android:layout_marginRight="15dp"
             android:layout_marginTop="10dp">
 
-
-
             <LinearLayout
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:layout_marginBottom="5dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
-                    android:id="@+id/textView_course"
-                    android:textAllCaps="false"
-                    android:textSize="14sp"
-                    android:text="Numéro d'équipe" />
-
+                android:layout_marginBottom="5dp"
+                android:weightSum="2">
 
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
+                    android:orientation="vertical"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="5dp">
+                    android:layout_width="102dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_course"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:text="Course"
+                        android:layout_marginBottom="2dp" />
 
                     <EditText
-                        android:layout_width="wrap_content"
                         android:inputType="number"
                         android:ems="10"
                         android:layout_below="@+id/textView"
-                        android:id="@+id/numEquipe"
+                        android:id="@+id/numCourse"
                         style="@style/Widget.AppCompat.EditText"
-                        android:hint="Entrez votre numéro d'équipe"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
                         android:background="@drawable/bg_edittext"
                         android:paddingBottom="10dp"
                         android:paddingTop="10dp"
@@ -70,42 +59,91 @@
                         android:paddingLeft="15dp"
                         android:textCursorDrawable="@null"
                         android:textColor="#3b3b3b"
-                        android:layout_weight="148.94"
                         android:layout_height="match_parent"
                         android:layout_marginRight="5dp"
-                        android:textSize="17sp" />
+                        android:textSize="17sp"
+                        android:layout_width="match_parent"
+                        android:hint="xxx" />
 
-                    <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1">
-
-                        <ProgressBar
-                            style="@style/Widget.AppCompat.ProgressBar"
-                            android:id="@+id/progressBar3"
-                            android:layout_gravity="center_vertical|center_horizontal"
-                            android:layout_width="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
-                            android:layout_height="25dp"
-                            android:elevation="7dp"/>
-
-                        <Button
-                            android:text="Afficher"
-                            android:layout_below="@+id/linearLayout3"
-                            android:layout_centerHorizontal="true"
-                            android:id="@+id/dllPlayers"
-                            android:layout_gravity="center_horizontal"
-                            android:textSize="14sp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_button"
-                            android:textColor="@android:color/background_light"
-                            android:layout_width="105dp" />
-
-                    </FrameLayout>
                 </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_equipe"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:text="Équipe"
+                        android:layout_marginBottom="2dp" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:layout_width="144dp"
+                            android:inputType="number"
+                            android:ems="10"
+                            android:layout_below="@+id/textView"
+                            android:id="@+id/numEquipe"
+                            style="@style/Widget.AppCompat.EditText"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:background="@drawable/bg_edittext"
+                            android:paddingBottom="10dp"
+                            android:paddingTop="10dp"
+                            android:paddingStart="15dp"
+                            android:paddingLeft="15dp"
+                            android:textCursorDrawable="@null"
+                            android:textColor="#3b3b3b"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="5dp"
+                            android:textSize="17sp"
+                            android:layout_weight="1"
+                            android:hint="xxx" />
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <ProgressBar
+                                style="@style/Widget.AppCompat.ProgressBar"
+                                android:id="@+id/progressBar3"
+                                android:layout_gravity="center_vertical|center_horizontal"
+                                android:layout_width="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_height="25dp"
+                                android:elevation="7dp"/>
+
+                            <Button
+                                android:text="Afficher"
+                                android:layout_below="@+id/linearLayout3"
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/dllPlayers"
+                                android:layout_gravity="center_horizontal"
+                                android:textSize="14sp"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_button"
+                                android:textColor="@android:color/background_light"
+                                android:layout_width="105dp" />
+
+                        </FrameLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
 
             </LinearLayout>
 

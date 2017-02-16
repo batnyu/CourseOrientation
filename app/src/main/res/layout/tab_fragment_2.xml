@@ -38,47 +38,80 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:id="@+id/chrono"
+                android:id="@+id/left"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/bg_tuile"
                 android:layout_weight="1"
                 android:layout_marginRight="3dp">
 
-                <TextView
-                    android:text="Chronomètre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_chrono"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-
                 <LinearLayout
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:id="@+id/chrono"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="3dp"
+                    android:background="@drawable/bg_tuile">
+
+                    <TextView
+                        android:text="Chronomètre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_chrono"
+                        android:layout_marginTop="2dp"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
 
                     <Chronometer
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/chronometer1"
                         android:fontFamily="sans-serif"
                         android:textSize="25sp"
-                        android:textAlignment="center"
                         android:textColor="#5b5d6e"
                         android:layout_gravity="center_vertical"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:layout_marginTop="2dp"
+                        android:textAlignment="center" />
 
-                    <ImageView
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:id="@+id/liaisonsBalise"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_tuile"
+                    android:layout_weight="1"
+                    android:layout_marginTop="3dp">
+
+                    <TextView
+                        android:text="Liaisons"
                         android:layout_width="wrap_content"
-                        app:srcCompat="@drawable/racingpetit"
-                        android:id="@+id/imageView"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp" />
+                        android:id="@+id/textView_liaisons"
+                        android:layout_marginTop="2dp"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:text=""
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_liaisons_nb"
+                        android:layout_marginTop="2dp"
+                        android:textAllCaps="false"
+                        android:textSize="25sp"
+                        android:textColor="@color/zxing_result_view" />
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -95,7 +128,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_tuile"
                     android:layout_marginBottom="3dp"
                     android:layout_weight="1">
 
@@ -107,21 +139,16 @@
                         android:paddingRight="10dp"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="2dp"
-                        android:layout_marginRight="2dp"
                         android:id="@+id/startBalise"
                         android:layout_gravity="center_horizontal"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_tuile"
+                        android:layout_marginRight="3dp">
 
                         <TextView
                             android:text="Départ"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignLeft="@+id/numEquipe"
-                            android:layout_alignStart="@+id/numEquipe"
                             android:id="@+id/textView_balise_depart"
                             android:layout_marginTop="2dp"
                             android:textAllCaps="false"
@@ -129,11 +156,8 @@
 
                         <TextView
                             android:text=""
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignLeft="@+id/numEquipe"
-                            android:layout_alignStart="@+id/numEquipe"
                             android:id="@+id/textView_balise_depart_nb"
                             android:layout_marginTop="2dp"
                             android:textAllCaps="false"
@@ -150,21 +174,16 @@
                         android:paddingRight="10dp"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="2dp"
-                        android:layout_marginRight="2dp"
+                        android:layout_marginLeft="3dp"
                         android:id="@+id/endBalise"
                         android:layout_gravity="center_horizontal"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_tuile">
 
                         <TextView
                             android:text="Arrivée"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignLeft="@+id/numEquipe"
-                            android:layout_alignStart="@+id/numEquipe"
                             android:id="@+id/textView_balise_fin"
                             android:layout_marginTop="2dp"
                             android:textAllCaps="false"
@@ -172,11 +191,8 @@
 
                         <TextView
                             android:text=""
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignLeft="@+id/numEquipe"
-                            android:layout_alignStart="@+id/numEquipe"
                             android:id="@+id/textView_balise_fin_nb"
                             android:layout_marginTop="2dp"
                             android:textAllCaps="false"
@@ -195,31 +211,25 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:layout_marginTop="3dp"
-                    android:id="@+id/azimutBalise"
+                    android:id="@+id/pocheBalise"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/bg_tuile"
                     android:layout_weight="1">
 
                     <TextView
-                        android:text="Azimut"
+                        android:text="Poche"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignLeft="@+id/numEquipe"
-                        android:layout_alignStart="@+id/numEquipe"
-                        android:id="@+id/textView_azimut"
+                        android:id="@+id/textView_poche"
                         android:layout_marginTop="2dp"
                         android:textAllCaps="false"
                         android:textSize="14sp" />
 
                     <TextView
                         android:text=""
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignLeft="@+id/numEquipe"
-                        android:layout_alignStart="@+id/numEquipe"
-                        android:id="@+id/textView_azimut_nb"
+                        android:id="@+id/textView_poche_nb"
                         android:layout_marginTop="2dp"
                         android:textAllCaps="false"
                         android:textSize="25sp"
@@ -253,9 +263,6 @@
                     android:text="Total balises"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_total_balises"
                     android:textAllCaps="false"
                     android:textSize="14sp"
@@ -265,9 +272,6 @@
                     android:text="0/10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_total_balises_nb"
                     android:textAllCaps="false"
                     android:textSize="18sp"
@@ -308,9 +312,6 @@
                     android:text="Dernière balise pointée"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_balise_pointee"
                     android:textAllCaps="false"
                     android:textSize="14sp"
@@ -318,11 +319,8 @@
 
                 <TextView
                     android:text=""
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_balise_pointee_nb"
                     android:layout_marginTop="2dp"
                     android:textAllCaps="false"
@@ -347,9 +345,6 @@
                     android:text="Balise suivante à pointer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_balise_suivante"
                     android:textAllCaps="false"
                     android:textSize="14sp"
@@ -357,11 +352,8 @@
 
                 <TextView
                     android:text=""
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@+id/numEquipe"
-                    android:layout_alignStart="@+id/numEquipe"
                     android:id="@+id/textView_balise_suivante_nb"
                     android:layout_marginTop="2dp"
                     android:textAllCaps="false"
@@ -376,8 +368,6 @@
             android:id="@+id/scan_button"
             android:layout_gravity="center_vertical"
             android:text="SCAN"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="5dp"
             android:textSize="20sp" />
 
@@ -385,8 +375,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scan_format"
-            android:layout_below="@+id/scan_content"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="10dp" />
 
@@ -394,8 +382,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/scan_content"
-            android:layout_below="@+id/title1"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp" />
 

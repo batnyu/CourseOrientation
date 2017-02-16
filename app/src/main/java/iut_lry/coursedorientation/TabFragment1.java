@@ -65,7 +65,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     private Button btnFtoA;
     private Button btnFtoF;
 
+    EditText numCourse;
     EditText numEquipe;
+
+    String numCourseStr;
+    String numCourseStrActuel;
 
     String numEquipeStr;
     String numEquipeStrActuel;
@@ -82,6 +86,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     LinearLayout joueursTab;
     TextView header;
     String nomEquipe;
+    String categorie;
+    String num_parcours;
     Button buttonCheckDate;
     EditText date;
     int longueur;
@@ -102,6 +108,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_1, container, false);
+
+        numCourse = (EditText) view.findViewById(R.id.numCourse);
 
         numEquipe = (EditText) view.findViewById(R.id.numEquipe);
 
@@ -163,6 +171,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         });*/
 
+        //pour ajouter et enlever les / automatiquement pour la date
         longueur = 0;
 
         date.addTextChangedListener(new TextWatcher() {
@@ -240,12 +249,15 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             case R.id.dllPlayers:
 
+                numCourseStrActuel=numCourse.getText().toString();
                 numEquipeStrActuel=numEquipe.getText().toString();
 
-                if(!numEquipeStrActuel.equals(numEquipeStr))
+                if(!numEquipeStrActuel.equals(numEquipeStr) || !numCourseStrActuel.equals(numCourseStr))
                 {
+                    numCourse.clearFocus();
                     numEquipe.clearFocus();
                     mCallback.hideKeyboard();
+                    essaiDate = 0;
                     ipServer = getWifiApIpAddress();
                     if(!ipServer.equals("erreur"))
                     {
@@ -254,7 +266,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
                 else
                 {
-                    mCallback.showToast("Veuillez changer de numéro d'équipe avant de refaire une requête.","court");
+                    mCallback.showToast("Veuillez changer les données avant de refaire une requête.","court");
                 }
                 break;
 
@@ -355,9 +367,15 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         dllPlayers.setEnabled(false);
         dllPlayers.setText("");
 
-        numEquipeStr = numEquipe.getText().toString();
-        System.out.println(numEquipeStr);
+        //on récupère le num de la course
+        numCourseStr = numCourse.getText().toString();
+        System.out.println("course : " + numCourseStr);
 
+        //on récupère le num de l'équipe
+        numEquipeStr = numEquipe.getText().toString();
+        System.out.println("equipe : " + numEquipeStr);
+
+        params.put("numCourse", numCourseStr);
         params.put("numEquipe", numEquipeStr);
         //Log.d("tag", controller.composeJSONfromSQLite().toString());
         client.post("http://" + ipServer + ":80/testProjet/getPlayersTeamRace.php",params ,new AsyncHttpResponseHandler() {
@@ -379,16 +397,23 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 dllPlayers.setEnabled(true);
                 dllPlayers.setText("Afficher");
 
-                if(!responseString.equals("erreur")) {
+                if(!responseString.equals("erreur") && !responseString.equals("erreurParcours")) {
                     afficherJoueurs(responseString);
                 } else {
                     //on vide la liste des joueurs et on cache tout
                     if(layoutPlayers.getChildCount() > 0){
                         layoutPlayers.removeAllViews();
                         joueursTab.setVisibility(View.GONE);
+                        dllParkour.setVisibility(View.GONE);
                         date.setText("");
                     }
-                    Toast.makeText(getActivity().getApplicationContext(), "Erreur, l'équipe est introuvable", Toast.LENGTH_LONG).show();
+                    if(responseString.equals("erreur")) {
+                        Toast.makeText(getActivity().getApplicationContext(), "Erreur, l'équipe est introuvable", Toast.LENGTH_LONG).show();
+                    }
+                    else if(responseString.equals("erreurParcours")) {
+                        Toast.makeText(getActivity().getApplicationContext(), "La course n'a pas de parcours pour votre catégorie.", Toast.LENGTH_LONG).show();
+                    }
+
                 }
 
             }
@@ -440,6 +465,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                     if(i==0){
                         nomEquipe = obj.get("nom_equipe").toString();
+                        categorie = obj.get("categorie").toString();
+                        num_parcours = obj.get("num_parcours").toString();
                     }
 
                     TextView joueur = new TextView(getActivity());
@@ -453,15 +480,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
 
                 //changer le header du tableau pour mettre le nom de l'équipe
-                header.setText("Joueurs de l'équipe \""+ nomEquipe +"\"");
+                header.setText("Joueurs de l'équipe \""+ nomEquipe +"\" catégorie " + categorie);
                 //afficher le tableau et le truc pr rentrer la date de naissance
                 joueursTab.setVisibility(View.VISIBLE);
-
-                //On récupère la course et l'équipe
-                numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
-                numEquipeStr = numEquipe.getText().toString();
-
-                //controller.updateNumEquipe(numEquipeStr);
 
             }
         } catch (JSONException e) {
@@ -571,6 +592,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setTimeout(5000); // both connection and socket timeout
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
+        System.out.println("num parcours : " + num_parcours);
+        params.put("num_parcours", num_parcours);
         // Make Http call to getusers.php, Ne pas oublier le port sinon ca bug
         client.post("http://" + ipServer + ":80/testProjet/getParcours.php", params, new AsyncHttpResponseHandler() {
             @Override

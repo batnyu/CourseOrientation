@@ -64,7 +64,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     String nbBalisePointee;
     TextView baliseSuivante;
     String nbBaliseSuivante;
-    TextView baliseAzimut;
+    TextView balisePoche;
+    TextView baliseLiaisons;
 
     String[] baliseActuelle;
 
@@ -86,7 +87,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         baliseDepart = (TextView) view.findViewById(R.id.textView_balise_depart_nb);
         balisePointee = (TextView) view.findViewById(R.id.textView_balise_pointee_nb);
         baliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
-        baliseAzimut = (TextView) view.findViewById(R.id.textView_azimut_nb);
+        balisePoche = (TextView) view.findViewById(R.id.textView_poche_nb);
+        baliseLiaisons = (TextView) view.findViewById(R.id.textView_liaisons_nb);
 
         interface2 = (LinearLayout) view.findViewById(R.id.interface2);
         noParcours2 = (TextView) view.findViewById(R.id.noParcours2);
@@ -358,6 +360,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         balisePointee.setText(baliseActuelle[0]);
         baliseSuivante.setText(baliseActuelle[1]);
+        /*
         //azimut
         if(!baliseActuelle[2].equals("") && !baliseActuelle[3].equals("")){
             baliseAzimut.setText(baliseActuelle[2] + "° " + baliseActuelle[3] + "m");
@@ -365,7 +368,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         else
         {
             baliseAzimut.setText("");
-        }
+        }*/
 
 
 

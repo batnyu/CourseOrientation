@@ -11,6 +11,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -82,6 +84,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     String nomEquipe;
     Button buttonCheckDate;
     EditText date;
+    int longueur;
     String dateStr;
     String dateStrActuel;
     ProgressBar spinnerCheckDate;
@@ -159,6 +162,39 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             }
 
         });*/
+
+        longueur = 0;
+
+        date.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = date.getText().toString();
+                if(s.length()> longueur){
+
+                    if(text.length() == 2 || text.length() == 5){
+                        date.append("/");
+                    }
+                    longueur = text.length();
+                }
+                else {
+                    if(text.length() == 2 || text.length() == 5){
+                        date.getText().delete(text.length() - 1, text.length());
+                    }
+                    longueur=0;
+                }
+
+            }
+        });
 
         //initialiser les essais de requêtes pour la date.
         essaiDate = 0;
@@ -350,6 +386,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     if(layoutPlayers.getChildCount() > 0){
                         layoutPlayers.removeAllViews();
                         joueursTab.setVisibility(View.GONE);
+                        date.setText("");
                     }
                     Toast.makeText(getActivity().getApplicationContext(), "Erreur, l'équipe est introuvable", Toast.LENGTH_LONG).show();
                 }

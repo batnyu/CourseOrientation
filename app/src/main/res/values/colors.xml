@@ -9,5 +9,6 @@
     <color name="colorChrono">#5b5d6e</color>
     <color name="fond">#e7e7e7</color>
     <color name="fondProgressBar">#e6e6e6</color>
+    <color name="checkedTab">#d7ffb0</color>
 
 </resources>

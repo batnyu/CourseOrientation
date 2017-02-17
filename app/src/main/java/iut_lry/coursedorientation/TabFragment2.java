@@ -277,7 +277,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 //mettre à jour la dernière balise pointée et sa suivante
                 baliseActuelle = controller.getBaliseActuelle();
                 //stocker la variable pour vérifier quand on scanne.
-                nbBaliseSuivante = baliseActuelle[1];
+                nbBaliseSuivante = baliseActuelle[2];
                 controller.updateNextAlreadyChecked(nbBaliseSuivante);
 
             }
@@ -358,22 +358,25 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         //mettre à jour la dernière balise pointée et sa suivante
         baliseActuelle = controller.getBaliseActuelle();
 
+        //dernière balise
         balisePointee.setText(baliseActuelle[0]);
-        baliseSuivante.setText(baliseActuelle[1]);
-        /*
-        //azimut
-        if(!baliseActuelle[2].equals("") && !baliseActuelle[3].equals("")){
-            baliseAzimut.setText(baliseActuelle[2] + "° " + baliseActuelle[3] + "m");
+        //balise suivante
+        if((baliseActuelle[1].equals("obligatoire") || baliseActuelle[1].equals("optionnelle")) && baliseActuelle[3].equals("non"))
+        {
+            baliseSuivante.setText(baliseActuelle[2] + " (" + baliseActuelle[1] + ")");
+        }
+        else if(baliseActuelle[3].equals("oui"))
+        {
+            baliseSuivante.setText("Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m" + " (" + baliseActuelle[1] + ")");
         }
         else
         {
-            baliseAzimut.setText("");
-        }*/
-
+            baliseSuivante.setText(baliseActuelle[1]);
+        }
 
 
         //stocker la variable pour vérifier quand on scanne.
-        nbBaliseSuivante = baliseActuelle[1];
+        nbBaliseSuivante = baliseActuelle[2];
 
         //regarder si la balise est la dernière.
         if(nbBaliseSuivante.equals("aucune") && departOK){

@@ -3,6 +3,7 @@ package iut_lry.coursedorientation;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -43,7 +44,6 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     Button buttonSend;
     //Progress Dialog Object
     ProgressDialog prgDialog;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,8 +95,8 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
             interfaceMain.setVisibility(LinearLayout.VISIBLE);
             noParcours.setVisibility(LinearLayout.GONE);
 
-            // Set the User Array list in ListView
-            ListAdapter adapter = new SpecialAdapter(getActivity(), baliseList, R.layout.grid_item, from, to);
+            // Set the User Array list in ListView ( on peut utiliser specialadapter si envie tryhard couleur truc checké)
+            SpecialAdapter adapter = new SpecialAdapter(getActivity(), baliseList, R.layout.grid_item, from, to);
             ListView myList = (ListView) getActivity().findViewById(R.id.listview);
             myList.setAdapter(adapter);
             registerForContextMenu(myList);

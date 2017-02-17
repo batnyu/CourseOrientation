@@ -22,8 +22,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
         android:id="@+id/interface2">
 
@@ -297,19 +297,18 @@
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_tuile"
                 android:paddingLeft="10dp"
-                android:paddingRight="5dp"
+                android:paddingRight="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:id="@+id/lastBalise"
-                android:layout_weight="1"
                 android:layout_marginRight="3dp">
 
                 <TextView
-                    android:text="Dernière balise pointée"
+                    android:text="Dernière balise"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_balise_pointee"
@@ -342,7 +341,7 @@
                 android:layout_marginLeft="3dp">
 
                 <TextView
-                    android:text="Balise suivante à pointer"
+                    android:text="Balise suivante à scanner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_balise_suivante"
@@ -351,14 +350,16 @@
                     android:paddingTop="2dp" />
 
                 <TextView
-                    android:text=""
+                    android:text="aucune"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/textView_balise_suivante_nb"
                     android:layout_marginTop="2dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/zxing_result_view"
+                    android:textStyle="bold"
                     android:textAllCaps="false"
-                    android:textSize="25sp"
-                    android:textColor="@color/zxing_result_view" />
+                    android:paddingTop="6dp" />
             </LinearLayout>
         </LinearLayout>
 

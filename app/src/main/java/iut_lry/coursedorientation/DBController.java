@@ -33,12 +33,12 @@ public class DBController extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_PARCOURS = "CREATE TABLE" +
             " parcours ( id INTEGER PRIMARY KEY, num_course INTEGER, categorie TEXT," +
-            " description TEXT, date TEXT )";
+            " description TEXT)";
 
     private static final String CREATE_TABLE_LISTE_BALISES = "CREATE TABLE" +
             " liste_balises ( id INTEGER PRIMARY KEY, num_parcours INTEGER," +
             " num_balise INTEGER," +
-            " suivante INTEGER, azimut TEXT, azimut_distance INTEGER," +
+            " suivante TEXT, num_suivante INTEGER, azimut TEXT, azimut_distance INTEGER," +
             " azimut_degre INTEGER," +
             " depart INTEGER, arrivee INTEGER, liaison TEXT," +
             " groupe TEXT, points INTEGER, temps TEXT )";
@@ -52,7 +52,7 @@ public class DBController extends SQLiteOpenHelper {
             " balise_sortie INTEGER, points_bonus INTEGER )";
 
     private static final String CREATE_TABLE_LISTE_LIAISONS = "CREATE TABLE" +
-            " liste_liaisons (  num INTEGER PRIMARY KEY, description TEXT," +
+            " liste_liaisons (  num INTEGER PRIMARY KEY, num_parcours INTEGER, description TEXT," +
             " points INTEGER )";
 
     private static final String CREATE_TABLE_LIAISON = "CREATE TABLE" +
@@ -146,9 +146,9 @@ public class DBController extends SQLiteOpenHelper {
             System.out.println("parcours");
             //parcours
             values.put("id", queryValues.get("parcours.id"));
+            values.put("num_course", queryValues.get("parcours.num_course"));
             values.put("categorie", queryValues.get("parcours.categorie"));
             values.put("description", queryValues.get("parcours.description"));
-            values.put("date", queryValues.get("parcours.date"));
             database.insert("parcours", null, values);
         }
         else if(queryValues.get("liste_balises.id") != null)
@@ -160,6 +160,7 @@ public class DBController extends SQLiteOpenHelper {
             values.put("num_parcours", queryValues.get("liste_balises.num_parcours"));
             values.put("num_balise", queryValues.get("liste_balises.num_balise"));
             values.put("suivante", queryValues.get("liste_balises.suivante"));
+            values.put("num_suivante", queryValues.get("liste_balises.num_suivante"));
             values.put("azimut", queryValues.get("liste_balises.azimut"));
             values.put("azimut_distance", queryValues.get("liste_balises.azimut_distance"));
             values.put("azimut_degre", queryValues.get("liste_balises.azimut_degre"));
@@ -198,6 +199,7 @@ public class DBController extends SQLiteOpenHelper {
             //liste_liaisons
             values = new ContentValues();
             values.put("num", queryValues.get("liste_liaisons.num"));
+            values.put("num_parcours", queryValues.get("liste_liaisons.num_parcours"));
             values.put("description", queryValues.get("liste_liaisons.description"));
             values.put("points", queryValues.get("liste_liaisons.points"));
             database.insert("liste_liaisons", null, values);
@@ -238,8 +240,9 @@ public class DBController extends SQLiteOpenHelper {
         usersList = new ArrayList<HashMap<String, String>>();
         //String selectQuery = "SELECT * FROM parcours ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
         //String selectQuery = "SELECT * FROM liste_balises ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
-        String selectQuery = "SELECT liste_balises.num_balise,liste_balises.temps,liste_balises.suivante,balise.poste " +
-                             "FROM liste_balises INNER JOIN balise ON liste_balises.num_balise = balise.num " +
+        String selectQuery = "SELECT liste_balises.num_balise,liste_balises.temps,liste_balises.suivante,liste_balises.num_suivante," +
+                             "balise.poste,liste_balises.azimut,liste_balises.azimut_degre,liste_balises.azimut_distance" +
+                             " FROM liste_balises INNER JOIN balise ON liste_balises.num_balise = balise.num " +
                              "ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
 
 
@@ -250,8 +253,19 @@ public class DBController extends SQLiteOpenHelper {
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put("num_balise", cursor.getString(0));
                 map.put("temps", cursor.getString(1));
-                map.put("suivante", cursor.getString(2));
-                map.put("poste", cursor.getString(3));
+                if(cursor.getString(2).equals("au choix") || cursor.getString(2).equals("aucune"))
+                {
+                    map.put("suivante", cursor.getString(2));
+                }
+                else if(cursor.getString(5).equals("non") && !cursor.getString(2).equals("au choix"))
+                {
+                    map.put("suivante", cursor.getString(3) + " (" + cursor.getString(2) + ")");
+                }
+                else
+                {
+                    map.put("suivante", cursor.getString(6) +"° " + cursor.getString(7) + "m" + " (" + cursor.getString(2) + ")");
+                }
+                map.put("poste", cursor.getString(4));
                 usersList.add(map);
             } while (cursor.moveToNext());
         }
@@ -269,16 +283,17 @@ public class DBController extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery("SELECT num_balise,temps FROM liste_balises " +
                                           "WHERE num_balise = ? AND temps != ''", new String[]{baliseSuivante});
 
-        Cursor cursor2 = database.rawQuery("SELECT num_balise,temps,suivante FROM liste_balises " +
-                "WHERE suivante = ?", new String[]{baliseSuivante});
+        Cursor cursor2 = database.rawQuery("SELECT num_balise,temps,suivante,num_suivante FROM liste_balises " +
+                "WHERE num_suivante = ?", new String[]{baliseSuivante});
 
         if(cursor.moveToFirst())
         {
             if(cursor2.moveToFirst()){
                 ContentValues newValues = new ContentValues();
                 newValues.put("suivante", "au choix");
+                newValues.put("num_suivante", "");
                 String[] args = new String[]{baliseSuivante};
-                database.update("liste_balises", newValues, "suivante=?", args);
+                database.update("liste_balises", newValues, "num_suivante=?", args);
                 cursor2.close();
             }
             cursor.close();
@@ -304,7 +319,7 @@ public class DBController extends SQLiteOpenHelper {
                     database.close();
                     return 3;
                 }
-                else if (departOK && (balise.equals(baliseSuivante) || baliseSuivante.equals("au choix"))) //si la première balise a déjà été scanné
+                else if (departOK && (balise.equals(baliseSuivante) || baliseSuivante.equals(""))) //si la première balise a déjà été scanné
                 {
                     cursor.close();
                     database.close();
@@ -454,28 +469,21 @@ public class DBController extends SQLiteOpenHelper {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
-        String[] balise = new String[4];
+        String[] balise = new String[6];
 
-        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,azimut_degre,azimut_distance FROM liste_balises " +
+        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,num_suivante,azimut,azimut_degre,azimut_distance FROM liste_balises " +
                 "WHERE temps != '' AND temps=(SELECT max(temps) FROM liste_balises) ", null);
 
         if (cursor.moveToFirst()) {
 
-            for(int i=0;i<4;i++)
+            for(int i=0;i<6;i++)
             {
-                if(cursor.getString(i).equals("0"))
-                {
-                    balise[i] = "";
-                }
-                else
-                {
-                    balise[i] = cursor.getString(i);
-                }
+                balise[i] = cursor.getString(i);
             }
         }
         else
         {
-            for(int i=0;i<4;i++)
+            for(int i=0;i<6;i++)
             {
                 balise[i] = "";
             }

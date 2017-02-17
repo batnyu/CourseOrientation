@@ -747,6 +747,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                         queryValues.put("liste_balises.num_parcours", obj.get("liste_balises.num_parcours").toString());
                         queryValues.put("liste_balises.num_balise", obj.get("liste_balises.num_balise").toString());
                         queryValues.put("liste_balises.suivante", obj.get("liste_balises.suivante").toString());
+                        queryValues.put("liste_balises.num_suivante", obj.get("liste_balises.num_suivante").toString());
                         queryValues.put("liste_balises.azimut", obj.get("liste_balises.azimut").toString());
                         queryValues.put("liste_balises.azimut_distance", obj.get("liste_balises.azimut_distance").toString());
                         queryValues.put("liste_balises.azimut_degre", obj.get("liste_balises.azimut_degre").toString());
@@ -772,6 +773,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     else if(!obj.isNull("liste_liaisons.num"))
                     {
                         queryValues.put("liste_liaisons.num", obj.get("liste_liaisons.num").toString());
+                        queryValues.put("liste_liaisons.num_parcours", obj.get("liste_liaisons.num_parcours").toString());
                         queryValues.put("liste_liaisons.description", obj.get("liste_liaisons.description").toString());
                         queryValues.put("liste_liaisons.points", obj.get("liste_liaisons.points").toString());
                     }

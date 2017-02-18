@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -367,7 +368,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         }
         else if(baliseActuelle[3].equals("oui"))
         {
+            //Quand prochaine est azimut
             baliseSuivante.setText("Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m" + " (" + baliseActuelle[1] + ")");
+            Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+            // Vibrate for 500 milliseconds
+            v.vibrate(500);
         }
         else
         {
@@ -379,7 +384,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         nbBaliseSuivante = baliseActuelle[2];
 
         //regarder si la balise est la dernière.
-        if(nbBaliseSuivante.equals("aucune") && departOK){
+        if(baliseActuelle[1].equals("aucune") && departOK){
             timeElapsed.stop();
             departOK=false;
             mCallback.showToast("Vous avez scanné la balise de fin !","long");

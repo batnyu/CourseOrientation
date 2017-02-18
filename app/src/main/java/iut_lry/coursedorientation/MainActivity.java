@@ -3,6 +3,8 @@ package iut_lry.coursedorientation;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,11 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements IFragmentToActivity {
@@ -99,6 +106,28 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    public String getWifiApIpAddress() {
+        String myIP = null;
+        final WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        final DhcpInfo dhcp = manager.getDhcpInfo();
+        //conversion chelou pour la mettre en string adresse IP
+        byte[] myIPAddress = BigInteger.valueOf(dhcp.gateway).toByteArray();
+        // you must reverse the byte array before conversion. Use Apache's commons library
+        ArrayUtils.reverse(myIPAddress);
+        InetAddress myInetIP = null;
+        try {
+            myInetIP = InetAddress.getByAddress(myIPAddress);
+            myIP = myInetIP.getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            Log.d("erreur ",e.getMessage());
+            showToast("Veuillez activer votre Wi-fi, connectez-vous au réseau de l'organisateur et réessayez.","long");
+            myIP = "erreur";
+        }
+
+        return myIP;
     }
 
     @Override

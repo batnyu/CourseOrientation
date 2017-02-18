@@ -10,6 +10,8 @@ public interface IFragmentToActivity {
 
     void hideKeyboard();
 
+    public String getWifiApIpAddress();
+
     void communicateToFragment2();
 
     void communicateToFragment3();

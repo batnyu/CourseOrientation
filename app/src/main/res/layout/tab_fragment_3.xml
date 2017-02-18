@@ -26,7 +26,7 @@
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
     android:paddingTop="10dp"
-        android:paddingBottom="10dp">
+        android:paddingBottom="5dp">
     <!-- Header -->
 
 
@@ -82,7 +82,7 @@
             android:textColor="#ffffff"
             android:paddingLeft="10dp"
             android:text="Suivante"
-            android:background="@color/zxing_custom_viewfinder_laser" />
+            android:background="@android:color/holo_blue_light" />
         <TextView android:id="@+id/item4"
             android:layout_height="fill_parent"
             android:layout_width="wrap_content"
@@ -94,7 +94,7 @@
             android:textColor="#ffffff"
             android:paddingLeft="10dp"
             android:text="Poste"
-            android:background="@android:color/darker_gray"
+            android:background="@android:color/holo_purple"
             android:elevation="0dp" />
     </LinearLayout>
 
@@ -110,13 +110,46 @@
 
     </LinearLayout>
 
-        <Button
-            android:text="Envoyer le parcours"
-            android:layout_width="212dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/buttonSend"
-            android:elevation="0dp"
-            android:layout_gravity="center" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingLeft="50dp"
+                android:id="@+id/layoutEnvoiParkour">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Envoi en cours"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/white" />
+
+                <ProgressBar
+                    style="@style/Widget.AppCompat.ProgressBar"
+                    android:id="@+id/progressBarSend"
+                    android:layout_height="20dp"
+                    android:layout_width="50dp" />
+
+            </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:text="Envoyer le parcours"
+                android:id="@+id/buttonSend"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
+
+        </FrameLayout>
 
         <!-- List Divider
     <View android:layout_width="fill_parent"

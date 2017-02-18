@@ -1,10 +1,7 @@
 package iut_lry.coursedorientation;
 
 import android.content.Context;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -13,23 +10,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,31 +29,20 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 import cz.msebera.android.httpclient.Header;
 
-import static android.graphics.Color.WHITE;
 import static android.graphics.Color.rgb;
 
 public class TabFragment1 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
-    private Button btnFtoA;
-    private Button btnFtoF;
 
     EditText numCourse;
     EditText numEquipe;
@@ -78,10 +57,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     private Button dllPlayers;
     ProgressBar spinnerCheckPlayers;
+    LinearLayout layoutSpinnerCheckPlayers;
 
-    RelativeLayout chargement;
+
     private Button dllParkour;
     ProgressBar spinner;
+    LinearLayout layoutDllParkour;
 
     LinearLayout joueursTab;
     TextView header;
@@ -94,6 +75,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     String dateStr;
     String dateStrActuel;
     ProgressBar spinnerCheckDate;
+    LinearLayout layoutSpinnerCheckDate;
 
     int essaiDate;
 
@@ -135,7 +117,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         spinnerCheckPlayers = (ProgressBar) view.findViewById(R.id.progressBar3);
         spinnerCheckPlayers.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
-        spinnerCheckPlayers.setVisibility(View.GONE);
+        layoutSpinnerCheckPlayers = (LinearLayout) view.findViewById(R.id.layoutSpinnerCheckPlayers);
+        layoutSpinnerCheckPlayers.setVisibility(View.GONE);
 
         joueursTab = (LinearLayout) view.findViewById(R.id.joueursTab);
         joueursTab.setVisibility(View.GONE);
@@ -145,17 +128,20 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         date = (EditText) view.findViewById(R.id.date);
         spinnerCheckDate = (ProgressBar) view.findViewById(R.id.progressBar4);
         spinnerCheckDate.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
-        spinnerCheckDate.setVisibility(View.GONE);
+        layoutSpinnerCheckDate = (LinearLayout) view.findViewById(R.id.layoutSpinnerCheckDate);
+        layoutSpinnerCheckDate.setVisibility(View.GONE);
 
         dllParkour = (Button) view.findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
         dllParkour.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
-        dllParkour.setTextColor(WHITE);
         dllParkour.setVisibility(View.GONE);
 
         spinner = (ProgressBar) view.findViewById(R.id.progressBar2);
         spinner.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
-        spinner.setVisibility(View.GONE);
+        layoutDllParkour = (LinearLayout) view.findViewById(R.id.layoutDllParkour);
+        layoutDllParkour.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
+        layoutDllParkour.setVisibility(View.GONE);
+
 
         //Scroll down quand on appuie sur l'edittext Date
         scroll = (ScrollView) view.findViewById(R.id.scroll);
@@ -258,7 +244,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     numEquipe.clearFocus();
                     mCallback.hideKeyboard();
                     essaiDate = 0;
-                    ipServer = getWifiApIpAddress();
+                    ipServer = mCallback.getWifiApIpAddress();
                     if(!ipServer.equals("erreur"))
                     {
                         getPlayersAndRace();
@@ -283,7 +269,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 {
                     date.clearFocus();
                     mCallback.hideKeyboard();
-                    ipServer = getWifiApIpAddress();
+                    ipServer = mCallback.getWifiApIpAddress();
                     if(!ipServer.equals("erreur"))
                     {
                         checkDate();
@@ -296,49 +282,14 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.dllParkour:
-                ipServer = getWifiApIpAddress();
+                ipServer = mCallback.getWifiApIpAddress();
                 if(!ipServer.equals("erreur"))
                 {
                     syncSQLiteMySQLDB();
                 }
                 break;
-/*
-            case R.id.buttonDel:
-                //test pour reset table qd télécharge le parcours
-                controller.deleteTable("parcours");
-                controller.deleteTable("liste_balises");
-                controller.deleteTable("balise");
-                controller.deleteTable("groupe");
-                controller.deleteTable("liste_liaisons");
-                controller.deleteTable("liaison");
-                mCallback.communicateToFragment3();
-                mCallback.communicateToFragment2();
-                break;*/
         }
     }
-
-    public String getWifiApIpAddress() {
-        String myIP = null;
-        final WifiManager manager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-        final DhcpInfo dhcp = manager.getDhcpInfo();
-        //conversion chelou pour la mettre en string adresse IP
-        byte[] myIPAddress = BigInteger.valueOf(dhcp.gateway).toByteArray();
-        // you must reverse the byte array before conversion. Use Apache's commons library
-        ArrayUtils.reverse(myIPAddress);
-        InetAddress myInetIP = null;
-        try {
-            myInetIP = InetAddress.getByAddress(myIPAddress);
-            myIP = myInetIP.getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            Log.d("erreur ",e.getMessage());
-            mCallback.showToast("Veuillez activer votre Wi-fi, connectez-vous au réseau de l'organisateur et réessayez.","long");
-            myIP = "erreur";
-        }
-
-        return myIP;
-    }
-
 
 
     public String getWifiNetworkName() {
@@ -362,10 +313,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setTimeout(5000); // both connection and socket timeout
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
-        spinnerCheckPlayers.setVisibility(View.VISIBLE);
-        //dllPlayers.setVisibility(View.INVISIBLE);
-        dllPlayers.setEnabled(false);
-        dllPlayers.setText("");
+        layoutSpinnerCheckPlayers.setVisibility(View.VISIBLE);
+        dllPlayers.setVisibility(View.INVISIBLE);
 
         //on récupère le num de la course
         numCourseStr = numCourse.getText().toString();
@@ -392,10 +341,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 System.out.println(responseString);
 
-                spinnerCheckPlayers.setVisibility(View.GONE);
-                //dllPlayers.setVisibility(View.VISIBLE);
-                dllPlayers.setEnabled(true);
-                dllPlayers.setText("Afficher");
+                layoutSpinnerCheckPlayers.setVisibility(View.GONE);
+                dllPlayers.setVisibility(View.VISIBLE);
 
                 if(!responseString.equals("erreur") && !responseString.equals("erreurParcours")) {
                     afficherJoueurs(responseString);
@@ -430,9 +377,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                             "[Most common Error: Device might not be connected to Internet]","long");
                 }
 
-                spinnerCheckPlayers.setVisibility(View.GONE);
-                dllPlayers.setEnabled(true);
-                dllPlayers.setText("Afficher");
+                layoutSpinnerCheckPlayers.setVisibility(View.GONE);
+                dllPlayers.setVisibility(View.VISIBLE);
 
                 //on ré-initialise le numEquipe si fail pour pouvoir redemander.
                 numEquipeStr="aucune";
@@ -504,9 +450,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setTimeout(5000); // both connection and socket timeout
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
-        spinnerCheckDate.setVisibility(View.VISIBLE);
-        buttonCheckDate.setText("");
-        buttonCheckDate.setEnabled(false);
+        layoutSpinnerCheckDate.setVisibility(View.VISIBLE);
+        buttonCheckDate.setVisibility(View.INVISIBLE);
 
         numEquipeStr = numEquipe.getText().toString();
         System.out.println(numEquipeStr);
@@ -531,9 +476,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 System.out.println(responseString);
 
-                spinnerCheckDate.setVisibility(View.GONE);
-                buttonCheckDate.setText("Vérifier");
-                buttonCheckDate.setEnabled(true);
+                layoutSpinnerCheckDate.setVisibility(View.GONE);
+                buttonCheckDate.setVisibility(View.VISIBLE);
 
                 if(!responseString.equals("erreur")) {
                     mCallback.showToast("Date de naissance OK !\nVous pouvez télécharger le parcours !","court");
@@ -560,9 +504,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                             "[Most common Error: Device might not be connected to Internet]","long");
                 }
 
-                spinnerCheckDate.setVisibility(View.GONE);
-                buttonCheckDate.setText("Vérifier");
-                buttonCheckDate.setEnabled(true);
+                layoutSpinnerCheckDate.setVisibility(View.GONE);
+                buttonCheckDate.setVisibility(View.VISIBLE);
 
                 //on ré-initialise la date enregistré si fail pour pouvoir redemander.
                 dateStr = "aucune";
@@ -580,9 +523,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         RequestParams params = new RequestParams();
 
         //cacher le bouton et afficher le spinner
-        spinner.setVisibility(View.VISIBLE);
-        dllParkour.setEnabled(false);
-        dllParkour.setText("Téléchargement en cours");
+        dllParkour.setVisibility(View.INVISIBLE);
+        layoutDllParkour.setVisibility(View.VISIBLE);
 
         client.setConnectTimeout(5000);
         //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
@@ -593,7 +535,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
         System.out.println("num parcours : " + num_parcours);
+        System.out.println("num course : " + numCourseStr);
+        System.out.println("num equipe : " + numEquipeStr);
         params.put("num_parcours", num_parcours);
+        params.put("num_course", numCourseStr);
+        params.put("num_equipe", numEquipeStr);
         // Make Http call to getusers.php, Ne pas oublier le port sinon ca bug
         client.post("http://" + ipServer + ":80/testProjet/getParcours.php", params, new AsyncHttpResponseHandler() {
             @Override
@@ -606,9 +552,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 // called when response HTTP status is "200 OK"
 
                 //cacher le spinner et afficher le bouton
-                spinner.setVisibility(View.GONE);
-                dllParkour.setEnabled(true);
-                dllParkour.setText("Télécharger le parcours");
+                dllParkour.setVisibility(View.VISIBLE);
+                layoutDllParkour.setVisibility(View.GONE);
 
                 //je sais pas encore lequel choisir
                 //Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
@@ -632,9 +577,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
 
                 //cacher le spinner et afficher le bouton
-                spinner.setVisibility(View.GONE);
-                dllParkour.setEnabled(true);
-                dllParkour.setText("Télécharger le parcours");
+                dllParkour.setVisibility(View.VISIBLE);
+                layoutDllParkour.setVisibility(View.GONE);
 
                 if (statusCode == 404) {
                     mCallback.showToast("Error " + statusCode + "\nRequested resource not found","long");
@@ -705,6 +649,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public void updateParcours(String response){
 
         //test pour reset table qd télécharge le parcours
+        controller.deleteTable("joueurs");
+        controller.deleteTable("equipe");
+        controller.deleteTable("course");
         controller.deleteTable("parcours");
         controller.deleteTable("liste_balises");
         controller.deleteTable("balise");
@@ -734,7 +681,28 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                     // Add parcours.id extracted from Object
 
-                    if(!obj.isNull("parcours.id"))
+                    if(!obj.isNull("joueurs.id"))
+                    {
+                        queryValues.put("joueurs.id", obj.get("joueurs.id").toString());
+                        queryValues.put("joueurs.prenom", obj.get("joueurs.prenom").toString());
+                        queryValues.put("joueurs.nom", obj.get("joueurs.nom").toString());
+                        queryValues.put("joueurs.date_naissance", obj.get("joueurs.date_naissance").toString());
+                        queryValues.put("joueurs.num_equipe", obj.get("joueurs.num_equipe").toString());
+                    }
+                    else if(!obj.isNull("equipe.id"))
+                    {
+                        queryValues.put("equipe.id", obj.get("equipe.id").toString());
+                        queryValues.put("equipe.nom_equipe", obj.get("equipe.nom_equipe").toString());
+                        queryValues.put("equipe.categorie", obj.get("equipe.categorie").toString());
+                        queryValues.put("equipe.num_course", obj.get("equipe.num_course").toString());
+                    }
+                    else if(!obj.isNull("course.id"))
+                    {
+                        queryValues.put("course.id", obj.get("course.id").toString());
+                        queryValues.put("course.date", obj.get("course.date").toString());
+                        queryValues.put("course.temps", obj.get("course.temps").toString());
+                    }
+                    else if(!obj.isNull("parcours.id"))
                     {
                         queryValues.put("parcours.id", obj.get("parcours.id").toString());
                         queryValues.put("parcours.num_course", obj.get("parcours.num_course").toString());
@@ -789,13 +757,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     // Insert User into SQLite DB
                     controller.insertDataParcours(queryValues);
                 }
-
-                //On récupère la course et l'équipe
-                numEquipe = (EditText) getActivity().findViewById(R.id.numEquipe);
-                numEquipeStr = numEquipe.getText().toString();
-
-                //controller.updateNumEquipe(numEquipeStr);
-
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block

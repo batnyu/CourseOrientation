@@ -19,49 +19,68 @@ import com.google.gson.GsonBuilder;
 
 public class DBController extends SQLiteOpenHelper {
 
-    private static final String CREATE_TABLE_JOUEURS = "CREATE TABLE" +
-            " joueurs ( id INTEGER PRIMARY KEY, prenom TEXT, nom TEXT" +
-            " date_naissance TEXT, num_equipe INTEGER )";
+    private static final String CREATE_TABLE_JOUEURS = "CREATE TABLE joueurs ( " +
+            "id INTEGER PRIMARY KEY, " +
+            "prenom TEXT, " +
+            "nom TEXT, " +
+            "date_naissance TEXT, " +
+            "num_equipe INTEGER )";
 
-    private static final String CREATE_TABLE_EQUIPE = "CREATE TABLE" +
-            " equipe ( id INTEGER PRIMARY KEY, nom_equipe TEXT, categorie TEXT" +
-            " num_course INTEGER )";
+    private static final String CREATE_TABLE_EQUIPE = "CREATE TABLE equipe ( " +
+            "id INTEGER PRIMARY KEY, " +
+            "nom_equipe TEXT, " +
+            "categorie TEXT, " +
+            "num_course INTEGER )";
 
-    private static final String CREATE_TABLE_COURSE = "CREATE TABLE" +
-            " course ( id INTEGER PRIMARY KEY, date TEXT" +
-            " temps TEXT )";
+    private static final String CREATE_TABLE_COURSE = "CREATE TABLE course ( " +
+            "id INTEGER PRIMARY KEY, " +
+            "date TEXT, " +
+            "temps TEXT )";
 
-    private static final String CREATE_TABLE_PARCOURS = "CREATE TABLE" +
-            " parcours ( id INTEGER PRIMARY KEY, num_course INTEGER, categorie TEXT," +
-            " description TEXT)";
+    private static final String CREATE_TABLE_PARCOURS = "CREATE TABLE parcours ( " +
+            "id INTEGER PRIMARY KEY, " +
+            "num_course INTEGER, " +
+            "categorie TEXT, " +
+            "description TEXT)";
 
-    private static final String CREATE_TABLE_LISTE_BALISES = "CREATE TABLE" +
-            " liste_balises ( id INTEGER PRIMARY KEY, num_parcours INTEGER," +
-            " num_balise INTEGER," +
-            " suivante TEXT, num_suivante INTEGER, azimut TEXT, azimut_distance INTEGER," +
-            " azimut_degre INTEGER," +
-            " depart INTEGER, arrivee INTEGER, liaison TEXT," +
-            " groupe TEXT, points INTEGER, temps TEXT )";
+    private static final String CREATE_TABLE_LISTE_BALISES = "CREATE TABLE liste_balises ( " +
+            "id INTEGER PRIMARY KEY, " +
+            "num_parcours INTEGER, " +
+            "num_balise INTEGER, " +
+            "suivante TEXT, " +
+            "num_suivante INTEGER, " +
+            "azimut TEXT, " +
+            "azimut_distance INTEGER, " +
+            "azimut_degre INTEGER, " +
+            "depart INTEGER, " +
+            "arrivee INTEGER, " +
+            "liaison TEXT, " +
+            "groupe TEXT, " +
+            "points INTEGER, " +
+            "temps TEXT )";
 
-    private static final String CREATE_TABLE_BALISE = "CREATE TABLE" +
-            " balise ( num INTEGER PRIMARY KEY, coord_gps INTEGER," +
-            " poste TEXT )";
+    private static final String CREATE_TABLE_BALISE = "CREATE TABLE balise ( " +
+            "num INTEGER PRIMARY KEY, " +
+            "coord_gps INTEGER, " +
+            "poste TEXT )";
 
-    private static final String CREATE_TABLE_GROUPE = "CREATE TABLE" +
-            " groupe ( nom_groupe TEXT PRIMARY KEY, balise_entree INTEGER," +
-            " balise_sortie INTEGER, points_bonus INTEGER )";
+    private static final String CREATE_TABLE_GROUPE = "CREATE TABLE groupe ( " +
+            "nom_groupe TEXT PRIMARY KEY, " +
+            "balise_entree INTEGER, " +
+            "balise_sortie INTEGER, " +
+            "points_bonus INTEGER )";
 
-    private static final String CREATE_TABLE_LISTE_LIAISONS = "CREATE TABLE" +
-            " liste_liaisons (  num INTEGER PRIMARY KEY, num_parcours INTEGER, description TEXT," +
-            " points INTEGER )";
+    private static final String CREATE_TABLE_LISTE_LIAISONS = "CREATE TABLE liste_liaisons ( " +
+            "num INTEGER PRIMARY KEY, " +
+            "num_parcours INTEGER, " +
+            "description TEXT, " +
+            "points INTEGER )";
 
-    private static final String CREATE_TABLE_LIAISON = "CREATE TABLE" +
-            " liaison (  num INTEGER, balise INTEGER," +
-            " ordre INTEGER )";
+    private static final String CREATE_TABLE_LIAISON = "CREATE TABLE liaison ( " +
+            "num INTEGER,  " +
+            "balise INTEGER, " +
+            "ordre INTEGER )";
 
-    private static final String CREATE_TABLE_RESULTATS = "CREATE TABLE" +
-            " resultats (  id INTEGER PRIMARY KEY, course INTEGER," +
-            " equipe INTEGER, balise INTEGER, temps TEXT )";
 
     public DBController(Context applicationcontext) {
         super(applicationcontext, "course.db", null, 1);
@@ -80,15 +99,13 @@ public class DBController extends SQLiteOpenHelper {
         database.execSQL(CREATE_TABLE_GROUPE);
         database.execSQL(CREATE_TABLE_LISTE_LIAISONS);
         database.execSQL(CREATE_TABLE_LIAISON);
-        database.execSQL(CREATE_TABLE_RESULTATS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int version_old, int current_version) {
         String query;
         query = "DROP TABLE IF EXISTS joueurs, equipe, course, parcours," +
-                " liste_balises, balise, groupe, liste_liaisons, liaison," +
-                " resultats";
+                " liste_balises, balise, groupe, liste_liaisons, liaison";
         database.execSQL(query);
         onCreate(database);
     }
@@ -98,50 +115,42 @@ public class DBController extends SQLiteOpenHelper {
         database.execSQL("delete from " + TABLE_NAME);
     }
 
-    /**
-     * Inserts User into SQLite DB
-     *
-     * @param queryValues
-     */
-    public void insertDataEquipe(HashMap<String, String> queryValues) {
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        //joueurs
-        values.put("id", queryValues.get("joueurs.id"));
-        values.put("prenom", queryValues.get("joueurs.prenom"));
-        values.put("nom", queryValues.get("joueurs.nom"));
-        values.put("date_naissance", queryValues.get("joueurs.date_naissance"));
-        values.put("num_equipe", queryValues.get("joueurs.num_equipe"));
-        database.insert("joueurs", null, values);
-
-        //equipe
-        values = new ContentValues();
-        values.put("id", queryValues.get("equipe.id"));
-        values.put("nom_equipe", queryValues.get("equipe.nom_equipe"));
-        values.put("categorie", queryValues.get("equipe.categorie"));
-        values.put("num_course", queryValues.get("equipe.num_course"));
-        database.insert("equipe", null, values);
-
-        //course
-        values = new ContentValues();
-        values.put("id", queryValues.get("course.id"));
-        values.put("parcours", queryValues.get("course.parcours"));
-        values.put("date", queryValues.get("course.date"));
-        values.put("temps", queryValues.get("course.temps"));
-        database.insert("course", null, values);
-
-        database.close();
-    }
-
     public void insertDataParcours(HashMap<String, String> queryValues) {
 
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        //System.out.println(queryValues.get("parcours.id"));
-
-        if(queryValues.get("parcours.id") != null)
+        if(queryValues.get("joueurs.id") != null)
+        {
+            System.out.println("joueurs");
+            //joueurs
+            values.put("id", queryValues.get("joueurs.id"));
+            values.put("prenom", queryValues.get("joueurs.prenom"));
+            values.put("nom", queryValues.get("joueurs.nom"));
+            values.put("date_naissance", queryValues.get("joueurs.date_naissance"));
+            values.put("num_equipe", queryValues.get("joueurs.num_equipe"));
+            database.insert("joueurs", null, values);
+        }
+        else if(queryValues.get("equipe.id") != null)
+        {
+            System.out.println("equipe");
+            //equipe
+            values.put("id", queryValues.get("equipe.id"));
+            values.put("nom_equipe", queryValues.get("equipe.nom_equipe"));
+            values.put("categorie", queryValues.get("equipe.categorie"));
+            values.put("num_course", queryValues.get("equipe.num_course"));
+            database.insert("equipe", null, values);
+        }
+        else if(queryValues.get("course.id") != null)
+        {
+            System.out.println("course");
+            //course
+            values.put("id", queryValues.get("course.id"));
+            values.put("date", queryValues.get("course.date"));
+            values.put("temps", queryValues.get("course.temps"));
+            database.insert("course", null, values);
+        }
+        else if(queryValues.get("parcours.id") != null)
         {
             System.out.println("parcours");
             //parcours
@@ -155,7 +164,7 @@ public class DBController extends SQLiteOpenHelper {
         {
             System.out.println("liste_balises");
             //liste_balises
-            values = new ContentValues();
+            //values = new ContentValues();
             values.put("id", queryValues.get("liste_balises.id"));
             values.put("num_parcours", queryValues.get("liste_balises.num_parcours"));
             values.put("num_balise", queryValues.get("liste_balises.num_balise"));
@@ -176,7 +185,7 @@ public class DBController extends SQLiteOpenHelper {
         {
             System.out.println("balise");
             //balise
-            values = new ContentValues();
+            //values = new ContentValues();
             values.put("num", queryValues.get("balise.num"));
             values.put("coord_gps", queryValues.get("balise.coord_gps"));
             values.put("poste", queryValues.get("balise.poste"));
@@ -186,7 +195,7 @@ public class DBController extends SQLiteOpenHelper {
         {
             System.out.println("groupe");
             //groupe
-            values = new ContentValues();
+            //values = new ContentValues();
             values.put("nom_groupe", queryValues.get("groupe.nom_groupe"));
             values.put("balise_entree", queryValues.get("groupe.balise_entree"));
             values.put("balise_sortie", queryValues.get("groupe.balise_sortie"));
@@ -197,7 +206,7 @@ public class DBController extends SQLiteOpenHelper {
         {
             System.out.println("liste_liaisons");
             //liste_liaisons
-            values = new ContentValues();
+            //values = new ContentValues();
             values.put("num", queryValues.get("liste_liaisons.num"));
             values.put("num_parcours", queryValues.get("liste_liaisons.num_parcours"));
             values.put("description", queryValues.get("liste_liaisons.description"));
@@ -208,24 +217,13 @@ public class DBController extends SQLiteOpenHelper {
         {
             System.out.println("liaison");
             //liaison
-            values = new ContentValues();
+            //values = new ContentValues();
             values.put("num", queryValues.get("liaison.num"));
             values.put("balise", queryValues.get("liaison.balise"));
             values.put("ordre", queryValues.get("liaison.ordre"));
             database.insert("liaison", null, values);
         }
 
-        database.close();
-    }
-
-    public void insertData(HashMap<String, String> queryValues) {
-        SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("id", queryValues.get("id"));
-        values.put("numEquipe", "");
-        values.put("balise", queryValues.get("balise"));
-        values.put("temps", "");
-        database.insert("parcours", null, values);
         database.close();
     }
 
@@ -503,16 +501,22 @@ public class DBController extends SQLiteOpenHelper {
     public String composeJSONfromSQLite() { //a modifier
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT * FROM liste_balises ORDER BY temps";
+        String selectQuery = "SELECT course.id, parcours.id, equipe.id, liste_balises.num_balise, liste_balises.temps FROM liste_balises " +
+                             "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
+                             "INNER JOIN course ON parcours.num_course = course.id " +
+                             "INNER JOIN equipe ON course.id = equipe.num_course " +
+                             "ORDER BY CASE WHEN liste_balises.temps = '' THEN 2 ELSE 1 END, liste_balises.temps";
+
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
-                //map.put("id", cursor.getString(0));
-                map.put("numEquipe", cursor.getString(1));
-                map.put("balise", cursor.getString(2));
-                map.put("temps", cursor.getString(3));
+                map.put("numCourse", cursor.getString(0));
+                map.put("numParcours", cursor.getString(1));
+                map.put("numEquipe", cursor.getString(2));
+                map.put("numBalise", cursor.getString(3));
+                map.put("temps", cursor.getString(4));
                 wordList.add(map);
             } while (cursor.moveToNext());
         }

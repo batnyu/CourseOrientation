@@ -375,20 +375,38 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void updateNumEquipe(String numEquipe) {
+    public String updateOngletParametres() {
+
+        ArrayList<HashMap<String, String>> wordList;
+        wordList = new ArrayList<HashMap<String, String>>();
+
+        String selectQuery = "SELECT course.id, equipe.id, prenom, nom, nom_equipe, parcours.categorie, parcours.id, date_naissance FROM joueurs " +
+                             "INNER JOIN equipe ON joueurs.num_equipe = equipe.id " +
+                             "INNER JOIN course ON equipe.num_course = course.id " +
+                             "INNER JOIN parcours ON course.id = parcours.num_course ";
 
         SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT numEquipe FROM parcours ", null);
+        Cursor cursor = database.rawQuery(selectQuery, null);
+
         if (cursor.moveToFirst()) {
             do {
-                ContentValues newValues = new ContentValues();
-                newValues.put("numEquipe", numEquipe);
-                database.update("parcours", newValues, null, null);
-
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("numCourse", cursor.getString(0));
+                map.put("numEquipe", cursor.getString(1));
+                map.put("prenom", cursor.getString(2));
+                map.put("nom", cursor.getString(3));
+                map.put("nom_equipe", cursor.getString(4));
+                map.put("categorie", cursor.getString(5));
+                map.put("num_parcours", cursor.getString(6));
+                map.put("date_naissance", cursor.getString(7));
+                wordList.add(map);
             } while (cursor.moveToNext());
         }
         cursor.close();
         database.close();
+        Gson gson = new GsonBuilder().create();
+        //Use GSON to serialize Array List to JSON
+        return gson.toJson(wordList);
     }
 
     public int[] getNbCheckpoints() {
@@ -520,6 +538,7 @@ public class DBController extends SQLiteOpenHelper {
                 wordList.add(map);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         database.close();
         Gson gson = new GsonBuilder().create();
         //Use GSON to serialize Array List to JSON

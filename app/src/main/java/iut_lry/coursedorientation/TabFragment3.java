@@ -1,9 +1,7 @@
 package iut_lry.coursedorientation;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,20 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -179,16 +171,26 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         String ipServer = mCallback.getWifiApIpAddress();
 
         params.put("resultatsJSON", controller.composeJSONfromSQLite());
-        Log.d("tag", controller.composeJSONfromSQLite().toString());
+        Log.d("tag", controller.composeJSONfromSQLite());
         client.post("http://" + ipServer + ":80/testProjet/insertResultats.php",params ,new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                System.out.println(response);
+
+/*                //Convertir byte[] en String
+                String responseString = null;
+                try {
+                    responseString = new String(response, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(responseString);*/
+
+                mCallback.showToast("Le parcours a bien été envoyé !","long");
 
                 buttonSend.setVisibility(View.VISIBLE);
                 layoutEnvoiParkour.setVisibility(View.GONE);
 
-                mCallback.showToast("Le parcours a bien été envoyé !","long");
+
             }
 
             @Override

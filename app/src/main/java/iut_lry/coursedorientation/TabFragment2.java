@@ -16,8 +16,6 @@ import android.view.ViewGroup;
 
 
 import android.content.Context;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -29,19 +27,15 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import static android.R.id.progress;
 
 public class TabFragment2 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
 
     private Button scanButton;
-    IntentIntegrator integrator;
     Calendar rightNow;
     Chronometer timeElapsed;
 
@@ -49,7 +43,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     boolean departOK;
 
-    IntentResult result;
     String scanContent;
     String scanFormat;
     String temps;
@@ -62,7 +55,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     TextView baliseDepart;
     String nbBaliseDepart;
     TextView balisePointee;
-    String nbBalisePointee;
     TextView baliseSuivante;
     String nbBaliseSuivante;
     TextView balisePoche;

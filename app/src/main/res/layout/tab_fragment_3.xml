@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/noParcours"
-        android:layout_weight="1"
         android:gravity="center_vertical|center"
         android:textColor="@android:color/background_dark"
         android:textAllCaps="false"
@@ -94,13 +93,12 @@
             android:textColor="#ffffff"
             android:paddingLeft="10dp"
             android:text="Poste"
-            android:background="@android:color/holo_purple"
-            android:elevation="0dp" />
+            android:background="@android:color/holo_purple" />
     </LinearLayout>
 
         <LinearLayout android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
             android:layout_weight="1">
 
         <ListView android:id="@+id/listview"

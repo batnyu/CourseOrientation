@@ -203,7 +203,30 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         controller = new DBController(getActivity());
+
+        ArrayList<HashMap<String, String>> baliseList = controller.getAllBalises();
+
+        if (baliseList.size() != 0)
+        {
+            String parametres = controller.updateOngletParametres();
+
+            afficherJoueurs(parametres,"onStart");
+
+            dllParkour.setVisibility(View.VISIBLE);
+            dllParkour.setEnabled(false);
+            dllParkour.setText("Parcours téléchargé");
+
+        }
+        else
+        {
+
+        }
+
+
+
+
 
     }
 
@@ -295,8 +318,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public String getWifiNetworkName() {
         WifiManager wifiMgr = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-        String name = wifiInfo.getSSID();
-        return name;
+        return wifiInfo.getSSID();
     }
 
     public void getPlayersAndRace()
@@ -344,8 +366,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 layoutSpinnerCheckPlayers.setVisibility(View.GONE);
                 dllPlayers.setVisibility(View.VISIBLE);
 
+                //changer dllPlayer pour afficher le bon msg si on vient de dll.
+                dllParkour.setEnabled(true);
+                dllParkour.setText("Télécharger le parcours");
+
                 if(!responseString.equals("erreur") && !responseString.equals("erreurParcours")) {
-                    afficherJoueurs(responseString);
+                    afficherJoueurs(responseString,"onVerify");
                 } else {
                     //on vide la liste des joueurs et on cache tout
                     if(layoutPlayers.getChildCount() > 0){
@@ -387,7 +413,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     }
 
-    public void afficherJoueurs(String response){
+    public void afficherJoueurs(String response, String choix){
 
         try {
             //vider la liste des joueurs
@@ -400,7 +426,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             JSONArray arr = new JSONArray(response);
             System.out.println(arr.length());
 
-            ArrayList<HashMap<String, String>> listPlayers = new ArrayList<HashMap<String, String>>();;
 
             // If no of array elements is not zero
             if(arr.length() != 0){
@@ -413,6 +438,15 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                         nomEquipe = obj.get("nom_equipe").toString();
                         categorie = obj.get("categorie").toString();
                         num_parcours = obj.get("num_parcours").toString();
+                        if(choix.equals("onStart")){
+                            numCourse.setText(obj.get("numCourse").toString());
+                            numEquipe.setText(obj.get("numEquipe").toString());
+                            date.setText(obj.get("date_naissance").toString());
+
+                            /*//pour que qd on restarte, on ne puisse pas retester la course et equipe deja téléchargé
+                            numCourseStr = obj.get("numCourse").toString();
+                            numEquipeStr = obj.get("numEquipe").toString();*/
+                        }
                     }
 
                     TextView joueur = new TextView(getActivity());
@@ -432,7 +466,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -555,7 +588,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 dllParkour.setVisibility(View.VISIBLE);
                 layoutDllParkour.setVisibility(View.GONE);
 
-                //je sais pas encore lequel choisir
+                //Eviter que le joueur télécharge 10 000 fois le parcours pour rien.
+                dllParkour.setEnabled(false);
+                dllParkour.setText("Parcours téléchargé");
+
                 //Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
                 mCallback.showToast("Le parcours a bien été téléchargé !","long");
 
@@ -659,8 +695,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         controller.deleteTable("liste_liaisons");
         controller.deleteTable("liaison");
 
-        // Create GSON object
-        Gson gson = new GsonBuilder().create();
         try {
             // Extract JSON array from the response
             JSONArray arr = new JSONArray(response);
@@ -759,7 +793,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

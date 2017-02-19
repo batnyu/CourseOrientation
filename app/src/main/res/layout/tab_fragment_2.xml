@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1.01"
@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/noParcours2"
-        android:layout_weight="1"
         android:gravity="center_vertical|center"
         android:textAllCaps="false"
         android:textSize="18sp"
@@ -32,7 +31,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp">
+            android:layout_marginBottom="3dp"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -67,7 +67,7 @@
 
                     <Chronometer
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:id="@+id/chronometer1"
                         android:fontFamily="sans-serif"
                         android:textSize="25sp"
@@ -103,7 +103,7 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:text=""
+                        android:text="salut comment ca"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView_liaisons_nb"
@@ -129,6 +129,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="3dp"
+                    android:baselineAligned="false"
                     android:layout_weight="1">
 
                     <LinearLayout
@@ -226,7 +227,7 @@
                         android:textSize="14sp" />
 
                     <TextView
-                        android:text=""
+                        android:text="\n"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView_poche_nb"
@@ -261,7 +262,7 @@
 
                 <TextView
                     android:text="Total balises"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_total_balises"
                     android:textAllCaps="false"
@@ -329,7 +330,7 @@
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_tuile"
                 android:paddingLeft="10dp"

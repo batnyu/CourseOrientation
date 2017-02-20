@@ -27,6 +27,8 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -54,6 +56,12 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     TextView baliseDepart;
     String nbBaliseDepart;
+    TextView baliseArrivee;
+    String nbBaliseArrivee;
+
+    TextView points;
+    String nbPoints;
+
     TextView balisePointee;
     TextView baliseSuivante;
     String nbBaliseSuivante;
@@ -64,6 +72,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     LinearLayout interface2;
     TextView noParcours2;
+
+    LinearLayout startBalise;
+    LinearLayout endBalise;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,6 +89,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         progressTotal = (ProgressBar) view.findViewById(R.id.progressBarTotal);
 
         baliseDepart = (TextView) view.findViewById(R.id.textView_balise_depart_nb);
+        baliseArrivee = (TextView) view.findViewById(R.id.textView_balise_arrivee_nb);
+        points = (TextView) view.findViewById(R.id.textView_points_nb);
         balisePointee = (TextView) view.findViewById(R.id.textView_balise_pointee_nb);
         baliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
         balisePoche = (TextView) view.findViewById(R.id.textView_poche_nb);
@@ -85,6 +98,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         interface2 = (LinearLayout) view.findViewById(R.id.interface2);
         noParcours2 = (TextView) view.findViewById(R.id.noParcours2);
+
+        startBalise = (LinearLayout) view.findViewById(R.id.startBalise);
+        endBalise = (LinearLayout) view.findViewById(R.id.endBalise);
 
         return view;
     }
@@ -324,7 +340,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         //faire un thread
 
-        //on récupère les données dans la base
+        UpdateInfosThread thread = new UpdateInfosThread();
+        thread.execute();
+
+        /*//on récupère les données dans la base
         scannéSurTotal = controller.getNbCheckpoints();
 
         //on met *100 pour voir l'animation
@@ -344,9 +363,23 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
               }
         });
 
-        //mettre à jour la balise de départ
-        nbBaliseDepart = controller.getFirstBalise();
-        baliseDepart.setText(nbBaliseDepart);
+        //Afficher soit la balise de départ avant le départ et la balise d'arrivée pendant la course
+        if(departOK){
+            //mettre à jour la balise d'arrivée
+            nbBaliseArrivee = controller.getLastBalise();
+            baliseArrivee.setText(nbBaliseArrivee);
+            //cacher la balise de départ et afficher celle d'arrivee
+            startBalise.setVisibility(View.GONE);
+            endBalise.setVisibility(View.VISIBLE);
+
+        } else {
+            //mettre à jour la balise de départ
+            nbBaliseDepart = controller.getFirstBalise();
+            baliseDepart.setText(nbBaliseDepart);
+            //cacher la balise d'arrivee et afficher celle de départ
+            startBalise.setVisibility(View.VISIBLE);
+            endBalise.setVisibility(View.GONE);
+        }
 
         //mettre à jour la dernière balise pointée et sa suivante
         baliseActuelle = controller.getBaliseActuelle();
@@ -370,7 +403,15 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         {
             baliseSuivante.setText(baliseActuelle[1]);
         }
-
+        //poche
+        TextView textView_poche = (TextView) getActivity().findViewById(R.id.textView_poche);
+        if(!baliseActuelle[6].equals("null")) {
+            textView_poche.setText("Poche actuelle : " + baliseActuelle[6]);
+            balisePoche.setText(controller.getBalisePoche(baliseActuelle[6]));
+        } else {
+            textView_poche.setText("Poche actuelle");
+            balisePoche.setText("aucune\n");
+        }
 
         //stocker la variable pour vérifier quand on scanne.
         nbBaliseSuivante = baliseActuelle[2];
@@ -380,8 +421,133 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             timeElapsed.stop();
             departOK=false;
             mCallback.showToast("Vous avez scanné la balise de fin !","long");
+        }*/
+
+    }
+
+    public class UpdateInfosThread extends AsyncTask<String, Integer, Void> {
+
+        @Override
+        protected void onPreExecute() {
+        /*
+         *    do things before doInBackground() code runs
+         *    such as preparing and showing a Dialog or ProgressBar
+        */
+
         }
 
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+        /*
+         *    updating data
+         *    such a Dialog or ProgressBar
+        */
+
+
+        }
+
+        @Override
+        protected Void doInBackground(String... parametres) {
+            //do your work here
+
+            //on récupère les données dans la base
+            scannéSurTotal = controller.getNbCheckpoints();
+
+            //Afficher soit la balise de départ avant le départ et la balise d'arrivée pendant la course
+            if(departOK){
+                nbBaliseArrivee = controller.getLastBalise();
+
+            } else {
+                nbBaliseDepart = controller.getFirstBalise();
+            }
+
+            //mettre à jour la dernière balise pointée et sa suivante
+            baliseActuelle = controller.getBaliseActuelle();
+
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+        /*
+         *    do something with data here
+         *    display it or send to mainactivity
+         *    close any dialogs/ProgressBars/etc...
+        */
+
+            //on met *100 pour voir l'animation
+            progressTotal.setMax(scannéSurTotal[1] * 100);
+            //sans animation
+            //progressTotal.setProgress(scannéSurTotal[0]);
+            //avec animation
+            ObjectAnimator animation = ObjectAnimator.ofInt(progressTotal, "progress", scannéSurTotal[0]*100);
+            animation.setDuration(600); // 1.5 second
+            animation.setInterpolator(new LinearInterpolator());
+            animation.start();
+
+            //pour mettre à jour le numéro à la fin de l'animation
+            animation.addListener(new AnimatorListenerAdapter() {
+                public void onAnimationEnd(Animator animation) {
+                    totalBalises.setText(scannéSurTotal[0] + "/" + scannéSurTotal[1]);
+                }
+            });
+
+            //Afficher soit la balise de départ avant le départ et la balise d'arrivée pendant la course
+            if(departOK){
+                baliseArrivee.setText(nbBaliseArrivee);
+                //cacher la balise de départ et afficher celle d'arrivee
+                startBalise.setVisibility(View.GONE);
+                endBalise.setVisibility(View.VISIBLE);
+
+            } else {
+                baliseDepart.setText(nbBaliseDepart);
+                //cacher la balise d'arrivee et afficher celle de départ
+                startBalise.setVisibility(View.VISIBLE);
+                endBalise.setVisibility(View.GONE);
+            }
+
+            //dernière balise
+            balisePointee.setText(baliseActuelle[0]);
+            //balise suivante
+            if((baliseActuelle[1].equals("obligatoire") || baliseActuelle[1].equals("optionnelle")) && baliseActuelle[3].equals("non"))
+            {
+                baliseSuivante.setText(baliseActuelle[2] + " (" + baliseActuelle[1] + ")");
+            }
+            else if(baliseActuelle[3].equals("oui"))
+            {
+                //Quand prochaine est azimut
+                baliseSuivante.setText("Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m" + " (" + baliseActuelle[1] + ")");
+                Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 500 milliseconds
+                v.vibrate(500);
+            }
+            else
+            {
+                baliseSuivante.setText(baliseActuelle[1]);
+            }
+            //poche
+            TextView textView_poche = (TextView) getActivity().findViewById(R.id.textView_poche);
+            if(!baliseActuelle[6].equals("null")) {
+                textView_poche.setText("Poche actuelle : " + baliseActuelle[6]);
+                balisePoche.setText(controller.getBalisePoche(baliseActuelle[6]));
+            } else {
+                textView_poche.setText("Poche actuelle");
+                balisePoche.setText("aucune\n");
+            }
+
+            //stocker la variable pour vérifier quand on scanne.
+            nbBaliseSuivante = baliseActuelle[2];
+
+            //regarder si la balise est la dernière.
+            if(baliseActuelle[1].equals("aucune") && departOK){
+                timeElapsed.stop();
+                departOK=false;
+                mCallback.showToast("Vous avez scanné la balise de fin !","long");
+            }
+
+        }
     }
 
     public void fragmentCommunication2() {
@@ -400,11 +566,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             interface2.setVisibility(LinearLayout.VISIBLE);
             noParcours2.setVisibility(LinearLayout.GONE);
 
-            //si la base de données est déjà remplie, on update les infos
-            updateInfos();
-
             //on check si la balise depart a déjà été scanné, si oui on met departOK a true.
             departOK = controller.checkFirstBalise();
+
+            //si la base de données est déjà remplie, on update les infos
+            updateInfos();
 
             //fonction a mettre en place pour récupérer le bon chrono si l'activité s'arrete.
         }

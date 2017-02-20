@@ -481,25 +481,45 @@ public class DBController extends SQLiteOpenHelper {
         return baliseDepart;
     }
 
-    public String[] getBaliseActuelle() {
+    public String getLastBalise() {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
-        String[] balise = new String[6];
+        String baliseArrivee = "0";
 
-        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,num_suivante,azimut,azimut_degre,azimut_distance FROM liste_balises " +
-                "WHERE temps != '' AND temps=(SELECT max(temps) FROM liste_balises) ", null);
+        Cursor cursor = database.rawQuery("SELECT num_balise,depart FROM liste_balises WHERE arrivee=1", null);
 
         if (cursor.moveToFirst()) {
 
-            for(int i=0;i<6;i++)
+            baliseArrivee = cursor.getString(0);
+        }
+
+        cursor.close();
+        database.close();
+
+        return baliseArrivee;
+    }
+
+    public String[] getBaliseActuelle() {
+        //Changer en json ?
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String[] balise = new String[7];
+
+        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,num_suivante,azimut,azimut_degre,azimut_distance,groupe " +
+                                          "FROM liste_balises WHERE temps != '' " +
+                                          "AND temps=(SELECT max(temps) FROM liste_balises) ", null);
+
+        if (cursor.moveToFirst()) {
+
+            for(int i=0;i<7;i++)
             {
                 balise[i] = cursor.getString(i);
             }
         }
         else
         {
-            for(int i=0;i<6;i++)
+            for(int i=0;i<7;i++)
             {
                 balise[i] = "";
             }
@@ -509,6 +529,30 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
 
         return balise;
+    }
+
+    public String getBalisePoche(String pocheActuelle) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String poche = "";
+
+        Cursor cursor = database.rawQuery("SELECT num_balise FROM liste_balises WHERE groupe=? AND temps = ''", new String[]{pocheActuelle});
+
+        if (cursor.moveToFirst()) {
+            do {
+                if(poche.equals("")) {
+                    poche = cursor.getString(0);
+                } else {
+                    poche = poche + " - " + cursor.getString(0);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        database.close();
+
+        return poche;
     }
 
     /**

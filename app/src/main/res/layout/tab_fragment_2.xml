@@ -30,107 +30,95 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:baselineAligned="false">
+            android:layout_height="match_parent"
+            android:id="@+id/left"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="3dp">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/left"
-                android:layout_gravity="center_horizontal"
+                android:id="@+id/chrono"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/bg_tuile"
                 android:layout_marginRight="3dp">
 
-                <LinearLayout
-                    android:orientation="vertical"
+                <TextView
+                    android:text="Chronomètre"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/chrono"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="10dp"
-                    android:layout_weight="1"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/bg_tuile">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_chrono"
+                    android:layout_marginTop="2dp"
+                    android:textAllCaps="false"
+                    android:textSize="14sp" />
 
-                    <TextView
-                        android:text="Chronomètre"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textView_chrono"
-                        android:layout_marginTop="2dp"
-                        android:textAllCaps="false"
-                        android:textSize="14sp" />
-
-                    <Chronometer
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:id="@+id/chronometer1"
-                        android:fontFamily="sans-serif"
-                        android:textSize="25sp"
-                        android:textColor="#5b5d6e"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:layout_marginTop="2dp"
-                        android:textAlignment="center" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
+                <Chronometer
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:id="@+id/liaisonsBalise"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_tuile"
+                    android:layout_height="0dp"
+                    android:id="@+id/chronometer1"
+                    android:fontFamily="sans-serif"
+                    android:textSize="25sp"
+                    android:textColor="#5b5d6e"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:layout_marginTop="3dp">
-
-                    <TextView
-                        android:text="Liaisons"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textView_liaisons"
-                        android:layout_marginTop="2dp"
-                        android:textAllCaps="false"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:text="salut comment ca"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textView_liaisons_nb"
-                        android:layout_marginTop="2dp"
-                        android:textAllCaps="false"
-                        android:textSize="25sp"
-                        android:textColor="@color/zxing_result_view" />
-
-                </LinearLayout>
+                    android:layout_marginTop="2dp"
+                    android:textAlignment="center" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:baselineAligned="false"
                 android:layout_weight="1"
                 android:layout_marginLeft="3dp">
 
-                <LinearLayout
-                    android:orientation="horizontal"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="3dp"
-                    android:baselineAligned="false"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:layout_marginRight="3dp">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:id="@+id/endBalise"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_tuile">
+
+                        <TextView
+                            android:text="Arrivée"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_balise_arrivee"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:text=""
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_balise_arrivee_nb"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="25sp"
+                            android:textColor="@color/zxing_result_view" />
+
+                    </LinearLayout>
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -143,8 +131,7 @@
                         android:id="@+id/startBalise"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_tuile"
-                        android:layout_marginRight="3dp">
+                        android:background="@drawable/bg_tuile">
 
                         <TextView
                             android:text="Départ"
@@ -166,42 +153,7 @@
                             android:textColor="@color/zxing_result_view" />
 
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:layout_marginLeft="3dp"
-                        android:id="@+id/endBalise"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_tuile">
-
-                        <TextView
-                            android:text="Arrivée"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/textView_balise_fin"
-                            android:layout_marginTop="2dp"
-                            android:textAllCaps="false"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:text=""
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/textView_balise_fin_nb"
-                            android:layout_marginTop="2dp"
-                            android:textAllCaps="false"
-                            android:textSize="25sp"
-                            android:textColor="@color/zxing_result_view" />
-
-                    </LinearLayout>
-                </LinearLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -211,32 +163,110 @@
                     android:paddingRight="10dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:layout_marginTop="3dp"
-                    android:id="@+id/pocheBalise"
+                    android:layout_marginLeft="3dp"
+                    android:id="@+id/points"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/bg_tuile"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_tuile">
 
                     <TextView
-                        android:text="Poche"
+                        android:text="Points"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView_poche"
+                        android:id="@+id/textView_points"
                         android:layout_marginTop="2dp"
                         android:textAllCaps="false"
                         android:textSize="14sp" />
 
                     <TextView
-                        android:text="\n"
+                        android:text=""
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView_poche_nb"
+                        android:id="@+id/textView_points_nb"
                         android:layout_marginTop="2dp"
                         android:textAllCaps="false"
                         android:textSize="25sp"
                         android:textColor="@color/zxing_result_view" />
 
                 </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:id="@+id/liaisonsBalise"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_tuile"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp">
+
+                <TextView
+                    android:text="Liaisons possibles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_liaisons"
+                    android:layout_marginTop="2dp"
+                    android:textAllCaps="false"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/textView_liaisons_nb"
+                    android:layout_marginTop="2dp"
+                    android:textAllCaps="false"
+                    android:textSize="25sp"
+                    android:textColor="@color/zxing_result_view"
+                    android:text="\n" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:id="@+id/pocheBalise"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/bg_tuile"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp">
+
+                <TextView
+                    android:text="Poche actuelle : aucune"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_poche"
+                    android:layout_marginTop="2dp"
+                    android:textAllCaps="false"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:text="aucune\n"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/textView_poche_nb"
+                    android:layout_marginTop="2dp"
+                    android:textAllCaps="false"
+                    android:textSize="25sp"
+                    android:textColor="@color/zxing_result_view" />
 
             </LinearLayout>
 

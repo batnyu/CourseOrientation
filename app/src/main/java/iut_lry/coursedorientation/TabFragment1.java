@@ -85,6 +85,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     // DB Class to perform DB related operations
     DBController controller;
 
+    ArrayList<HashMap<String, String>> baliseList;
+
     HashMap<String, String> queryValues;
 
     @Override
@@ -204,29 +206,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        controller = new DBController(getActivity());
-
-        ArrayList<HashMap<String, String>> baliseList = controller.getAllBalises();
-
-        if (baliseList.size() != 0)
-        {
-            String parametres = controller.updateOngletParametres();
-
-            afficherJoueurs(parametres,"onStart");
-
-            dllParkour.setVisibility(View.VISIBLE);
-            dllParkour.setEnabled(false);
-            dllParkour.setText("Parcours téléchargé");
-
-        }
-        else
-        {
-
-        }
-
-
-
-
+        updateParametres thread = new updateParametres();
+        thread.execute();
 
     }
 
@@ -348,7 +329,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         params.put("numCourse", numCourseStr);
         params.put("numEquipe", numEquipeStr);
-        //Log.d("tag", controller.composeJSONfromSQLite().toString());
         client.post("http://" + ipServer + ":80/testProjet/getPlayersTeamRace.php",params ,new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -795,6 +775,66 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public class updateParametres extends AsyncTask<Void, Void, Void> {
+
+        String parametres;
+
+        @Override
+        protected void onPreExecute() {
+        /*
+         *    do things before doInBackground() code runs
+         *    such as preparing and showing a Dialog or ProgressBar
+        */
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        /*
+         *    updating data
+         *    such a Dialog or ProgressBar
+        */
+        }
+
+        @Override
+        protected Void doInBackground(Void... settings) {
+            //do your work here
+
+            controller = new DBController(getActivity());
+
+            baliseList = controller.getAllBalises();
+
+            if (baliseList.size() != 0)
+            {
+                parametres = controller.updateOngletParametres();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+        /*
+         *    do something with data here
+         *    display it or send to mainactivity
+         *    close any dialogs/ProgressBars/etc...
+        */
+            if (baliseList.size() != 0)
+            {
+                afficherJoueurs(parametres,"onStart");
+
+                dllParkour.setVisibility(View.VISIBLE);
+                dllParkour.setEnabled(false);
+                dllParkour.setText("Parcours téléchargé");
+
+            }
+            else
+            {
+
+            }
+        }
+
     }
 
 }

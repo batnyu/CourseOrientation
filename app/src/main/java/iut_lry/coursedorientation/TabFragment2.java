@@ -66,6 +66,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     TextView baliseSuivante;
     String nbBaliseSuivante;
     TextView balisePoche;
+    String baliseRemainingPoche;
+    String baliseCheckedPoche;
+    String baliseSortiePoche;
+
     TextView baliseLiaisons;
 
     String[] baliseActuelle;
@@ -464,6 +468,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //mettre à jour la dernière balise pointée et sa suivante
             baliseActuelle = controller.getBaliseActuelle();
 
+            //poche
+            baliseSortiePoche = controller.getSortiePoche(baliseActuelle[6]);
+            baliseRemainingPoche = controller.getRemainingPoche(baliseActuelle[6]);
+            baliseCheckedPoche = controller.getCheckedPoche(baliseActuelle[6]);
 
 
             return null;
@@ -529,11 +537,18 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             }
             //poche
             TextView textView_poche = (TextView) getActivity().findViewById(R.id.textView_poche);
-            if(!baliseActuelle[6].equals("null")) {
-                textView_poche.setText("Poche actuelle : " + baliseActuelle[6]);
-                balisePoche.setText(controller.getBalisePoche(baliseActuelle[6]));
-            } else {
+            if(baliseActuelle[6].equals("")) { //si on vient de dll le parkour
                 textView_poche.setText("Poche actuelle");
+                balisePoche.setText("\n");
+            } else if(!baliseActuelle[6].equals("null")){ //si la balise actuelle fait partie d'une poche
+                textView_poche.setText("Poche actuelle : " + baliseActuelle[6]);
+                balisePoche.setTextSize(15);
+                balisePoche.setText("sortie : " + baliseSortiePoche
+                                  + "\nrestantes : " + baliseRemainingPoche
+                                  + "\nscannées : " + baliseCheckedPoche);
+            } else { //si la balise actuelle n'a pas de poche
+                textView_poche.setText("Poche actuelle");
+                balisePoche.setTextSize(25);
                 balisePoche.setText("aucune\n");
             }
 

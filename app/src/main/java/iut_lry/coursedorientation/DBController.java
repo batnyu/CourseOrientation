@@ -531,7 +531,25 @@ public class DBController extends SQLiteOpenHelper {
         return balise;
     }
 
-    public String getBalisePoche(String pocheActuelle) {
+    public String getSortiePoche(String pocheActuelle) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String sortiePoche = "";
+
+        Cursor cursor = database.rawQuery("SELECT balise_sortie FROM groupe WHERE nom_groupe=?", new String[]{pocheActuelle});
+
+        if (cursor.moveToFirst()) {
+            sortiePoche = cursor.getString(0);
+        }
+
+        cursor.close();
+        database.close();
+
+        return sortiePoche;
+    }
+
+    public String getRemainingPoche(String pocheActuelle) {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
@@ -544,7 +562,31 @@ public class DBController extends SQLiteOpenHelper {
                 if(poche.equals("")) {
                     poche = cursor.getString(0);
                 } else {
-                    poche = poche + " - " + cursor.getString(0);
+                    poche = poche + "-" + cursor.getString(0);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        database.close();
+
+        return poche;
+    }
+
+    public String getCheckedPoche(String pocheActuelle) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String poche = "";
+
+        Cursor cursor = database.rawQuery("SELECT num_balise FROM liste_balises WHERE groupe=? AND temps != ''", new String[]{pocheActuelle});
+
+        if (cursor.moveToFirst()) {
+            do {
+                if(poche.equals("")) {
+                    poche = cursor.getString(0);
+                } else {
+                    poche = poche + "-" + cursor.getString(0);
                 }
             } while (cursor.moveToNext());
         }

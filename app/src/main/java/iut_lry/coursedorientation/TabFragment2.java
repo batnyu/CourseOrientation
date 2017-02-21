@@ -27,8 +27,6 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -62,8 +60,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     TextView points;
     String nbPoints;
 
-    TextView balisePointee;
-    TextView baliseSuivante;
+    TextView txtBalisePointee;
+    TextView txtBaliseSuivante;
+    String baliseSuivante;
     String nbBaliseSuivante;
     TextView balisePoche;
     String baliseRemainingPoche;
@@ -95,8 +94,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         baliseDepart = (TextView) view.findViewById(R.id.textView_balise_depart_nb);
         baliseArrivee = (TextView) view.findViewById(R.id.textView_balise_arrivee_nb);
         points = (TextView) view.findViewById(R.id.textView_points_nb);
-        balisePointee = (TextView) view.findViewById(R.id.textView_balise_pointee_nb);
-        baliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
+        txtBalisePointee = (TextView) view.findViewById(R.id.textView_balise_pointee_nb);
+        txtBaliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
         balisePoche = (TextView) view.findViewById(R.id.textView_poche_nb);
         baliseLiaisons = (TextView) view.findViewById(R.id.textView_liaisons_nb);
 
@@ -172,8 +171,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 temps = format.format(rightNow.getTime());
                 */
 
-                ReceiveData test = new ReceiveData();
-                test.execute();
+                if(scanContent.equals("BALISE TEST")) {
+                    mCallback.showToast("La balise TEST a été scanné !","court");
+                } else {
+                    ReceiveData test = new ReceiveData();
+                    test.execute();
+                }
+
 
                 /*//Joué un son -> BUG
                 final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.zxing_beep);
@@ -267,7 +271,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         protected Void doInBackground(String... parametres) {
             //do your work here
 
-            resultat = controller.checkBalise(scanContent, temps, departOK, nbBaliseDepart, nbBaliseSuivante);
+            resultat = controller.checkBalise(scanContent, temps, departOK, nbBaliseDepart, baliseSuivante, nbBaliseSuivante);
 
             publishProgress(resultat);
 
@@ -342,90 +346,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     public void updateInfos() {
 
-        //faire un thread
-
         UpdateInfosThread thread = new UpdateInfosThread();
         thread.execute();
-
-        /*//on récupère les données dans la base
-        scannéSurTotal = controller.getNbCheckpoints();
-
-        //on met *100 pour voir l'animation
-        progressTotal.setMax(scannéSurTotal[1] * 100);
-        //sans animation
-        //progressTotal.setProgress(scannéSurTotal[0]);
-        //avec animation
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressTotal, "progress", scannéSurTotal[0]*100);
-        animation.setDuration(600); // 1.5 second
-        animation.setInterpolator(new LinearInterpolator());
-        animation.start();
-
-        //pour mettre à jour le numéro à la fin de l'animation
-        animation.addListener(new AnimatorListenerAdapter() {
-              public void onAnimationEnd(Animator animation) {
-                  totalBalises.setText(scannéSurTotal[0] + "/" + scannéSurTotal[1]);
-              }
-        });
-
-        //Afficher soit la balise de départ avant le départ et la balise d'arrivée pendant la course
-        if(departOK){
-            //mettre à jour la balise d'arrivée
-            nbBaliseArrivee = controller.getLastBalise();
-            baliseArrivee.setText(nbBaliseArrivee);
-            //cacher la balise de départ et afficher celle d'arrivee
-            startBalise.setVisibility(View.GONE);
-            endBalise.setVisibility(View.VISIBLE);
-
-        } else {
-            //mettre à jour la balise de départ
-            nbBaliseDepart = controller.getFirstBalise();
-            baliseDepart.setText(nbBaliseDepart);
-            //cacher la balise d'arrivee et afficher celle de départ
-            startBalise.setVisibility(View.VISIBLE);
-            endBalise.setVisibility(View.GONE);
-        }
-
-        //mettre à jour la dernière balise pointée et sa suivante
-        baliseActuelle = controller.getBaliseActuelle();
-
-        //dernière balise
-        balisePointee.setText(baliseActuelle[0]);
-        //balise suivante
-        if((baliseActuelle[1].equals("obligatoire") || baliseActuelle[1].equals("optionnelle")) && baliseActuelle[3].equals("non"))
-        {
-            baliseSuivante.setText(baliseActuelle[2] + " (" + baliseActuelle[1] + ")");
-        }
-        else if(baliseActuelle[3].equals("oui"))
-        {
-            //Quand prochaine est azimut
-            baliseSuivante.setText("Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m" + " (" + baliseActuelle[1] + ")");
-            Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-            // Vibrate for 500 milliseconds
-            v.vibrate(500);
-        }
-        else
-        {
-            baliseSuivante.setText(baliseActuelle[1]);
-        }
-        //poche
-        TextView textView_poche = (TextView) getActivity().findViewById(R.id.textView_poche);
-        if(!baliseActuelle[6].equals("null")) {
-            textView_poche.setText("Poche actuelle : " + baliseActuelle[6]);
-            balisePoche.setText(controller.getBalisePoche(baliseActuelle[6]));
-        } else {
-            textView_poche.setText("Poche actuelle");
-            balisePoche.setText("aucune\n");
-        }
-
-        //stocker la variable pour vérifier quand on scanne.
-        nbBaliseSuivante = baliseActuelle[2];
-
-        //regarder si la balise est la dernière.
-        if(baliseActuelle[1].equals("aucune") && departOK){
-            timeElapsed.stop();
-            departOK=false;
-            mCallback.showToast("Vous avez scanné la balise de fin !","long");
-        }*/
 
     }
 
@@ -517,23 +439,23 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             }
 
             //dernière balise
-            balisePointee.setText(baliseActuelle[0]);
+            txtBalisePointee.setText(baliseActuelle[0]);
             //balise suivante
             if((baliseActuelle[1].equals("obligatoire") || baliseActuelle[1].equals("optionnelle")) && baliseActuelle[3].equals("non"))
             {
-                baliseSuivante.setText(baliseActuelle[2] + " (" + baliseActuelle[1] + ")");
+                txtBaliseSuivante.setText(baliseActuelle[2] + " (" + baliseActuelle[1] + ")");
             }
             else if(baliseActuelle[3].equals("oui"))
             {
                 //Quand prochaine est azimut
-                baliseSuivante.setText("Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m" + " (" + baliseActuelle[1] + ")");
+                txtBaliseSuivante.setText("Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m" + " (" + baliseActuelle[1] + ")");
                 Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                 // Vibrate for 500 milliseconds
                 v.vibrate(500);
             }
             else
             {
-                baliseSuivante.setText(baliseActuelle[1]);
+                txtBaliseSuivante.setText(baliseActuelle[1]);
             }
             //poche
             TextView textView_poche = (TextView) getActivity().findViewById(R.id.textView_poche);
@@ -553,7 +475,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             }
 
             //stocker la variable pour vérifier quand on scanne.
+            baliseSuivante = baliseActuelle[1];
             nbBaliseSuivante = baliseActuelle[2];
+
 
             //regarder si la balise est la dernière.
             if(baliseActuelle[1].equals("aucune") && departOK){

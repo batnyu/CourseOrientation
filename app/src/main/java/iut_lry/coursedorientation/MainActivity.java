@@ -157,5 +157,4 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
 }

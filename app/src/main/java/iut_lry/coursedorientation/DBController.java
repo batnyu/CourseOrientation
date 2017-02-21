@@ -299,7 +299,7 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
     }
 
-    public int checkBalise(String balise, String temps, boolean departOK, String baliseDepart, String baliseSuivante) {
+    public int checkBalise(String balise, String temps, boolean departOK, String baliseDepart, String baliseSuivante, String nbBaliseSuivante) {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
@@ -317,25 +317,25 @@ public class DBController extends SQLiteOpenHelper {
                     database.close();
                     return 3;
                 }
-                else if (departOK && (balise.equals(baliseSuivante) || baliseSuivante.equals(""))) //si la première balise a déjà été scanné
+                else if (departOK && (balise.equals(nbBaliseSuivante) || nbBaliseSuivante.equals("") || baliseSuivante.equals("optionnelle"))) //si la première balise a déjà été scanné
                 {
                     cursor.close();
                     database.close();
                     return 1;
                 }
-                else if(!balise.equals(baliseSuivante) && departOK) //si c'est pas la balise suivante
+                else if(!balise.equals(nbBaliseSuivante) && departOK) //si c'est pas la balise suivante
                 {
                     cursor.close();
                     database.close();
                     return 5;
                 }
-                else if(baliseSuivante.equals("aucune")) //s'il a scanné la balise de fin
+                else if(nbBaliseSuivante.equals("aucune")) //s'il a scanné la balise de fin
                 {
                     cursor.close();
                     database.close();
                     return 6;
                 }
-                else
+                else //la balise n'est pas la balise de départ
                 {
                     cursor.close();
                     database.close();

@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,23 +97,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         numCourse = (EditText) view.findViewById(R.id.numCourse);
 
         numEquipe = (EditText) view.findViewById(R.id.numEquipe);
-
-
-        //A completer pour enlever le focus quand on enleve le truc ou alors quand on appuie sur le bouton
-        numEquipe.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View view, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(numEquipe.getWindowToken(), 0);
-                    numEquipe.setFocusable(false);
-                    numEquipe.setFocusableInTouchMode(true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-
 
         dllPlayers = (Button) view.findViewById(R.id.dllPlayers);
         dllPlayers.setOnClickListener(this);
@@ -210,6 +194,14 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         thread.execute();
 
     }
+
+    //pr tenter de régler "IInputConnectionWrapper: showStatusIcon on inactive InputConnection" quand on quitte l'appli quand on a un edittext sélectionné
+/*    @Override
+    public void onResume() {
+        RelativeLayout layoutFocus = (RelativeLayout) getView().findViewById(R.id.layoutFocus);
+        layoutFocus.requestFocus();
+        super.onResume();
+    }*/
 
     @Override
     public void onAttach(Context context) {

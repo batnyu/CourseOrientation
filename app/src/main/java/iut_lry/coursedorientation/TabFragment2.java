@@ -46,42 +46,22 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     String scanContent;
     String scanFormat;
     String temps;
-    int resultat;
+
 
     TextView totalBalises;
-    ProgressBar progressTotal;
-    int[] scannéSurTotal;
 
-    TextView baliseDepart;
     String nbBaliseDepart;
-    TextView baliseArrivee;
-    String nbBaliseArrivee;
 
-    TextView points;
-    String nbPoints;
-
-    TextView txtBalisePointee;
-    TextView txtBaliseSuivante;
     String baliseSuivante;
     String nbBaliseSuivante;
-    TextView balisePoche;
-    String baliseRemainingPoche;
-    String baliseCheckedPoche;
-    String baliseSortiePoche;
-
-    TextView baliseLiaisons;
 
     String[] baliseActuelle;
 
-    LinearLayout interface2;
-    TextView noParcours2;
-
-    LinearLayout startBalise;
-    LinearLayout endBalise;
+    View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tab_fragment_2, container, false);
+        view = inflater.inflate(R.layout.tab_fragment_2, container, false);
 
         scanButton = (Button) view.findViewById(R.id.scan_button);
         scanButton.setOnClickListener(this);
@@ -89,21 +69,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         controller = new DBController(getActivity());
 
         totalBalises = (TextView) view.findViewById(R.id.textView_total_balises_nb);
-        progressTotal = (ProgressBar) view.findViewById(R.id.progressBarTotal);
-
-        baliseDepart = (TextView) view.findViewById(R.id.textView_balise_depart_nb);
-        baliseArrivee = (TextView) view.findViewById(R.id.textView_balise_arrivee_nb);
-        points = (TextView) view.findViewById(R.id.textView_points_nb);
-        txtBalisePointee = (TextView) view.findViewById(R.id.textView_balise_pointee_nb);
-        txtBaliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
-        balisePoche = (TextView) view.findViewById(R.id.textView_poche_nb);
-        baliseLiaisons = (TextView) view.findViewById(R.id.textView_liaisons_nb);
-
-        interface2 = (LinearLayout) view.findViewById(R.id.interface2);
-        noParcours2 = (TextView) view.findViewById(R.id.noParcours2);
-
-        startBalise = (LinearLayout) view.findViewById(R.id.startBalise);
-        endBalise = (LinearLayout) view.findViewById(R.id.endBalise);
 
         return view;
     }
@@ -202,6 +167,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     }
 
     public class ReceiveData extends AsyncTask<String, Integer, Void> {
+
+        int resultat;
+
 
         @Override
         protected void onPreExecute() {
@@ -310,8 +278,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
          *    close any dialogs/ProgressBars/etc...
         */
             //Affichage dans les TextViews
-            TextView scan_format = (TextView) getActivity().findViewById(R.id.scan_format);
-            TextView scan_content = (TextView) getActivity().findViewById(R.id.scan_content);
+            TextView scan_format = (TextView) view.findViewById(R.id.scan_format);
+            TextView scan_content = (TextView) view.findViewById(R.id.scan_content);
 
             scan_format.setText("FORMAT: " + scanFormat);
             scan_content.setText("CONTENT: " + scanContent);
@@ -352,6 +320,17 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     }
 
     public class UpdateInfosThread extends AsyncTask<String, Integer, Void> {
+
+        String nbBaliseArrivee;
+
+        String baliseRemainingPoche;
+        String baliseCheckedPoche;
+        String baliseSortiePoche;
+
+        String nbPoints;
+        String liaisons;
+
+        int[] scannéSurTotal;
 
         @Override
         protected void onPreExecute() {
@@ -395,7 +374,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             baliseRemainingPoche = controller.getRemainingPoche(baliseActuelle[6]);
             baliseCheckedPoche = controller.getCheckedPoche(baliseActuelle[6]);
 
-            //points
+            //liaisons
+            liaisons = controller.getLiaisonsPossibles(baliseActuelle[0]);
+
+            //points avec liaisons
             nbPoints = controller.calculerPoints();
 
 
@@ -410,6 +392,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
          *    close any dialogs/ProgressBars/etc...
         */
 
+            ProgressBar progressTotal = (ProgressBar) view.findViewById(R.id.progressBarTotal);
             //on met *100 pour voir l'animation
             progressTotal.setMax(scannéSurTotal[1] * 100);
             //sans animation
@@ -420,6 +403,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             animation.setInterpolator(new LinearInterpolator());
             animation.start();
 
+
             //pour mettre à jour le numéro à la fin de l'animation
             animation.addListener(new AnimatorListenerAdapter() {
                 public void onAnimationEnd(Animator animation) {
@@ -429,21 +413,22 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
             //Afficher soit la balise de départ avant le départ et la balise d'arrivée pendant la course
             if(departOK){
-                baliseArrivee.setText(nbBaliseArrivee);
+                ((TextView) view.findViewById(R.id.textView_balise_arrivee_nb)).setText(nbBaliseArrivee);
                 //cacher la balise de départ et afficher celle d'arrivee
-                startBalise.setVisibility(View.GONE);
-                endBalise.setVisibility(View.VISIBLE);
+                view.findViewById(R.id.startBalise).setVisibility(View.GONE);
+                view.findViewById(R.id.endBalise).setVisibility(View.VISIBLE);
 
             } else {
-                baliseDepart.setText(nbBaliseDepart);
+                ((TextView) view.findViewById(R.id.textView_balise_depart_nb)).setText(nbBaliseDepart);
                 //cacher la balise d'arrivee et afficher celle de départ
-                startBalise.setVisibility(View.VISIBLE);
-                endBalise.setVisibility(View.GONE);
+                view.findViewById(R.id.startBalise).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.endBalise).setVisibility(View.GONE);
             }
 
             //dernière balise
-            txtBalisePointee.setText(baliseActuelle[0]);
+            ((TextView) view.findViewById(R.id.textView_balise_pointee_nb)).setText(baliseActuelle[0]);
             //balise suivante
+            TextView txtBaliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
             if((baliseActuelle[1].equals("obligatoire") || baliseActuelle[1].equals("optionnelle")) && baliseActuelle[3].equals("non"))
             {
                 txtBaliseSuivante.setText(baliseActuelle[2] + " (" + baliseActuelle[1] + ")");
@@ -460,25 +445,29 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 txtBaliseSuivante.setText(baliseActuelle[1]);
             }
+
             //poche
-            TextView textView_poche = (TextView) getActivity().findViewById(R.id.textView_poche);
+            TextView balisePoche = ((TextView) view.findViewById(R.id.textView_poche_nb));
             if(baliseActuelle[6].equals("")) { //si on vient de dll le parkour
-                textView_poche.setText("Poche actuelle");
+                ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
                 balisePoche.setText("\n");
             } else if(!baliseActuelle[6].equals("null")){ //si la balise actuelle fait partie d'une poche
-                textView_poche.setText("Poche actuelle : " + baliseActuelle[6]);
+                ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle : " + baliseActuelle[6]);
                 balisePoche.setTextSize(15);
                 balisePoche.setText("sortie : " + baliseSortiePoche
                                   + "\nrestantes : " + baliseRemainingPoche
                                   + "\nscannées : " + baliseCheckedPoche);
             } else { //si la balise actuelle n'a pas de poche
-                textView_poche.setText("Poche actuelle");
+                ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
                 balisePoche.setTextSize(25);
                 balisePoche.setText("aucune\n");
             }
 
+            //liaisons
+            ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText(liaisons);
+
             //points
-            points.setText(nbPoints);
+            ((TextView) view.findViewById(R.id.textView_points_nb)).setText(nbPoints);
 
             //stocker la variable pour vérifier quand on scanne.
             baliseSuivante = baliseActuelle[1];
@@ -512,8 +501,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         if (baliseList.size() != 0) {
 
             //afficher l'interface du deuxieme onglet et cacher la phrase
-            interface2.setVisibility(LinearLayout.VISIBLE);
-            noParcours2.setVisibility(LinearLayout.GONE);
+            view.findViewById(R.id.interface2).setVisibility(LinearLayout.VISIBLE);
+            view.findViewById(R.id.noParcours2).setVisibility(LinearLayout.GONE);
 
             //on check si la balise depart a déjà été scanné, si oui on met departOK a true.
             departOK = controller.checkFirstBalise();
@@ -530,8 +519,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             departOK = false;
 
             //cacher l'interface du deuxieme onglet et afficher la phrase
-            interface2.setVisibility(LinearLayout.GONE);
-            noParcours2.setVisibility(LinearLayout.VISIBLE);
+            view.findViewById(R.id.interface2).setVisibility(LinearLayout.GONE);
+            view.findViewById(R.id.noParcours2).setVisibility(LinearLayout.VISIBLE);
         }
     }
 

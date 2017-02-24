@@ -460,6 +460,7 @@ public class DBController extends SQLiteOpenHelper {
         {
             return true;
         }
+
     }
 
     public String getFirstBalise() {
@@ -612,8 +613,6 @@ public class DBController extends SQLiteOpenHelper {
         }
         cursor.close();
 
-        System.out.println("ALLLLLLLLLLLLLLO");
-
         //TEST
 
         Cursor cursor2 = database.rawQuery("SELECT num FROM liste_liaisons", null);
@@ -691,6 +690,30 @@ public class DBController extends SQLiteOpenHelper {
 
         return String.valueOf(somme);
     }
+
+
+    public String getLiaisonsPossibles(String lastBalise) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String liaisons = "";
+
+        Cursor cursor = database.rawQuery("SELECT description FROM liste_liaisons INNER JOIN liaison " +
+                                          "ON liste_liaisons.num = liaison.num " +
+                                          "WHERE liaison.balise=?", new String[]{lastBalise});
+
+        if (cursor.moveToFirst()) {
+            do {
+                liaisons = liaisons + cursor.getString(0) + "\n";
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        database.close();
+
+        return liaisons;
+    }
+
 
     /**
      * Compose JSON out of SQLite records

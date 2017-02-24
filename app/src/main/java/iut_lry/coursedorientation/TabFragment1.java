@@ -396,7 +396,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             // Extract JSON array from the response
             JSONArray arr = new JSONArray(response);
-            System.out.println(arr.length());
+            //System.out.println(arr.length());
 
 
             // If no of array elements is not zero
@@ -751,7 +751,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                         queryValues.put("liste_liaisons.description", obj.get("liste_liaisons.description").toString());
                         queryValues.put("liste_liaisons.points", obj.get("liste_liaisons.points").toString());
                     }
-                    else if(!obj.isNull("liaisons.num"))
+                    else if(!obj.isNull("liaison.num"))
                     {
                         queryValues.put("liaison.num", obj.get("liaison.num").toString());
                         queryValues.put("liaison.balise", obj.get("liaison.balise").toString());

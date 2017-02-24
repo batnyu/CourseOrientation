@@ -488,6 +488,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //regarder si la balise est la dernière.
             if(baliseActuelle[1].equals("aucune") && departOK){
                 timeElapsed.stop();
+                //jai eu une seconde de diff une fois entre frag2 (-1) et frag 3 donc test
+                //ca
+                timeElapsed.setText(temps);
+
                 departOK=false;
                 mCallback.showToast("Vous avez scanné la balise de fin !","long");
             }

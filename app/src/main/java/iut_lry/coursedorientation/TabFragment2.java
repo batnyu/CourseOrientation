@@ -395,6 +395,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             baliseRemainingPoche = controller.getRemainingPoche(baliseActuelle[6]);
             baliseCheckedPoche = controller.getCheckedPoche(baliseActuelle[6]);
 
+            //points
+            nbPoints = controller.calculerPoints();
+
 
             return null;
         }
@@ -473,6 +476,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 balisePoche.setTextSize(25);
                 balisePoche.setText("aucune\n");
             }
+
+            //points
+            points.setText(nbPoints);
 
             //stocker la variable pour vérifier quand on scanne.
             baliseSuivante = baliseActuelle[1];

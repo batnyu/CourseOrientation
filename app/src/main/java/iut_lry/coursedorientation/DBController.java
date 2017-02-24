@@ -597,6 +597,26 @@ public class DBController extends SQLiteOpenHelper {
         return poche;
     }
 
+    public String calculerPoints() {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        int somme = 0;
+
+        Cursor cursor = database.rawQuery("SELECT liaison,points FROM liste_balises WHERE temps != ''", null);
+        if (cursor.moveToFirst()) {
+            do {
+                somme = somme + Integer.parseInt(cursor.getString(1));
+
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        
+        database.close();
+
+        return String.valueOf(somme);
+    }
+
     /**
      * Compose JSON out of SQLite records
      *

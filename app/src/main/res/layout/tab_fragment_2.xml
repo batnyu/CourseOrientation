@@ -228,9 +228,9 @@
                     android:id="@+id/textView_liaisons_nb"
                     android:layout_marginTop="2dp"
                     android:textAllCaps="false"
-                    android:textSize="25sp"
+                    android:textSize="15sp"
                     android:textColor="@color/zxing_result_view"
-                    android:text="\n" />
+                    android:text="aucune\n\n" />
 
             </LinearLayout>
 
@@ -258,13 +258,13 @@
                     android:textSize="14sp" />
 
                 <TextView
-                    android:text="aucune\n"
+                    android:text="aucune\n\n"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/textView_poche_nb"
                     android:layout_marginTop="2dp"
                     android:textAllCaps="false"
-                    android:textSize="25sp"
+                    android:textSize="15sp"
                     android:textColor="@color/zxing_result_view" />
 
             </LinearLayout>
@@ -380,14 +380,13 @@
                     android:paddingTop="2dp" />
 
                 <TextView
-                    android:text="aucune"
+                    android:text="aucune\n\n"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/textView_balise_suivante_nb"
                     android:layout_marginTop="2dp"
                     android:textSize="15sp"
                     android:textColor="@color/zxing_result_view"
-                    android:textStyle="bold"
                     android:textAllCaps="false"
                     android:paddingTop="6dp" />
             </LinearLayout>
@@ -401,20 +400,6 @@
             android:text="SCAN"
             android:layout_marginBottom="5dp"
             android:textSize="20sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/scan_format"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/scan_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp" />
 
     </LinearLayout>
 

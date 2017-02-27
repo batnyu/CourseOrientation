@@ -299,25 +299,61 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
     }
 
-    public int checkBalise(String balise, String temps, boolean departOK, String baliseDepart, String baliseSuivante, String nbBaliseSuivante) {
+    public int checkBalise(String balise, boolean departOK, String baliseDepart, String baliseSuivante, String nbBaliseSuivante, String pocheActuelle) {
+
+        boolean scanPossible = false;
 
         SQLiteDatabase database = this.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT num_balise,temps FROM liste_balises WHERE num_balise = ?", new String[]{balise});
+        Cursor cursor = database.rawQuery("SELECT num_balise,temps,groupe,balise_entree,balise_sortie FROM liste_balises " +
+                                          "LEFT JOIN groupe ON groupe = nom_groupe WHERE num_balise = ?", new String[]{balise});
 
         if (cursor.moveToFirst())
         {
 
-            String colonne2 = cursor.getString(1);
-            if (colonne2.equals(""))
+            String tempsReq = cursor.getString(1);
+            String poche = cursor.getString(2);
+            String baliseEntree = cursor.getString(3);
+            String baliseSortie = cursor.getString(4);
+
+            if (tempsReq.equals(""))
             {
-                if (cursor.getString(0).equals(baliseDepart))//si la balise de depart est scanné
+
+                /*//TEST
+                //poche
+                if(poche.equals(pocheActuelle) || baliseEntree.equals(balise) || baliseSortie.equals(balise))//si
+                {
+                    scanPossible = true;
+                }
+                else if(!poche.equals(pocheActuelle) && pocheActuelle.equals("null"))
+                {
+                    cursor.close();
+                    database.close();
+                    return 7; //n'est pas rentré dans la poche
+                }
+                else if(!poche.equals(pocheActuelle) && !pocheActuelle.equals("null"))
+                {
+                    cursor.close();
+                    database.close();
+                    return 8; //n'est pas sorti de la poche
+                }
+
+                if(baliseSortie.equals(balise) || poche.equals(pocheActuelle)) //si on scanne la balise de sortie de la poche
+                {
+                    cursor.close();
+                    database.close();
+                    return 12; //changer la poche actuelle en null
+                }
+
+                //FIN TEST*/
+
+                if (scanPossible && cursor.getString(0).equals(baliseDepart))//si la balise de depart est scanné
                 {
                     cursor.close();
                     database.close();
                     return 3;
                 }
-                else if (departOK && (balise.equals(nbBaliseSuivante) || nbBaliseSuivante.equals("") || baliseSuivante.equals("optionnelle"))) //si la première balise a déjà été scanné
+                else if (scanPossible && departOK && (balise.equals(nbBaliseSuivante) || nbBaliseSuivante.equals("") || baliseSuivante.equals("optionnelle"))) //si la première balise a déjà été scanné
                 {
                     cursor.close();
                     database.close();
@@ -390,6 +426,7 @@ public class DBController extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
+
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put("numCourse", cursor.getString(0));
                 map.put("numEquipe", cursor.getString(1));
@@ -400,6 +437,7 @@ public class DBController extends SQLiteOpenHelper {
                 map.put("num_parcours", cursor.getString(6));
                 map.put("date_naissance", cursor.getString(7));
                 wordList.add(map);
+
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -505,22 +543,29 @@ public class DBController extends SQLiteOpenHelper {
         //Changer en json ?
         SQLiteDatabase database = this.getReadableDatabase();
 
-        String[] balise = new String[7];
+        String[] balise = new String[9];
 
-        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,num_suivante,azimut,azimut_degre,azimut_distance,groupe " +
+        Cursor cursor = database.rawQuery("SELECT num_balise,suivante,num_suivante,azimut,azimut_degre,azimut_distance,groupe,temps " +
                                           "FROM liste_balises WHERE temps != '' " +
                                           "AND temps=(SELECT max(temps) FROM liste_balises) ", null);
 
         if (cursor.moveToFirst()) {
 
-            for(int i=0;i<7;i++)
+            for(int i=0;i<8;i++)
             {
                 balise[i] = cursor.getString(i);
+            }
+
+            Cursor cursor25 = database.rawQuery("SELECT poste " +
+                    "FROM balise WHERE num = ?", new String[]{cursor.getString(2)});
+
+            if(cursor25.moveToFirst()) {
+                balise[8] = cursor25.getString(0);
             }
         }
         else
         {
-            for(int i=0;i<7;i++)
+            for(int i=0;i<9;i++)
             {
                 balise[i] = "";
             }
@@ -530,6 +575,32 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
 
         return balise;
+    }
+
+    public boolean checkSortiePoche(String pocheActuelle){ //essai autrement
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String temps = "";
+
+        Cursor cursor = database.rawQuery("SELECT num_balise,temps,groupe,balise_entree FROM liste_balises " +
+                "LEFT JOIN groupe ON groupe = nom_groupe WHERE num_balise = ?", new String[]{pocheActuelle});
+
+        if (cursor.moveToFirst()) {
+
+            temps = cursor.getString(0);
+        }
+
+        cursor.close();
+        database.close();
+
+        if(temps.equals("")){
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+
     }
 
     public String getSortiePoche(String pocheActuelle) {
@@ -627,12 +698,13 @@ public class DBController extends SQLiteOpenHelper {
                                                    "liste_liaisons.points FROM liste_liaisons INNER JOIN liaison " +
                                                    "ON liste_liaisons.num = liaison.num " +
                                                    "WHERE liste_liaisons.num = ? " +
-                                                   "ORDER BY liaison.ordre", new String[]{liaisonActuelle});
+                                                   "ORDER BY liaison.ordre DESC", new String[]{liaisonActuelle});
 
                 System.out.println("stp : " + cursor3.getCount());
                 //Cursor cursor3 = database.rawQuery("SELECT * FROM liste_liaisons",null);
 
-                if (cursor3.moveToFirst()) {
+                if (cursor3.moveToFirst())
+                {
                     //do {
                     int longueurTest = 0;
 
@@ -642,33 +714,36 @@ public class DBController extends SQLiteOpenHelper {
                             "ORDER BY temps", null);
                     if (cursor4.moveToFirst()) {
                         do {
-                            if (longueurTest == 54) {
+                            if (longueurTest == 54)
+                            {
                                 cursor4.moveToPrevious();
                                 longueurTest = 0;
                             }
 
-                            if (cursor3.getString(1).equals(cursor4.getString(0))) {
+                            if (cursor3.getString(1).equals(cursor4.getString(0)))
+                            {
                                 longueurTest++;
                                 System.out.println("Truc égal à balise !");
 
-                                if (longueurTest == longueur) {
+                                if (longueurTest == longueur)
+                                {
                                     somme = somme + Integer.parseInt(cursor3.getString(3));
                                     longueurTest = 0;
                                     cursor3.moveToFirst();
                                     //une fois que t'as trouvé la liaison, normalement tu peux l'avoir qu'une seule fois
                                     // donc là, faudrait quitter la boucle pour opti.
-                                } else {
+                                }
+                                else
+                                {
                                     cursor3.moveToNext();
                                 }
 
-
-                            } else if(longueurTest > 0){
+                            }
+                            else if(longueurTest > 0)
+                            {
                                 longueurTest = 54;
                                 cursor3.moveToFirst();
                             }
-
-
-
 
                         } while (cursor4.moveToNext());
                     }
@@ -698,13 +773,13 @@ public class DBController extends SQLiteOpenHelper {
 
         String liaisons = "";
 
-        Cursor cursor = database.rawQuery("SELECT description FROM liste_liaisons INNER JOIN liaison " +
+        Cursor cursor = database.rawQuery("SELECT description,points FROM liste_liaisons INNER JOIN liaison " +
                                           "ON liste_liaisons.num = liaison.num " +
                                           "WHERE liaison.balise=?", new String[]{lastBalise});
 
         if (cursor.moveToFirst()) {
             do {
-                liaisons = liaisons + cursor.getString(0) + "\n";
+                liaisons = liaisons + cursor.getString(0) + " -> " + cursor.getString(1) + " pts" + "\n";
             } while (cursor.moveToNext());
         }
 

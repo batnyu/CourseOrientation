@@ -86,8 +86,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     // DB Class to perform DB related operations
     DBController controller;
 
-    ArrayList<HashMap<String, String>> baliseList;
-
     HashMap<String, String> queryValues;
 
     @Override
@@ -561,6 +559,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 layoutDllParkour.setVisibility(View.GONE);
 
                 //Eviter que le joueur télécharge 10 000 fois le parcours pour rien.
+
                 dllParkour.setEnabled(false);
                 dllParkour.setText("Parcours téléchargé");
 
@@ -771,6 +770,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     public class updateParametres extends AsyncTask<Void, Void, Void> {
 
+        ArrayList<HashMap<String, String>> baliseList;
         String parametres;
 
         @Override
@@ -797,9 +797,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             baliseList = controller.getAllBalises();
 
+
             if (baliseList.size() != 0)
             {
                 parametres = controller.updateOngletParametres();
+                System.out.println("PARAMETRES : " + parametres);
             }
 
             return null;
@@ -817,6 +819,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 afficherJoueurs(parametres,"onStart");
 
                 dllParkour.setVisibility(View.VISIBLE);
+                //enlever pr l'instant car chiant
                 dllParkour.setEnabled(false);
                 dllParkour.setText("Parcours téléchargé");
 

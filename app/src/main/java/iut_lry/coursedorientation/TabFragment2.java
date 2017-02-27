@@ -54,6 +54,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     String baliseSuivante;
     String nbBaliseSuivante;
+    String pocheActuelle;
 
     String[] baliseActuelle;
 
@@ -239,7 +240,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         protected Void doInBackground(String... parametres) {
             //do your work here
 
-            resultat = controller.checkBalise(scanContent, temps, departOK, nbBaliseDepart, baliseSuivante, nbBaliseSuivante);
+            resultat = controller.checkBalise(scanContent, departOK, nbBaliseDepart, baliseSuivante, nbBaliseSuivante, pocheActuelle);
 
             publishProgress(resultat);
 
@@ -277,13 +278,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
          *    display it or send to mainactivity
          *    close any dialogs/ProgressBars/etc...
         */
-            //Affichage dans les TextViews
-            TextView scan_format = (TextView) view.findViewById(R.id.scan_format);
-            TextView scan_content = (TextView) view.findViewById(R.id.scan_content);
-
-            scan_format.setText("FORMAT: " + scanFormat);
-            scan_content.setText("CONTENT: " + scanContent);
-
             if(resultat == 1 || resultat == 3)
             {
                 //On update la listView du fragment 3 (onglet parcours)
@@ -413,58 +407,72 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
             //Afficher soit la balise de départ avant le départ et la balise d'arrivée pendant la course
             if(departOK){
-                ((TextView) view.findViewById(R.id.textView_balise_arrivee_nb)).setText(nbBaliseArrivee);
+                ((TextView) view.findViewById(R.id.textView_balise_arrivee_nb)).setText("n°" + nbBaliseArrivee);
                 //cacher la balise de départ et afficher celle d'arrivee
                 view.findViewById(R.id.startBalise).setVisibility(View.GONE);
                 view.findViewById(R.id.endBalise).setVisibility(View.VISIBLE);
 
             } else {
-                ((TextView) view.findViewById(R.id.textView_balise_depart_nb)).setText(nbBaliseDepart);
+                ((TextView) view.findViewById(R.id.textView_balise_depart_nb)).setText("n°" + nbBaliseDepart);
                 //cacher la balise d'arrivee et afficher celle de départ
                 view.findViewById(R.id.startBalise).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.endBalise).setVisibility(View.GONE);
             }
 
             //dernière balise
-            ((TextView) view.findViewById(R.id.textView_balise_pointee_nb)).setText(baliseActuelle[0]);
+            if(baliseActuelle[0].equals("")){
+                ((TextView) view.findViewById(R.id.textView_balise_pointee_nb)).setText(baliseActuelle[0]);
+            } else {
+                ((TextView) view.findViewById(R.id.textView_balise_pointee_nb)).setText("n°" + baliseActuelle[0]);
+            }
+
             //balise suivante
             TextView txtBaliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
             if((baliseActuelle[1].equals("obligatoire") || baliseActuelle[1].equals("optionnelle")) && baliseActuelle[3].equals("non"))
             {
-                txtBaliseSuivante.setText(baliseActuelle[2] + " (" + baliseActuelle[1] + ")");
+                //Quand prochaine n'est pas azimut
+                txtBaliseSuivante.setText("n°" + baliseActuelle[2] + " -> " + baliseActuelle[1] + "\n" +
+                                          "Poste : " + baliseActuelle[8] + "\n");
             }
             else if(baliseActuelle[3].equals("oui"))
             {
                 //Quand prochaine est azimut
-                txtBaliseSuivante.setText("Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m" + " (" + baliseActuelle[1] + ")");
+                txtBaliseSuivante.setText("n°" + baliseActuelle[2] + " -> " + baliseActuelle[1] + "\n" +
+                                          "Indication : Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m\n" +
+                                          "Poste : " + baliseActuelle[8]);
                 Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                 // Vibrate for 500 milliseconds
                 v.vibrate(500);
             }
             else
             {
-                txtBaliseSuivante.setText(baliseActuelle[1]);
+                //Quand prochaine est au choix ou aucune
+                txtBaliseSuivante.setText(baliseActuelle[1] + "\n\n");
             }
 
             //poche
             TextView balisePoche = ((TextView) view.findViewById(R.id.textView_poche_nb));
             if(baliseActuelle[6].equals("")) { //si on vient de dll le parkour
                 ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
-                balisePoche.setText("\n");
+                balisePoche.setText("\n\n");
             } else if(!baliseActuelle[6].equals("null")){ //si la balise actuelle fait partie d'une poche
                 ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle : " + baliseActuelle[6]);
-                balisePoche.setTextSize(15);
                 balisePoche.setText("sortie : " + baliseSortiePoche
                                   + "\nrestantes : " + baliseRemainingPoche
                                   + "\nscannées : " + baliseCheckedPoche);
+                pocheActuelle = baliseActuelle[6];
             } else { //si la balise actuelle n'a pas de poche
                 ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
-                balisePoche.setTextSize(25);
-                balisePoche.setText("aucune\n");
+                balisePoche.setText("aucune\n\n");
             }
 
             //liaisons
-            ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText(liaisons);
+            if(liaisons.equals("")){
+                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("aucune\n\n");
+            } else {
+                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText(liaisons);
+            }
+
 
             //points
             ((TextView) view.findViewById(R.id.textView_points_nb)).setText(nbPoints);
@@ -479,7 +487,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 timeElapsed.stop();
                 //jai eu une seconde de diff une fois entre frag2 (-1) et frag 3 donc test
                 //ca
-                timeElapsed.setText(temps);
+                timeElapsed.setText(baliseActuelle[7]);
 
                 departOK=false;
                 mCallback.showToast("Vous avez scanné la balise de fin !","long");

@@ -58,6 +58,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     String[] baliseActuelle;
 
+    int resultat = 54;
+
     View view;
 
     @Override
@@ -101,6 +103,28 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (IFragmentToActivity) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement IFragmentToActivity");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        mCallback = null;
+        super.onDetach();
+    }
+
+    public void onRefresh() {
+        Toast.makeText(getActivity(), "Fragment 2: Refresh called.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onClick(View v) {
         if(v.getId() == R.id.scan_button){
 
@@ -137,13 +161,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 temps = format.format(rightNow.getTime());
                 */
 
+                //BALISE TEST
                 if(scanContent.equals("BALISE TEST")) {
                     mCallback.showToast("La balise TEST a été scanné !","court");
                 } else {
                     ReceiveData test = new ReceiveData();
                     test.execute();
                 }
-
 
                 /*//Joué un son -> BUG
                 final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.zxing_beep);
@@ -156,21 +180,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallback = (IFragmentToActivity) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement IFragmentToActivity");
-        }
-    }
-
     public class ReceiveData extends AsyncTask<String, Integer, Void> {
-
-        int resultat;
-
 
         @Override
         protected void onPreExecute() {
@@ -183,12 +193,23 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
+        protected Void doInBackground(String... parametres) {
+            //do your work here
+
+            resultat = controller.checkBalise(scanContent, departOK, nbBaliseDepart, baliseSuivante, nbBaliseSuivante, pocheActuelle);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
         /*
-         *    updating data
-         *    such a Dialog or ProgressBar
+         *    do something with data here
+         *    display it or send to mainactivity
+         *    close any dialogs/ProgressBars/etc...
         */
-            if(values[0] == 1) {
+
+            if(resultat == 1 || resultat == 12) {
                 //Si on fait ca, on a le temps quand on appuie sur le bouton SCAN
                 //et pas quand on obtient le résultat
                 //temps = timeElapsed.getText().toString();
@@ -202,9 +223,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 String ss = s < 10 ? "0"+s: s+"";
                 temps = hh+":"+mm+":"+ss;
 
-                Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
+                if(resultat == 1)
+                    mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps,"long");
+                else
+                    mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps + "\nVous avez quitté la poche " + pocheActuelle,"long");
+
             }
-            else if(values[0] == 3)
+            else if(resultat == 3)
             {
                 temps = timeElapsed.getText().toString();
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
@@ -213,97 +238,36 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 timeElapsed.start();
                 departOK = true;
             }
-            else if(values[0] == 2)
+            else if(resultat == 2)
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
             }
-            else if(values[0] == 4)
+            else if(resultat == 4)
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
             }
-            else if(values[0] == 5)
+            else if(resultat == 5)
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise suivante !", Toast.LENGTH_LONG).show();
             }
-            else if(values[0] == 6)
+            else if(resultat == 6)
             {
                 Toast.makeText(getActivity(), "Vous avez déjà fini le parcours!", Toast.LENGTH_LONG).show();
             }
-            else
+            else if(resultat !=54)
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
             }
 
-        }
-
-        @Override
-        protected Void doInBackground(String... parametres) {
-            //do your work here
-
-            resultat = controller.checkBalise(scanContent, departOK, nbBaliseDepart, baliseSuivante, nbBaliseSuivante, pocheActuelle);
-
-            publishProgress(resultat);
-
-
-            //On doit attendre pour que le programme ait le temps de mettre à jour la variable temps dans onProgressUpdate
-            try {
-                Thread.sleep(400);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-
-
-            if(resultat == 1 || resultat == 3)
+            if(resultat == 1 || resultat == 3 || resultat == 12)
             {
-                //Update du temps dans la base de données
-                controller.UpdateTemps(scanContent,temps);
-
-                //pour pouvoir vérifier si la suivante a déjà été pointé
-                //mettre à jour la dernière balise pointée et sa suivante
-                baliseActuelle = controller.getBaliseActuelle();
-                //stocker la variable pour vérifier quand on scanne.
-                nbBaliseSuivante = baliseActuelle[2];
-                controller.updateNextAlreadyChecked(nbBaliseSuivante);
-
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-        /*
-         *    do something with data here
-         *    display it or send to mainactivity
-         *    close any dialogs/ProgressBars/etc...
-        */
-            if(resultat == 1 || resultat == 3)
-            {
-                //On update la listView du fragment 3 (onglet parcours)
-                mCallback.communicateToFragment3();
                 //on update les infos de l'onglet "infos"
                 updateInfos();
-
             }
-            //au hasard
-            resultat = 54;
 
             //réactiver le bouton
             scanButton.setEnabled(true);
-
         }
-    }
-
-    @Override
-    public void onDetach() {
-        mCallback = null;
-        super.onDetach();
-    }
-
-    public void onRefresh() {
-        Toast.makeText(getActivity(), "Fragment 2: Refresh called.",
-                Toast.LENGTH_SHORT).show();
     }
 
     public void updateInfos() {
@@ -332,22 +296,30 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
          *    do things before doInBackground() code runs
          *    such as preparing and showing a Dialog or ProgressBar
         */
-
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-        /*
-         *    updating data
-         *    such a Dialog or ProgressBar
-        */
-
-
         }
 
         @Override
         protected Void doInBackground(String... parametres) {
             //do your work here
+
+            if(resultat == 1 || resultat == 3 || resultat == 12)
+            {
+                //Update du temps dans la base de données
+                controller.UpdateTemps(scanContent,temps);
+            }
+
+            //pour pouvoir vérifier si la suivante a déjà été pointé
+            //mettre à jour la dernière balise pointée et sa suivante
+            baliseActuelle = controller.getBaliseActuelle();
+            //stocker la variable pour vérifier quand on scanne.
+            nbBaliseSuivante = baliseActuelle[2];
+            controller.updateNextAlreadyChecked(nbBaliseSuivante);
+
+            if(resultat == 12)
+            {
+                //balise //mettre la balise actuelle 6 a "null" pour pouvoir scanner une autre balise d'une autre poche qd on quitte la poche.
+                //sauf que ya re un controller.getBaliseActuelle() dans l'autre thread, essayez de tout transvaser dans le thread update.
+            }
 
             //on récupère les données dans la base
             scannéSurTotal = controller.getNbCheckpoints();
@@ -360,9 +332,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 nbBaliseDepart = controller.getFirstBalise();
             }
 
-            //mettre à jour la dernière balise pointée et sa suivante
-            baliseActuelle = controller.getBaliseActuelle();
-
             //poche
             baliseSortiePoche = controller.getSortiePoche(baliseActuelle[6]);
             baliseRemainingPoche = controller.getRemainingPoche(baliseActuelle[6]);
@@ -374,6 +343,16 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //points avec liaisons
             nbPoints = controller.calculerPoints();
 
+            //on attend pas si on refresh qd on télécharge
+            if(resultat != 54)
+            {
+                //on attend un peu avant de finir le thread pour laisser le temps au joueur de voir les infos bouger
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
             return null;
         }
@@ -464,6 +443,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             } else { //si la balise actuelle n'a pas de poche
                 ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
                 balisePoche.setText("aucune\n\n");
+                pocheActuelle = "null";
             }
 
             //liaisons
@@ -492,6 +472,15 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 departOK=false;
                 mCallback.showToast("Vous avez scanné la balise de fin !","long");
             }
+
+
+            //Si un temps a été ajouté, on update la listView du fragment 3 (onglet parcours)
+            if(resultat == 1 || resultat == 3)
+            {
+                mCallback.communicateToFragment3();
+            }
+
+            resultat = 54;
 
         }
     }

@@ -819,7 +819,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 afficherJoueurs(parametres,"onStart");
 
                 dllParkour.setVisibility(View.VISIBLE);
-                //enlever pr l'instant car chiant
                 dllParkour.setEnabled(false);
                 dllParkour.setText("Parcours téléchargé");
 

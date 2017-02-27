@@ -319,45 +319,52 @@ public class DBController extends SQLiteOpenHelper {
             if (tempsReq.equals(""))
             {
 
-                /*//TEST
-                //poche
-                if(poche.equals(pocheActuelle) || baliseEntree.equals(balise) || baliseSortie.equals(balise))//si
-                {
-                    scanPossible = true;
-                }
-                else if(!poche.equals(pocheActuelle) && pocheActuelle.equals("null"))
-                {
-                    cursor.close();
-                    database.close();
-                    return 7; //n'est pas rentré dans la poche
-                }
-                else if(!poche.equals(pocheActuelle) && !pocheActuelle.equals("null"))
-                {
-                    cursor.close();
-                    database.close();
-                    return 8; //n'est pas sorti de la poche
-                }
-
-                if(baliseSortie.equals(balise) || poche.equals(pocheActuelle)) //si on scanne la balise de sortie de la poche
-                {
-                    cursor.close();
-                    database.close();
-                    return 12; //changer la poche actuelle en null
-                }
-
-                //FIN TEST*/
-
-                if (scanPossible && cursor.getString(0).equals(baliseDepart))//si la balise de depart est scanné
+                if (cursor.getString(0).equals(baliseDepart))//si la balise de depart est scanné
                 {
                     cursor.close();
                     database.close();
                     return 3;
                 }
-                else if (scanPossible && departOK && (balise.equals(nbBaliseSuivante) || nbBaliseSuivante.equals("") || baliseSuivante.equals("optionnelle"))) //si la première balise a déjà été scanné
+                else if (departOK && (balise.equals(nbBaliseSuivante) || nbBaliseSuivante.equals("") || baliseSuivante.equals("optionnelle"))) //si la première balise a déjà été scanné
                 {
-                    cursor.close();
-                    database.close();
-                    return 1;
+                    //resoudre bug null chelou a cause de left join
+                    if(pocheActuelle.equals("null"))
+                    {
+                        baliseEntree = "null";
+                        baliseSortie = "null";
+                    }
+
+                    if(baliseSortie.equals(balise) && poche.equals(pocheActuelle)) //si on scanne la balise de sortie de la poche
+                    {
+                        cursor.close();
+                        database.close();
+                        return 12; //changer la poche actuelle en null
+                    }
+                    else if(poche.equals(pocheActuelle) || baliseEntree.equals(balise)) //si la balise scanné appartient a la poche actuelle
+                    {
+                        cursor.close();
+                        database.close();
+                        return 1;
+                    }
+                    else if(!poche.equals(pocheActuelle) && pocheActuelle.equals("null"))
+                    {
+                        cursor.close();
+                        database.close();
+                        return 7; //n'est pas rentré dans la poche
+                    }
+                    else if(!poche.equals(pocheActuelle) && !pocheActuelle.equals("null"))
+                    {
+                        cursor.close();
+                        database.close();
+                        return 8; //n'est pas sorti de la poche
+                    }
+                    else
+                    {
+                        cursor.close();
+                        database.close();
+                        return 10; //cas non traité
+                    }
+
                 }
                 else if(!balise.equals(nbBaliseSuivante) && departOK) //si c'est pas la balise suivante
                 {
@@ -384,7 +391,9 @@ public class DBController extends SQLiteOpenHelper {
                 database.close();
                 return 2;
             }
-        } else { //si la balise n'est pas trouvé dans la base
+        }
+        else
+        { //si la balise n'est pas trouvé dans la base
             cursor.close();
             database.close();
             return 0;

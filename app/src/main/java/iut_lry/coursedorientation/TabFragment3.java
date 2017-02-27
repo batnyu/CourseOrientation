@@ -68,7 +68,7 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         updateList();
 
     }
-
+    //faire un thread pour update list et attendre un peu avant de refresh tout pour opti
     public void updateList() {
         //TEST
         interfaceMain = (LinearLayout) getActivity().findViewById(R.id.main);

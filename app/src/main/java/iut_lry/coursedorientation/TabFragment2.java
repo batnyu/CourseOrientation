@@ -490,7 +490,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         ArrayList<HashMap<String, String>> baliseList;
         // Get User records from SQLite DB
 
-        baliseList = controller.getAllBalises();
+        baliseList = controller.getAllBalises(false);
 
         timeElapsed.stop();
         timeElapsed.setText("00:00:00");

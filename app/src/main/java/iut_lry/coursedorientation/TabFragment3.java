@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -41,6 +43,9 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     LinearLayout layoutEnvoiParkour;
     ProgressBar progressBarSend;
 
+    CheckBox checkBoxNotChecked;
+    boolean notCheckedBox;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_3, container, false);
@@ -48,6 +53,14 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         buttonSend = (Button) view.findViewById(R.id.buttonSend);
         buttonSend.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
         buttonSend.setOnClickListener(this);
+
+        checkBoxNotChecked = (CheckBox) view.findViewById(R.id.checkBoxNotChecked);
+        checkBoxNotChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                updateList();
+            }
+        });
 
         progressBarSend = (ProgressBar) view.findViewById(R.id.progressBarSend);
         progressBarSend.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
@@ -82,7 +95,16 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         ArrayList<HashMap<String, String>> baliseList;
         // Get User records from SQLite DB
 
-        baliseList = controller.getAllBalises();
+        if(checkBoxNotChecked.isChecked())
+        {
+            notCheckedBox = true;
+        }
+        else
+        {
+            notCheckedBox = false;
+        }
+
+        baliseList = controller.getAllBalises(notCheckedBox);
 
         System.out.println("nombre de ligne de la table à afficher : " + baliseList.size());
         // If users exists in SQLite DB

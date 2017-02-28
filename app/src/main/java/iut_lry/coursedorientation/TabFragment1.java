@@ -795,7 +795,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             controller = new DBController(getActivity());
 
-            baliseList = controller.getAllBalises();
+            baliseList = controller.getAllBalises(false);
 
 
             if (baliseList.size() != 0)

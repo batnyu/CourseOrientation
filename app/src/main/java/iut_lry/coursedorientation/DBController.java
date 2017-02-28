@@ -232,16 +232,24 @@ public class DBController extends SQLiteOpenHelper {
      *
      * @return
      */
-    public ArrayList<HashMap<String, String>> getAllBalises() {
+    public ArrayList<HashMap<String, String>> getAllBalises(boolean notChecked) {
 
         ArrayList<HashMap<String, String>> usersList;
         usersList = new ArrayList<HashMap<String, String>>();
-        //String selectQuery = "SELECT * FROM parcours ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
-        //String selectQuery = "SELECT * FROM liste_balises ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
+
+        String parametres = "";
+
+        //on vérifie le parametre pr les différents options de classement
+        if(notChecked)
+        {
+            parametres = " WHERE temps = ''";
+        }
+
         String selectQuery = "SELECT liste_balises.num_balise,liste_balises.temps,liste_balises.suivante,liste_balises.num_suivante," +
                              "balise.poste,liste_balises.azimut,liste_balises.azimut_degre,liste_balises.azimut_distance" +
-                             " FROM liste_balises INNER JOIN balise ON liste_balises.num_balise = balise.num " +
-                             "ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
+                             " FROM liste_balises INNER JOIN balise ON liste_balises.num_balise = balise.num" +
+                             parametres +
+                             " ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
 
 
         SQLiteDatabase database = this.getWritableDatabase();

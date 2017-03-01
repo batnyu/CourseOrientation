@@ -58,6 +58,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     String[] baliseActuelle;
 
+    boolean activiteRedemarre;
+
     int resultat = 54;
 
     View view;
@@ -96,6 +98,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         });
         timeElapsed.setText("00:00:00");
         departOK = false;
+
+        activiteRedemarre = true;
 
         fragmentCommunication2();
         //vérif tableau.
@@ -302,6 +306,16 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         protected Void doInBackground(String... parametres) {
             //do your work here
 
+            //retarder l'update qd l'app demarre mais regle rien.
+            if(activiteRedemarre){
+                activiteRedemarre = false;
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             if(resultat == 1 || resultat == 3 || resultat == 12)
             {
                 //Update du temps dans la base de données
@@ -447,12 +461,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             }
 
             //liaisons
-            if(liaisons.equals("")){
+            if(liaisons.equals("") && departOK){
                 ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("aucune\n\n");
+            } else if(liaisons.equals("")){
+                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("\n\n");
             } else {
                 ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText(liaisons);
             }
-
 
             //points
             ((TextView) view.findViewById(R.id.textView_points_nb)).setText(nbPoints);
@@ -487,15 +502,14 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     public void fragmentCommunication2() {
 
-        ArrayList<HashMap<String, String>> baliseList;
-        // Get User records from SQLite DB
+        boolean parcoursFull;
 
-        baliseList = controller.getAllBalises(false);
+        parcoursFull = controller.checkParcours();
 
         timeElapsed.stop();
         timeElapsed.setText("00:00:00");
 
-        if (baliseList.size() != 0) {
+        if (parcoursFull) {
 
             //afficher l'interface du deuxieme onglet et cacher la phrase
             view.findViewById(R.id.interface2).setVisibility(LinearLayout.VISIBLE);

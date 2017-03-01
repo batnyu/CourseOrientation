@@ -770,7 +770,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     public class updateParametres extends AsyncTask<Void, Void, Void> {
 
-        ArrayList<HashMap<String, String>> baliseList;
+        boolean parcoursFull;
         String parametres;
 
         @Override
@@ -795,10 +795,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             controller = new DBController(getActivity());
 
-            baliseList = controller.getAllBalises(false);
+            parcoursFull = controller.checkParcours();
 
 
-            if (baliseList.size() != 0)
+            if (parcoursFull)
             {
                 parametres = controller.updateOngletParametres();
                 System.out.println("PARAMETRES : " + parametres);
@@ -814,7 +814,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
          *    display it or send to mainactivity
          *    close any dialogs/ProgressBars/etc...
         */
-            if (baliseList.size() != 0)
+            if (parcoursFull)
             {
                 afficherJoueurs(parametres,"onStart");
 

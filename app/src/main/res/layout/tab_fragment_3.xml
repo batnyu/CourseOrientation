@@ -8,7 +8,7 @@
     android:background="@color/fond">
 
     <TextView
-        android:text="Vous n'avez téléchargé aucun parcours !"
+        android:text="Vous n'avez pas téléchargé de parcours"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/noParcours"
@@ -33,10 +33,10 @@
             android:theme="@style/checkBoxStyle"
             android:text="non scanné"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/checkBoxNotChecked"
             android:layout_marginBottom="8dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:layout_height="wrap_content" />
 
         <LinearLayout android:id="@+id/header"
         android:background="#9b9b9b"

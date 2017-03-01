@@ -227,6 +227,26 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
     }
 
+    public boolean checkParcours(){
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT id FROM parcours", null);
+
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            database.close();
+            return true;
+        }
+        else {
+            cursor.close();
+            database.close();
+            return false;
+        }
+
+
+
+    }
+
     /**
      * Get list of Users from SQLite DB as Array List
      *
@@ -703,6 +723,8 @@ public class DBController extends SQLiteOpenHelper {
 
         //TEST
 
+        String sens;
+
         Cursor cursor2 = database.rawQuery("SELECT num FROM liste_liaisons", null);
 
         if (cursor2.moveToFirst()) {
@@ -711,63 +733,75 @@ public class DBController extends SQLiteOpenHelper {
                 String liaisonActuelle = cursor2.getString(0);
                 System.out.println("liaisonActuelle = " + liaisonActuelle);
 
-                Cursor cursor3 = database.rawQuery("SELECT liste_liaisons.num,liaison.balise,liaison.ordre," +
-                                                   "liste_liaisons.points FROM liste_liaisons INNER JOIN liaison " +
-                                                   "ON liste_liaisons.num = liaison.num " +
-                                                   "WHERE liste_liaisons.num = ? " +
-                                                   "ORDER BY liaison.ordre DESC", new String[]{liaisonActuelle});
-
-                System.out.println("stp : " + cursor3.getCount());
-                //Cursor cursor3 = database.rawQuery("SELECT * FROM liste_liaisons",null);
-
-                if (cursor3.moveToFirst())
+                //pour faire dans les deux sens
+                for(int i=0;i<2;i++)
                 {
-                    //do {
-                    int longueurTest = 0;
-
-                    int longueur = cursor3.getCount();
-
-                    Cursor cursor4 = database.rawQuery("SELECT num_balise,temps FROM liste_balises WHERE temps != '' " +
-                            "ORDER BY temps", null);
-                    if (cursor4.moveToFirst()) {
-                        do {
-                            if (longueurTest == 54)
-                            {
-                                cursor4.moveToPrevious();
-                                longueurTest = 0;
-                            }
-
-                            if (cursor3.getString(1).equals(cursor4.getString(0)))
-                            {
-                                longueurTest++;
-                                System.out.println("Truc égal à balise !");
-
-                                if (longueurTest == longueur)
-                                {
-                                    somme = somme + Integer.parseInt(cursor3.getString(3));
-                                    longueurTest = 0;
-                                    cursor3.moveToFirst();
-                                    //une fois que t'as trouvé la liaison, normalement tu peux l'avoir qu'une seule fois
-                                    // donc là, faudrait quitter la boucle pour opti.
-                                }
-                                else
-                                {
-                                    cursor3.moveToNext();
-                                }
-
-                            }
-                            else if(longueurTest > 0)
-                            {
-                                longueurTest = 54;
-                                cursor3.moveToFirst();
-                            }
-
-                        } while (cursor4.moveToNext());
+                    if(i==0){
+                        sens = "ASC";
+                    } else {
+                        sens = "DESC";
                     }
 
-                    //} while (cursor3.moveToNext());
+                    Cursor cursor3 = database.rawQuery("SELECT liste_liaisons.num,liaison.balise,liaison.ordre," +
+                            "liste_liaisons.points FROM liste_liaisons INNER JOIN liaison " +
+                            "ON liste_liaisons.num = liaison.num " +
+                            "WHERE liste_liaisons.num = ? " +
+                            "ORDER BY liaison.ordre " + sens, new String[]{liaisonActuelle});
+
+                    System.out.println("stp : " + cursor3.getCount());
+                    //Cursor cursor3 = database.rawQuery("SELECT * FROM liste_liaisons",null);
+
+                    if (cursor3.moveToFirst())
+                    {
+                        //do {
+                        int longueurTest = 0;
+
+                        int longueur = cursor3.getCount();
+
+                        Cursor cursor4 = database.rawQuery("SELECT num_balise,temps FROM liste_balises WHERE temps != '' " +
+                                "ORDER BY temps", null);
+                        if (cursor4.moveToFirst()) {
+                            do {
+                                if (longueurTest == 54)
+                                {
+                                    cursor4.moveToPrevious();
+                                    longueurTest = 0;
+                                }
+
+                                if (cursor3.getString(1).equals(cursor4.getString(0)))
+                                {
+                                    longueurTest++;
+                                    System.out.println("Truc égal à balise !");
+
+                                    if (longueurTest == longueur)
+                                    {
+                                        somme = somme + Integer.parseInt(cursor3.getString(3));
+                                        longueurTest = 0;
+                                        cursor3.moveToFirst();
+                                        //une fois que t'as trouvé la liaison, normalement tu peux l'avoir qu'une seule fois
+                                        // donc là, faudrait quitter la boucle pour opti.
+                                    }
+                                    else
+                                    {
+                                        cursor3.moveToNext();
+                                    }
+
+                                }
+                                else if(longueurTest > 0)
+                                {
+                                    longueurTest = 54;
+                                    cursor3.moveToFirst();
+                                }
+
+                            } while (cursor4.moveToNext());
+                        }
+
+                        //} while (cursor3.moveToNext());
+                    }
+                    cursor3.close();
                 }
-                cursor3.close();
+
+
 
             } while (cursor2.moveToNext());
         }
@@ -789,6 +823,8 @@ public class DBController extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getReadableDatabase();
 
         String liaisons = "";
+        String sens;
+
 
         Cursor cursor = database.rawQuery("SELECT description,points FROM liste_liaisons INNER JOIN liaison " +
                                           "ON liste_liaisons.num = liaison.num " +

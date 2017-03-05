@@ -12,6 +12,8 @@ public interface IFragmentToActivity {
 
     public String getWifiApIpAddress();
 
+    public void vibrer();
+
     void communicateToFragment2();
 
     void communicateToFragment3();

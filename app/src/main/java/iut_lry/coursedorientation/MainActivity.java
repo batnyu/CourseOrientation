@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -128,6 +129,13 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         }
 
         return myIP;
+    }
+
+    public void vibrer()
+    {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        long[] pattern = {0, 250, 130, 250};
+        v.vibrate(pattern, -1);
     }
 
     @Override

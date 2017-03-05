@@ -711,7 +711,9 @@ public class DBController extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getReadableDatabase();
 
         int somme = 0;
+        String sens = "";
 
+        //CALCUL POINTS BALISES
         Cursor cursor = database.rawQuery("SELECT points FROM liste_balises WHERE temps != ''", null);
         if (cursor.moveToFirst()) {
             do {
@@ -721,10 +723,7 @@ public class DBController extends SQLiteOpenHelper {
         }
         cursor.close();
 
-        //TEST
-
-        String sens;
-
+        //CALCUL POINTS LIAISONS
         Cursor cursor2 = database.rawQuery("SELECT num FROM liste_liaisons", null);
 
         if (cursor2.moveToFirst()) {
@@ -733,15 +732,11 @@ public class DBController extends SQLiteOpenHelper {
                 String liaisonActuelle = cursor2.getString(0);
                 System.out.println("liaisonActuelle = " + liaisonActuelle);
 
-                //pour faire dans les deux sens
-                for(int i=0;i<2;i++)
-                {
-                    if(i==0){
-                        sens = "ASC";
-                    } else {
-                        sens = "DESC";
-                    }
+                sens = determinerSensLiaison(database, liaisonActuelle);
 
+                //pour faire dans les deux sens
+                if(sens.equals("ASC") || sens.equals("DESC"))
+                {
                     Cursor cursor3 = database.rawQuery("SELECT liste_liaisons.num,liaison.balise,liaison.ordre," +
                             "liste_liaisons.points FROM liste_liaisons INNER JOIN liaison " +
                             "ON liste_liaisons.num = liaison.num " +
@@ -749,11 +744,9 @@ public class DBController extends SQLiteOpenHelper {
                             "ORDER BY liaison.ordre " + sens, new String[]{liaisonActuelle});
 
                     System.out.println("stp : " + cursor3.getCount());
-                    //Cursor cursor3 = database.rawQuery("SELECT * FROM liste_liaisons",null);
 
                     if (cursor3.moveToFirst())
                     {
-                        //do {
                         int longueurTest = 0;
 
                         int longueur = cursor3.getCount();
@@ -795,8 +788,6 @@ public class DBController extends SQLiteOpenHelper {
 
                             } while (cursor4.moveToNext());
                         }
-
-                        //} while (cursor3.moveToNext());
                     }
                     cursor3.close();
                 }
@@ -817,6 +808,41 @@ public class DBController extends SQLiteOpenHelper {
         return String.valueOf(somme);
     }
 
+    public String determinerSensLiaison(SQLiteDatabase database, String liaisonActuelle)
+    {
+        //DETERMINATION DU SENS ASC OU DESC
+        String sens = "";
+
+        Cursor cursor44 = database.rawQuery("SELECT num FROM liaison WHERE num = ?", new String[]{liaisonActuelle});
+
+        Cursor cursor45 = database.rawQuery("SELECT num_balise,liaison.ordre FROM liste_balises " +
+                "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
+                "INNER JOIN liste_liaisons ON parcours.id = liste_liaisons.num_parcours " +
+                "INNER JOIN liaison ON liste_liaisons.num = liaison.num " +
+                "WHERE liste_liaisons.num = ? AND temps != '' AND num_balise = balise " +
+                "ORDER BY temps", new String[]{liaisonActuelle});
+
+        if(cursor45.moveToFirst())
+        {
+            System.out.println("nb balise liaison = " + cursor44.getCount());
+            System.out.println("num_balise =  " + cursor45.getString(0) + "  liaison_ordre = " + cursor45.getString(1));
+
+            if(Integer.parseInt(cursor45.getString(1)) == cursor44.getCount())
+            {
+                sens = "DESC";
+            }
+            else if(Integer.parseInt(cursor45.getString(1)) == 1)
+            {
+                sens = "ASC";
+            }
+
+        }
+        cursor44.close();
+        cursor45.close();
+
+        return sens;
+    }
+
     public String getLiaisons() {
 
         SQLiteDatabase database = this.getReadableDatabase();
@@ -824,7 +850,9 @@ public class DBController extends SQLiteOpenHelper {
 
         String liaisons = "";
         String sens = "aucun";
-        String statut;
+        String reussi = "";
+        String encours = "";
+        String rate = "";
 
         Cursor cursor2 = database.rawQuery("SELECT num FROM liste_liaisons", null);
 
@@ -834,37 +862,8 @@ public class DBController extends SQLiteOpenHelper {
                 String liaisonActuelle = cursor2.getString(0);
                 System.out.println("liaisonActuelle = " + liaisonActuelle);
 
-
-                //DETERMINATION DU SENS ASC OU DESC
-                Cursor cursor44 = database.rawQuery("SELECT num FROM liaison WHERE num = ?", new String[]{liaisonActuelle});
-
-                Cursor cursor45 = database.rawQuery("SELECT num_balise,liaison.ordre FROM liste_balises " +
-                        "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
-                        "INNER JOIN liste_liaisons ON parcours.id = liste_liaisons.num_parcours " +
-                        "INNER JOIN liaison ON liste_liaisons.num = liaison.num " +
-                        "WHERE liste_liaisons.num = ? AND temps != '' AND num_balise = balise " +
-                        "ORDER BY temps", new String[]{liaisonActuelle});
-
-                if(cursor45.moveToFirst())
-                {
-                    System.out.println("nb balise liaison = " + cursor44.getCount());
-                    System.out.println("num_balise =  " + cursor45.getString(0) + "  liaison_ordre = " + cursor45.getString(1));
-
-                    if(Integer.parseInt(cursor45.getString(1)) == cursor44.getCount())
-                    {
-                        sens = "DESC";
-                    }
-                    else if(Integer.parseInt(cursor45.getString(1)) == 1)
-                    {
-                        sens = "ASC";
-                    }
-
-                    System.out.println("SENS = " + sens);
-
-                }
-                cursor44.close();
-                cursor45.close();
-
+                //déterminer le sens de la liaison
+                sens = determinerSensLiaison(database, liaisonActuelle);
 
                 if(sens.equals("ASC") || sens.equals("DESC"))
                 {
@@ -877,7 +876,6 @@ public class DBController extends SQLiteOpenHelper {
 
                     if (cursor3.moveToFirst())
                     {
-                        //do {
                         int longueurTest = 0;
 
                         int longueur = cursor3.getCount();
@@ -888,37 +886,8 @@ public class DBController extends SQLiteOpenHelper {
                                 "ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps", null);
                         if (cursor4.moveToFirst()) {
                             do {
-/*                                if(cursor3.getString(1).equals(cursor4.getString(0)) && !cursor4.getString(1).equals(""))
-                                {
-                                    longueurTest++;
-                                    cursor3.moveToNext();
-                                }
-                                else if(longueurTest > 0 && longueurTest < longueur && cursor4.getString(1).equals(""))
-                                {
-                                    //incomplète
-                                    statut = "incomplete";
 
-                                    liaisons = liaisons + "[<font color='#ffa100'>En cours</font>] ";
-                                    if(cursor3.moveToFirst())
-                                    {
-                                        do {
-                                            if(!cursor3.isLast())
-                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
-                                            else
-                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>" +
-                                                        " : " + cursor3.getString(3) + " pts";
-
-                                        } while(cursor3.moveToNext());
-                                    }
-
-
-                                }
-                                else if(longueurTest > 0 && !cursor3.getString(1).equals(cursor4.getString(0)))
-                                {
-                                    //raté
-                                }*/
-
-
+                                //Si la bonne balise a été scanné
                                 if (cursor3.getString(1).equals(cursor4.getString(0)) && !cursor4.getString(1).equals(""))
                                 {
                                     longueurTest++;
@@ -926,21 +895,20 @@ public class DBController extends SQLiteOpenHelper {
 
                                     if (longueurTest == longueur)
                                     {
-                                        liaisons = liaisons + "[<font color='#2f9e00'>OK</font>] ";
+                                        reussi = reussi + "[<font color='#2f9e00'>OK</font>] ";
+
                                         if(cursor3.moveToFirst())
                                         {
                                             do {
                                                 if(!cursor3.isLast())
-                                                    liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                                    reussi = reussi + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
                                                 else
-                                                    liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>" +
+                                                    reussi = reussi + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>" +
                                                             " : " + cursor3.getString(3) + " pts<br/>";
 
                                             } while(cursor3.moveToNext());
                                         }
 
-                                        //une fois que t'as trouvé la liaison, normalement tu peux l'avoir qu'une seule fois
-                                        // donc là, faudrait quitter la boucle pour opti.
                                         cursor4.moveToLast();
                                     }
                                     else
@@ -949,9 +917,10 @@ public class DBController extends SQLiteOpenHelper {
                                     }
 
                                 }
+                                //Si une bonne balise a été scanné, et que les suivantes ne l'ont pas encore été
                                 else if(longueurTest > 0 && longueurTest < longueur && cursor4.getString(1).equals(""))
                                 {
-                                    liaisons = liaisons + "[<font color='#ffa100'>...</font>] ";
+                                    encours = encours + "[<font color='#ffa100'>...</font>] ";
                                     System.out.println("LA DEDANS");
 
                                     if(cursor3.moveToFirst())
@@ -959,11 +928,11 @@ public class DBController extends SQLiteOpenHelper {
                                         int compteur=0;
                                         do {
                                             if(!cursor3.isLast() && compteur < longueurTest)
-                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                                encours = encours + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
                                             else if(!cursor3.isLast())
-                                                liaisons = liaisons + cursor3.getString(1) + "-";
+                                                encours = encours + "<font color='#ffa100'>" + cursor3.getString(1) + "</font>-";
                                             else
-                                                liaisons = liaisons + cursor3.getString(1) + "</font>" +
+                                                encours = encours + "<font color='#ffa100'>" + cursor3.getString(1) + "</font>" +
                                                         " : " + cursor3.getString(3) + " pts<br/>";
 
                                             compteur++;
@@ -971,9 +940,10 @@ public class DBController extends SQLiteOpenHelper {
                                         cursor4.moveToLast();
                                     }
                                 }
+                                //Si une bonne balise a été scanné et que la suivante n'est pas la bonne
                                 else if(longueurTest > 0 && longueurTest < longueur && !cursor3.getString(1).equals(cursor4.getString(0)))
                                 {
-                                    liaisons = liaisons + "[<font color='#db1500'>Echec</font>] ";
+                                    rate = rate + "[<font color='#db1500'>KO</font>] ";
                                     System.out.println("LA DEDANS");
 
                                     if(cursor3.moveToFirst())
@@ -981,11 +951,11 @@ public class DBController extends SQLiteOpenHelper {
                                         int compteur=0;
                                         do {
                                             if(!cursor3.isLast() && compteur < longueurTest)
-                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                                rate = rate + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
                                             else if(!cursor3.isLast())
-                                                liaisons = liaisons + "<font color='#db1500'>" + cursor3.getString(1) + "</font>-";
+                                                rate = rate + "<font color='#db1500'>" + cursor3.getString(1) + "</font>-";
                                             else
-                                                liaisons = liaisons + "<font color='#db1500'>" + cursor3.getString(1) + "</font>" +
+                                                rate = rate + "<font color='#db1500'>" + cursor3.getString(1) + "</font>" +
                                                         " : <strike>" + cursor3.getString(3) + " pts</strike><br/>";
 
                                             compteur++;
@@ -993,15 +963,11 @@ public class DBController extends SQLiteOpenHelper {
                                         cursor4.moveToLast();
                                     }
                                 }
-
-
+                                //réorganisation de l'affichage
+                                liaisons = encours + reussi + rate;
 
                             } while (cursor4.moveToNext());
                         }
-
-                        //faire resultats ici
-
-                        //} while (cursor3.moveToNext());
                     }
                     cursor3.close();
                 }

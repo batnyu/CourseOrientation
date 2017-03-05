@@ -435,9 +435,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 txtBaliseSuivante.setText("n°" + baliseActuelle[2] + " -> " + baliseActuelle[1] + "\n" +
                                           "Indication : Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m\n" +
                                           "Poste : " + baliseActuelle[8]);
-                Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                // Vibrate for 500 milliseconds
-                v.vibrate(500);
+
+                mCallback.vibrer();
             }
             else
             {

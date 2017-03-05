@@ -222,15 +222,26 @@
                     android:textAllCaps="false"
                     android:textSize="14sp" />
 
-                <TextView
+                <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/textView_liaisons_nb"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="15sp"
-                    android:textColor="@color/zxing_result_view"
-                    android:text="aucune\n\n" />
+                    android:layout_marginTop="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/textView_liaisons_nb"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            android:textColor="@color/zxing_result_view"
+                            android:text="aucune\n\n" />
+                    </LinearLayout>
+                </ScrollView>
 
             </LinearLayout>
 

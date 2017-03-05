@@ -811,14 +811,489 @@ public class DBController extends SQLiteOpenHelper {
 
         //FIN TEST
 
-        
+
         database.close();
 
         return String.valueOf(somme);
     }
 
+    public String getLiaisons() {
 
-    public String getLiaisonsPossibles(String lastBalise) {
+        SQLiteDatabase database = this.getReadableDatabase();
+
+
+        String liaisons = "";
+        String sens = "aucun";
+        String statut;
+
+        Cursor cursor2 = database.rawQuery("SELECT num FROM liste_liaisons", null);
+
+        if (cursor2.moveToFirst()) {
+            do {
+
+                String liaisonActuelle = cursor2.getString(0);
+                System.out.println("liaisonActuelle = " + liaisonActuelle);
+
+
+                //DETERMINATION DU SENS ASC OU DESC
+                Cursor cursor44 = database.rawQuery("SELECT num FROM liaison WHERE num = ?", new String[]{liaisonActuelle});
+
+                Cursor cursor45 = database.rawQuery("SELECT num_balise,liaison.ordre FROM liste_balises " +
+                        "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
+                        "INNER JOIN liste_liaisons ON parcours.id = liste_liaisons.num_parcours " +
+                        "INNER JOIN liaison ON liste_liaisons.num = liaison.num " +
+                        "WHERE liste_liaisons.num = ? AND temps != '' AND num_balise = balise " +
+                        "ORDER BY temps", new String[]{liaisonActuelle});
+
+                if(cursor45.moveToFirst())
+                {
+                    System.out.println("nb balise liaison = " + cursor44.getCount());
+                    System.out.println("num_balise =  " + cursor45.getString(0) + "  liaison_ordre = " + cursor45.getString(1));
+
+                    if(Integer.parseInt(cursor45.getString(1)) == cursor44.getCount())
+                    {
+                        sens = "DESC";
+                    }
+                    else if(Integer.parseInt(cursor45.getString(1)) == 1)
+                    {
+                        sens = "ASC";
+                    }
+
+                    System.out.println("SENS = " + sens);
+
+                }
+                cursor44.close();
+                cursor45.close();
+
+
+                if(sens.equals("ASC") || sens.equals("DESC"))
+                {
+
+                    Cursor cursor3 = database.rawQuery("SELECT liste_liaisons.num,liaison.balise,liaison.ordre," +
+                            "liste_liaisons.points FROM liste_liaisons INNER JOIN liaison " +
+                            "ON liste_liaisons.num = liaison.num " +
+                            "WHERE liste_liaisons.num = ? " +
+                            "ORDER BY liaison.ordre " + sens, new String[]{liaisonActuelle});
+
+                    if (cursor3.moveToFirst())
+                    {
+                        //do {
+                        int longueurTest = 0;
+
+                        int longueur = cursor3.getCount();
+
+                        System.out.println("SENS = " + sens);
+
+                        Cursor cursor4 = database.rawQuery("SELECT num_balise,temps FROM liste_balises " +
+                                "ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps", null);
+                        if (cursor4.moveToFirst()) {
+                            do {
+/*                                if(cursor3.getString(1).equals(cursor4.getString(0)) && !cursor4.getString(1).equals(""))
+                                {
+                                    longueurTest++;
+                                    cursor3.moveToNext();
+                                }
+                                else if(longueurTest > 0 && longueurTest < longueur && cursor4.getString(1).equals(""))
+                                {
+                                    //incomplète
+                                    statut = "incomplete";
+
+                                    liaisons = liaisons + "[<font color='#ffa100'>En cours</font>] ";
+                                    if(cursor3.moveToFirst())
+                                    {
+                                        do {
+                                            if(!cursor3.isLast())
+                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                            else
+                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>" +
+                                                        " : " + cursor3.getString(3) + " pts";
+
+                                        } while(cursor3.moveToNext());
+                                    }
+
+
+                                }
+                                else if(longueurTest > 0 && !cursor3.getString(1).equals(cursor4.getString(0)))
+                                {
+                                    //raté
+                                }*/
+
+
+                                if (cursor3.getString(1).equals(cursor4.getString(0)) && !cursor4.getString(1).equals(""))
+                                {
+                                    longueurTest++;
+                                    System.out.println("OUI et longueurTest = " + longueurTest);
+
+                                    if (longueurTest == longueur)
+                                    {
+                                        liaisons = liaisons + "[<font color='#2f9e00'>OK</font>] ";
+                                        if(cursor3.moveToFirst())
+                                        {
+                                            do {
+                                                if(!cursor3.isLast())
+                                                    liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                                else
+                                                    liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>" +
+                                                            " : " + cursor3.getString(3) + " pts<br/>";
+
+                                            } while(cursor3.moveToNext());
+                                        }
+
+                                        //une fois que t'as trouvé la liaison, normalement tu peux l'avoir qu'une seule fois
+                                        // donc là, faudrait quitter la boucle pour opti.
+                                        cursor4.moveToLast();
+                                    }
+                                    else
+                                    {
+                                        cursor3.moveToNext();
+                                    }
+
+                                }
+                                else if(longueurTest > 0 && longueurTest < longueur && cursor4.getString(1).equals(""))
+                                {
+                                    liaisons = liaisons + "[<font color='#ffa100'>...</font>] ";
+                                    System.out.println("LA DEDANS");
+
+                                    if(cursor3.moveToFirst())
+                                    {
+                                        int compteur=0;
+                                        do {
+                                            if(!cursor3.isLast() && compteur < longueurTest)
+                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                            else if(!cursor3.isLast())
+                                                liaisons = liaisons + cursor3.getString(1) + "-";
+                                            else
+                                                liaisons = liaisons + cursor3.getString(1) + "</font>" +
+                                                        " : " + cursor3.getString(3) + " pts<br/>";
+
+                                            compteur++;
+                                        } while(cursor3.moveToNext());
+                                        cursor4.moveToLast();
+                                    }
+                                }
+                                else if(longueurTest > 0 && longueurTest < longueur && !cursor3.getString(1).equals(cursor4.getString(0)))
+                                {
+                                    liaisons = liaisons + "[<font color='#db1500'>Echec</font>] ";
+                                    System.out.println("LA DEDANS");
+
+                                    if(cursor3.moveToFirst())
+                                    {
+                                        int compteur=0;
+                                        do {
+                                            if(!cursor3.isLast() && compteur < longueurTest)
+                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                            else if(!cursor3.isLast())
+                                                liaisons = liaisons + "<font color='#db1500'>" + cursor3.getString(1) + "</font>-";
+                                            else
+                                                liaisons = liaisons + "<font color='#db1500'>" + cursor3.getString(1) + "</font>" +
+                                                        " : <strike>" + cursor3.getString(3) + " pts</strike><br/>";
+
+                                            compteur++;
+                                        } while(cursor3.moveToNext());
+                                        cursor4.moveToLast();
+                                    }
+                                }
+
+
+
+                            } while (cursor4.moveToNext());
+                        }
+
+                        //faire resultats ici
+
+                        //} while (cursor3.moveToNext());
+                    }
+                    cursor3.close();
+                }
+
+
+
+            } while (cursor2.moveToNext());
+        }
+
+        cursor2.close();
+
+
+        //FIN TEST
+
+
+        database.close();
+
+        return liaisons;
+    }
+
+    public String getLiaisonsTest() {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+
+        String liaisons = "";
+        String sens;
+        String statut;
+
+        Cursor cursor2 = database.rawQuery("SELECT num FROM liste_liaisons", null);
+
+        if (cursor2.moveToFirst()) {
+            do {
+
+                String liaisonActuelle = cursor2.getString(0);
+                System.out.println("liaisonActuelle = " + liaisonActuelle);
+
+                //pour faire dans les deux sens
+                for(int i=0;i<2;i++)
+                {
+                    if(i==0){
+                        sens = "ASC";
+                    } else {
+                        sens = "DESC";
+                    }
+
+                    Cursor cursor3 = database.rawQuery("SELECT liste_liaisons.num,liaison.balise,liaison.ordre," +
+                            "liste_liaisons.points FROM liste_liaisons INNER JOIN liaison " +
+                            "ON liste_liaisons.num = liaison.num " +
+                            "WHERE liste_liaisons.num = ? " +
+                            "ORDER BY liaison.ordre " + sens, new String[]{liaisonActuelle});
+
+                    System.out.println("stp : " + cursor3.getCount());
+                    //Cursor cursor3 = database.rawQuery("SELECT * FROM liste_liaisons",null);
+
+                    if (cursor3.moveToFirst())
+                    {
+                        //do {
+                        int longueurTest = 0;
+
+                        int longueur = cursor3.getCount();
+
+                        Cursor cursor4 = database.rawQuery("SELECT num_balise,temps FROM liste_balises " +
+                                "ORDER BY temps", null);
+                        if (cursor4.moveToFirst()) {
+                            do {
+/*                                if(cursor3.getString(1).equals(cursor4.getString(0)) && !cursor4.getString(1).equals(""))
+                                {
+                                    longueurTest++;
+                                    cursor3.moveToNext();
+                                }
+                                else if(longueurTest > 0 && longueurTest < longueur && cursor4.getString(1).equals(""))
+                                {
+                                    //incomplète
+                                    statut = "incomplete";
+
+                                    liaisons = liaisons + "[<font color='#ffa100'>En cours</font>] ";
+                                    if(cursor3.moveToFirst())
+                                    {
+                                        do {
+                                            if(!cursor3.isLast())
+                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                            else
+                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>" +
+                                                        " : " + cursor3.getString(3) + " pts";
+
+                                        } while(cursor3.moveToNext());
+                                    }
+
+
+                                }
+                                else if(longueurTest > 0 && !cursor3.getString(1).equals(cursor4.getString(0)))
+                                {
+                                    //raté
+                                }*/
+
+
+
+
+                                if (longueurTest == 54)
+                                {
+                                    cursor4.moveToPrevious();
+                                    longueurTest = 0;
+                                }
+
+                                if (cursor3.getString(1).equals(cursor4.getString(0)) && !cursor4.getString(1).equals(""))
+                                {
+                                    longueurTest++;
+                                    System.out.println("Truc égal à balise !");
+
+                                    if (longueurTest == longueur)
+                                    {
+                                        liaisons = liaisons + "[<font color='#2f9e00'>OK</font>] ";
+                                        if(cursor3.moveToFirst())
+                                        {
+                                            do {
+                                                if(!cursor3.isLast())
+                                                    liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                                else
+                                                    liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>" +
+                                                            " : " + cursor3.getString(3) + " pts";
+
+                                            } while(cursor3.moveToNext());
+                                        }
+
+                                        longueurTest = 0;
+                                        cursor3.moveToFirst();
+                                        //une fois que t'as trouvé la liaison, normalement tu peux l'avoir qu'une seule fois
+                                        // donc là, faudrait quitter la boucle pour opti.
+                                    }
+                                    else
+                                    {
+                                        cursor3.moveToNext();
+                                    }
+
+                                }
+                                else if(longueurTest > 0)
+                                {
+                                    longueurTest = 54;
+                                    cursor3.moveToFirst();
+                                }
+
+                                if(longueurTest > 0 && longueurTest < longueur && cursor4.getString(1).equals(""))
+                                {
+                                    liaisons = liaisons + "[<font color='#ffa100'>En cours</font>] ";
+
+                                    if(cursor3.moveToFirst())
+                                    {
+                                        int compteur=0;
+                                        do {
+                                            if(!cursor3.isLast() && compteur < longueurTest)
+                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>-";
+                                            else if(!cursor3.isLast())
+                                                liaisons = liaisons + cursor3.getString(1) + "-";
+                                            else
+                                                liaisons = liaisons + "<font color='#2f9e00'>" + cursor3.getString(1) + "</font>" +
+                                                        " : " + cursor3.getString(3) + " pts";
+
+                                            compteur++;
+                                        } while(cursor3.moveToNext());
+                                    }
+                                }
+
+
+                            } while (cursor4.moveToNext());
+                        }
+
+                        //faire resultats ici
+
+                        //} while (cursor3.moveToNext());
+                    }
+                    cursor3.close();
+                }
+
+
+
+            } while (cursor2.moveToNext());
+        }
+
+        cursor2.close();
+
+
+        //FIN TEST
+
+
+        database.close();
+
+        return liaisons;
+    }
+
+
+    public String getLiaisonsPossibles() {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String sens;
+        String liaisons = "";
+        String statut;
+        String pointsActuels = "";
+        boolean atLeastOneBalise = false;
+
+        Cursor cursor2 = database.rawQuery("SELECT num FROM liste_liaisons", null);
+
+        if (cursor2.moveToFirst()) {
+            do {
+
+                String liaisonActuelle = cursor2.getString(0);
+                System.out.println("liaisonActuelle = " + liaisonActuelle);
+
+                //pour faire dans les deux sens
+                for(int i=0;i<2;i++)
+                {
+                    if(i==0){
+                        sens = "ASC";
+                    } else {
+                        sens = "DESC";
+                    }
+
+                    Cursor cursor3 = database.rawQuery("SELECT liste_liaisons.num,liaison.balise,liaison.ordre," +
+                            "liste_liaisons.points FROM liste_liaisons INNER JOIN liaison " +
+                            "ON liste_liaisons.num = liaison.num " +
+                            "WHERE liste_liaisons.num = ? " +
+                            "ORDER BY liaison.ordre " + sens, new String[]{liaisonActuelle});
+
+                    if (cursor3.moveToFirst())
+                    {
+                        do {
+                            int longueurTest = 0;
+
+                            int longueur = cursor3.getCount();
+                            pointsActuels = cursor3.getString(3);
+                            atLeastOneBalise = false;
+
+                            Cursor cursor4 = database.rawQuery("SELECT num_balise,temps FROM liste_balises " +
+                                    "ORDER BY temps", null);
+                            if (cursor4.moveToFirst()) {
+                                do {
+
+                                    if (cursor3.getString(1).equals(cursor4.getString(0)) && !cursor4.getString(1).equals(""))
+                                    {
+                                        atLeastOneBalise = true;
+                                        liaisons = liaisons + "<font color='#2f9e00'>" + cursor4.getString(0) + "</font>-";
+                                        i=1;
+
+                                    }
+                                    else
+                                    {
+                                        if(atLeastOneBalise)
+                                        {
+                                            if(cursor4.getString(1).equals(""))
+                                            {
+                                                liaisons = liaisons + "<font color='black'>" + cursor4.getString(0) + "</font>-";
+                                                statut = "incomplet";
+                                            }
+                                            else
+                                            {
+                                                liaisons = liaisons + "<font color='#af1400'>" + cursor4.getString(0) + "</font>-";
+                                                statut = "raté";
+                                            }
+                                        }
+
+                                    }
+
+
+
+                                } while (cursor4.moveToNext());
+                            }
+                        } while(cursor3.moveToNext());
+
+
+                    }
+                    cursor3.close();
+                }
+
+                if(!pointsActuels.equals(""))
+                    liaisons = liaisons + " : " + pointsActuels + " pts\n";
+
+            } while (cursor2.moveToNext());
+        }
+
+        cursor2.close();
+
+
+        //FIN TEST
+
+
+        database.close();
+
+        return liaisons;
+    }
+
+    public String getLiaisonsPossiblesNuLLE(String lastBalise) {
 
         SQLiteDatabase database = this.getReadableDatabase();
 

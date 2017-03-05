@@ -10,6 +10,8 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -310,7 +312,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             if(activiteRedemarre){
                 activiteRedemarre = false;
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -352,7 +354,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             baliseCheckedPoche = controller.getCheckedPoche(baliseActuelle[6]);
 
             //liaisons
-            liaisons = controller.getLiaisonsPossibles(baliseActuelle[0]);
+            liaisons = controller.getLiaisons();
 
             //points avec liaisons
             nbPoints = controller.calculerPoints();
@@ -466,7 +468,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             } else if(liaisons.equals("")){
                 ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("\n\n");
             } else {
-                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText(liaisons);
+                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText(fromHtml(liaisons), TextView.BufferType.SPANNABLE);
             }
 
             //points
@@ -533,6 +535,17 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             view.findViewById(R.id.interface2).setVisibility(LinearLayout.GONE);
             view.findViewById(R.id.noParcours2).setVisibility(LinearLayout.VISIBLE);
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
     }
 
 }

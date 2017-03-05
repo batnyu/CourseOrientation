@@ -11,5 +11,6 @@
     <color name="fondProgressBar">#e6e6e6</color>
     <color name="checkedTab">#d7ffb0</color>
     <color name="black">#000000</color>
+    <color name="gris">#5b5b5b</color>
 
 </resources>

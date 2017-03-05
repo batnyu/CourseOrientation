@@ -733,6 +733,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     else if(!obj.isNull("balise.num"))
                     {
                         queryValues.put("balise.num", obj.get("balise.num").toString());
+                        queryValues.put("balise.hash", obj.get("balise.hash").toString());
                         queryValues.put("balise.coord_gps", obj.get("balise.coord_gps").toString());
                         queryValues.put("balise.poste", obj.get("balise.poste").toString());
                     }

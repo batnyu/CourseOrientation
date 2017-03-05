@@ -345,12 +345,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             nbBaliseSuivante = baliseActuelle[2];
             controller.updateNextAlreadyChecked(nbBaliseSuivante);
 
-            /*if(resultat == 12)
-            {
-                //Quand on scanne la balise de sortie d'une poche, on quitte la poche
-                baliseActuelle[6] = "null";
-            }*/
-
             //on récupère les données dans la base
             scannéSurTotal = controller.getNbCheckpoints();
 

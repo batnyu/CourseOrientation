@@ -61,6 +61,7 @@ public class DBController extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_BALISE = "CREATE TABLE balise ( " +
             "num INTEGER PRIMARY KEY, " +
+            "hash TEXT, " +
             "coord_gps INTEGER, " +
             "poste TEXT )";
 
@@ -187,6 +188,7 @@ public class DBController extends SQLiteOpenHelper {
             //balise
             //values = new ContentValues();
             values.put("num", queryValues.get("balise.num"));
+            values.put("hash", queryValues.get("balise.hash"));
             values.put("coord_gps", queryValues.get("balise.coord_gps"));
             values.put("poste", queryValues.get("balise.poste"));
             database.insert("balise", null, values);
@@ -327,18 +329,21 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
     }
 
-    public int checkBalise(String balise, boolean departOK, String baliseDepart, String baliseSuivante, String nbBaliseSuivante, String pocheActuelle) {
+    public int checkBalise(String hash, boolean departOK, String baliseDepart, String baliseSuivante, String nbBaliseSuivante, String pocheActuelle) {
 
         boolean scanPossible = false;
 
         SQLiteDatabase database = this.getReadableDatabase();
 
         Cursor cursor = database.rawQuery("SELECT num_balise,temps,groupe,balise_entree,balise_sortie FROM liste_balises " +
-                                          "LEFT JOIN groupe ON groupe = nom_groupe WHERE num_balise = ?", new String[]{balise});
+                                          "LEFT JOIN groupe ON groupe = nom_groupe " +
+                                          "INNER JOIN balise ON num_balise = num " +
+                                          "WHERE hash = ?", new String[]{hash});
 
         if (cursor.moveToFirst())
         {
 
+            String balise = cursor.getString(0);
             String tempsReq = cursor.getString(1);
             String poche = cursor.getString(2);
             String baliseEntree = cursor.getString(3);

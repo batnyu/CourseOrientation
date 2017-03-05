@@ -260,6 +260,18 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 Toast.makeText(getActivity(), "Vous avez déjà fini le parcours!", Toast.LENGTH_LONG).show();
             }
+            else if(resultat == 7)
+            {
+                Toast.makeText(getActivity(), "Vous n'êtes pas rentré dans la poche de cette balise!", Toast.LENGTH_LONG).show();
+            }
+            else if(resultat == 8)
+            {
+                Toast.makeText(getActivity(), "La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.", Toast.LENGTH_LONG).show();
+            }
+            else if(resultat == 10)
+            {
+                Toast.makeText(getActivity(), "Cas non traité!", Toast.LENGTH_LONG).show();
+            }
             else if(resultat !=54)
             {
                 Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
@@ -270,6 +282,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 //on update les infos de l'onglet "infos"
                 updateInfos();
             }
+
+            System.out.println("resultat = " + resultat);
 
             //réactiver le bouton
             scanButton.setEnabled(true);
@@ -331,11 +345,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             nbBaliseSuivante = baliseActuelle[2];
             controller.updateNextAlreadyChecked(nbBaliseSuivante);
 
-            if(resultat == 12)
+            /*if(resultat == 12)
             {
-                //balise //mettre la balise actuelle 6 a "null" pour pouvoir scanner une autre balise d'une autre poche qd on quitte la poche.
-                //sauf que ya re un controller.getBaliseActuelle() dans l'autre thread, essayez de tout transvaser dans le thread update.
-            }
+                //Quand on scanne la balise de sortie d'une poche, on quitte la poche
+                baliseActuelle[6] = "null";
+            }*/
 
             //on récupère les données dans la base
             scannéSurTotal = controller.getNbCheckpoints();
@@ -352,6 +366,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             baliseSortiePoche = controller.getSortiePoche(baliseActuelle[6]);
             baliseRemainingPoche = controller.getRemainingPoche(baliseActuelle[6]);
             baliseCheckedPoche = controller.getCheckedPoche(baliseActuelle[6]);
+
+            //Si on scanne la sortie de la poche, la deuxieme condition sert quand on redémarre l'appli =
+            if(resultat == 12 || baliseActuelle[0].equals(baliseSortiePoche))
+            {
+                //Quand on scanne la balise de sortie d'une poche, on quitte la poche
+                baliseActuelle[6] = "null";
+            }
 
             //liaisons
             liaisons = controller.getLiaisons();
@@ -491,7 +512,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
 
             //Si un temps a été ajouté, on update la listView du fragment 3 (onglet parcours)
-            if(resultat == 1 || resultat == 3)
+            if(resultat == 1 || resultat == 3 || resultat == 12)
             {
                 mCallback.communicateToFragment3();
             }

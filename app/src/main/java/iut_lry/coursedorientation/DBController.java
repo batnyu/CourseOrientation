@@ -355,36 +355,38 @@ public class DBController extends SQLiteOpenHelper {
                 }
                 else if (departOK && (balise.equals(nbBaliseSuivante) || nbBaliseSuivante.equals("") || baliseSuivante.equals("optionnelle"))) //si la première balise a déjà été scanné
                 {
-                    //resoudre bug null chelou a cause de left join
-                    if(pocheActuelle.equals("null"))
+                    //Si la balise qu'on scanne n'a pas de poche, mettre ses balises à null
+                    if(poche.equals("null"))
                     {
                         baliseEntree = "null";
                         baliseSortie = "null";
                     }
+                    System.out.println("baliseEntree = " + baliseEntree);
+                    System.out.println("balise = " + balise);
 
-                    if(baliseSortie.equals(balise) && poche.equals(pocheActuelle)) //si on scanne la balise de sortie de la poche
+                    if(baliseSortie.equals(balise) && poche.equals(pocheActuelle))
                     {
                         cursor.close();
                         database.close();
-                        return 12; //changer la poche actuelle en null
+                        return 12; //si on scanne la balise de sortie de la poche
                     }
-                    else if(poche.equals(pocheActuelle) || baliseEntree.equals(balise)) //si la balise scanné appartient a la poche actuelle
+                    else if(poche.equals(pocheActuelle) || baliseEntree.equals(balise))
                     {
                         cursor.close();
                         database.close();
-                        return 1;
+                        return 1; //si la balise scanné appartient a la poche actuelle ou a la balise d'entrée
                     }
                     else if(!poche.equals(pocheActuelle) && pocheActuelle.equals("null"))
                     {
                         cursor.close();
                         database.close();
-                        return 7; //n'est pas rentré dans la poche
+                        return 7; //Vous n'êtes pas rentré dans la poche de cette balise!
                     }
                     else if(!poche.equals(pocheActuelle) && !pocheActuelle.equals("null"))
                     {
                         cursor.close();
                         database.close();
-                        return 8; //n'est pas sorti de la poche
+                        return 8; //La balise ne fait pas partie de la poche actuelle!
                     }
                     else
                     {
@@ -394,23 +396,23 @@ public class DBController extends SQLiteOpenHelper {
                     }
 
                 }
-                else if(!balise.equals(nbBaliseSuivante) && departOK) //si c'est pas la balise suivante
+                else if(!balise.equals(nbBaliseSuivante) && departOK)
                 {
                     cursor.close();
                     database.close();
-                    return 5;
+                    return 5; //si c'est pas la balise suivante et que le parcours a commencé
                 }
-                else if(nbBaliseSuivante.equals("aucune")) //s'il a scanné la balise de fin
+                else if(nbBaliseSuivante.equals("aucune"))
                 {
                     cursor.close();
                     database.close();
-                    return 6;
+                    return 6; //s'il a scanné la balise de fin
                 }
-                else //la balise n'est pas la balise de départ
+                else
                 {
                     cursor.close();
                     database.close();
-                    return 4;
+                    return 4; //la balise n'est pas la balise de départ
                 }
             }
             else //Quand la balise a déjà été scanné
@@ -577,7 +579,7 @@ public class DBController extends SQLiteOpenHelper {
     }
 
     public String[] getBaliseActuelle() {
-        //Changer en json ?
+        //Changer en json ou faire objet balise
         SQLiteDatabase database = this.getReadableDatabase();
 
         String[] balise = new String[9];

@@ -304,6 +304,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         String baliseRemainingPoche;
         String baliseCheckedPoche;
         String baliseSortiePoche;
+        String pocheStr;
 
         String nbPoints;
         String liaisons;
@@ -356,17 +357,20 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 nbBaliseDepart = controller.getFirstBalise();
             }
 
-            //poche
-            baliseSortiePoche = controller.getSortiePoche(baliseActuelle[6]);
-            baliseRemainingPoche = controller.getRemainingPoche(baliseActuelle[6]);
-            baliseCheckedPoche = controller.getCheckedPoche(baliseActuelle[6]);
-
             //Si on scanne la sortie de la poche, la deuxieme condition sert quand on redémarre l'appli =
             if(resultat == 12 || baliseActuelle[0].equals(baliseSortiePoche))
             {
                 //Quand on scanne la balise de sortie d'une poche, on quitte la poche
                 baliseActuelle[6] = "null";
             }
+
+            //poche
+            baliseSortiePoche = controller.getSortiePoche(baliseActuelle[6]);
+            baliseRemainingPoche = controller.getRemainingPoche(baliseActuelle[6]);
+            baliseCheckedPoche = controller.getCheckedPoche(baliseActuelle[6]);
+
+            //poche test
+            pocheStr = controller.getPoche(baliseActuelle[6]);
 
             //liaisons
             liaisons = controller.getLiaisons();
@@ -461,7 +465,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
             //poche
             TextView balisePoche = ((TextView) view.findViewById(R.id.textView_poche_nb));
-            if(baliseActuelle[6].equals("")) { //si on vient de dll le parkour
+/*            if(baliseActuelle[6].equals("")) { //si on vient de dll le parkour
                 ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
                 balisePoche.setText("\n\n");
             } else if(!baliseActuelle[6].equals("null")){ //si la balise actuelle fait partie d'une poche
@@ -469,12 +473,16 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 balisePoche.setText("sortie : " + baliseSortiePoche
                                   + "\nrestantes : " + baliseRemainingPoche
                                   + "\nscannées : " + baliseCheckedPoche);
+
                 pocheActuelle = baliseActuelle[6];
             } else { //si la balise actuelle n'a pas de poche
                 ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
                 balisePoche.setText("aucune\n\n");
                 pocheActuelle = "null";
-            }
+            }*/
+
+            balisePoche.setText(fromHtml(pocheStr), TextView.BufferType.SPANNABLE);
+            pocheActuelle = baliseActuelle[6];
 
             //liaisons
             if(liaisons.equals("") && departOK){
@@ -518,6 +526,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     public void fragmentCommunication2() {
 
+        boolean pochesDsParcours;
+        boolean liaisonsDsParcours;
         boolean parcoursFull;
 
         parcoursFull = controller.checkParcours();
@@ -530,6 +540,26 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //afficher l'interface du deuxieme onglet et cacher la phrase
             view.findViewById(R.id.interface2).setVisibility(LinearLayout.VISIBLE);
             view.findViewById(R.id.noParcours2).setVisibility(LinearLayout.GONE);
+
+            pochesDsParcours = controller.checkPoches();
+            liaisonsDsParcours = controller.checkLiaisons();
+
+
+
+            if(pochesDsParcours && !liaisonsDsParcours)
+            {
+                view.findViewById(R.id.liaisonsBalise).setVisibility(LinearLayout.GONE);
+                LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                params.setMargins(0,0,0,0);
+                view.findViewById(R.id.pocheBalise).setLayoutParams(params);
+            }
+            else if(!pochesDsParcours && liaisonsDsParcours)
+            {
+                view.findViewById(R.id.pocheBalise).setVisibility(LinearLayout.GONE);
+                LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                params.setMargins(0,0,0,0);
+                view.findViewById(R.id.liaisonsBalise).setLayoutParams(params);
+            }
 
             //on check si la balise depart a déjà été scanné, si oui on met departOK a true.
             departOK = controller.checkFirstBalise();

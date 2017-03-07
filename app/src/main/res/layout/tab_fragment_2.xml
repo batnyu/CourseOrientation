@@ -230,12 +230,12 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="vertical" >
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:id="@+id/textView_liaisons_nb"
                             android:textAllCaps="false"
                             android:textSize="15sp"
@@ -261,7 +261,7 @@
                 android:layout_marginLeft="3dp">
 
                 <TextView
-                    android:text="Poche actuelle"
+                    android:text="Poches"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView_poche"
@@ -269,15 +269,26 @@
                     android:textAllCaps="false"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:text="aucune\n\n"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/textView_poche_nb"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="15sp"
-                    android:textColor="@color/zxing_result_view" />
+                    android:layout_height="70dp"
+                    android:layout_marginTop="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" >
+
+                        <TextView
+                            android:text="aucune\n\n"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/textView_poche_nb"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            android:textColor="@color/zxing_result_view" />
+                    </LinearLayout>
+                </ScrollView>
 
             </LinearLayout>
 

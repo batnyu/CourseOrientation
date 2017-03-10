@@ -238,7 +238,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             else if(resultat == 3)
             {
                 temps = timeElapsed.getText().toString();
-                Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
+                mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps,"long");
 
                 timeElapsed.setBase(SystemClock.elapsedRealtime());
                 timeElapsed.start();
@@ -246,35 +247,56 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             }
             else if(resultat == 2)
             {
-                Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
+                mCallback.showToast("La balise n°" + scanContent + " a déjà été scanné !","long");
+
             }
             else if(resultat == 4)
             {
-                Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
+                mCallback.showToast("La balise n°" + scanContent + " n'est pas la balise de départ !","long");
+
             }
             else if(resultat == 5)
             {
-                Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise suivante !", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise suivante !", Toast.LENGTH_LONG).show();
+                mCallback.showToast("La balise n°" + scanContent + " n'est pas la balise suivante !","long");
+
             }
             else if(resultat == 6)
             {
-                Toast.makeText(getActivity(), "Vous avez déjà fini le parcours!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Vous avez déjà fini le parcours!", Toast.LENGTH_LONG).show();
+                mCallback.showToast("Vous avez déjà fini le parcours!","long");
+
             }
             else if(resultat == 7)
             {
-                Toast.makeText(getActivity(), "Vous n'êtes pas rentré dans la poche de cette balise!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Vous n'êtes pas rentré dans la poche de cette balise!", Toast.LENGTH_LONG).show();
+                mCallback.showToast("Vous n'êtes pas rentré dans la poche de cette balise!","long");
+
             }
             else if(resultat == 8)
             {
-                Toast.makeText(getActivity(), "La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.", Toast.LENGTH_LONG).show();
+                mCallback.showToast("La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.","long");
+
+            }
+            else if(resultat == 15)
+            {
+                //Toast.makeText(getActivity(), "La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!", Toast.LENGTH_LONG).show();
+                mCallback.showToast("La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!","long");
+
             }
             else if(resultat == 10)
             {
-                Toast.makeText(getActivity(), "Cas non traité!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Cas non traité!", Toast.LENGTH_LONG).show();
+                mCallback.showToast("Cas non traité!","long");
+
             }
             else if(resultat !=54)
             {
-                Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
+                mCallback.showToast("La balise n°" + scanContent + " n'est pas dans le parcours !","long");
             }
 
             if(resultat == 1 || resultat == 3 || resultat == 12)
@@ -377,6 +399,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
             //points avec liaisons
             nbPoints = controller.calculerPoints();
+
+            //update les points dans la table équipe
+            controller.UpdatePoints(nbPoints);
 
             //on attend pas si on refresh qd on télécharge
             if(resultat != 54)

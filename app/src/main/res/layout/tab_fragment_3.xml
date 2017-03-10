@@ -45,7 +45,7 @@
         >
         <TextView android:id="@+id/item1"
             android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:height="30dip"
             android:gravity="center_vertical"
             android:textStyle="bold"
@@ -55,10 +55,11 @@
             android:paddingLeft="10dp"
             android:background="@android:color/holo_red_dark"
             android:paddingRight="10dp"
-            android:width="63dip" />
+            android:width="63dip"
+            android:layout_weight="0.24" />
         <TextView android:id="@+id/item2"
             android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:text="Temps"
             android:width="80dip"
             android:height="30dip"
@@ -67,10 +68,11 @@
             android:textSize="15sp"
             android:textColor="#ffffff"
             android:paddingLeft="10dp"
-            android:background="@color/zxing_possible_result_points" />
+            android:background="@color/zxing_possible_result_points"
+            android:layout_weight="0.21" />
         <TextView android:id="@+id/item3"
             android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:width="120dip"
             android:height="30dip"
             android:gravity="center_vertical"
@@ -79,10 +81,11 @@
             android:textColor="#ffffff"
             android:paddingLeft="10dp"
             android:text="Suivante"
-            android:background="@android:color/holo_blue_light" />
+            android:background="@android:color/holo_blue_light"
+            android:layout_weight="0.30" />
         <TextView android:id="@+id/item4"
             android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:width="100dip"
             android:height="30dip"
             android:gravity="center_vertical"
@@ -91,7 +94,8 @@
             android:textColor="#ffffff"
             android:paddingLeft="10dp"
             android:text="Poste"
-            android:background="@android:color/holo_purple" />
+            android:background="@android:color/holo_purple"
+            android:layout_weight="0.25" />
     </LinearLayout>
 
         <LinearLayout android:id="@+id/layout"
@@ -116,7 +120,8 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:paddingLeft="50dp"
-                android:id="@+id/layoutEnvoiParkour">
+                android:id="@+id/layoutEnvoiParkour"
+                android:background="@drawable/bg_button_big">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -140,10 +145,11 @@
                 android:text="Envoyer le parcours"
                 android:id="@+id/buttonSend"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:paddingBottom="20dp"
-                android:paddingTop="20dp"
+                android:paddingBottom="18dp"
+                android:paddingTop="18dp"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_button_big" />
 
         </FrameLayout>
 

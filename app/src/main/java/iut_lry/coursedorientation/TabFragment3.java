@@ -51,7 +51,6 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.tab_fragment_3, container, false);
 
         buttonSend = (Button) view.findViewById(R.id.buttonSend);
-        buttonSend.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
         buttonSend.setOnClickListener(this);
 
         checkBoxNotChecked = (CheckBox) view.findViewById(R.id.checkBoxNotChecked);
@@ -65,7 +64,6 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         progressBarSend = (ProgressBar) view.findViewById(R.id.progressBarSend);
         progressBarSend.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
         layoutEnvoiParkour = (LinearLayout) view.findViewById(R.id.layoutEnvoiParkour);
-        layoutEnvoiParkour.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
         layoutEnvoiParkour.setVisibility(View.GONE);
 
         return view;

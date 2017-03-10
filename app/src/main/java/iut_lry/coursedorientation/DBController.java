@@ -30,7 +30,8 @@ public class DBController extends SQLiteOpenHelper {
             "id INTEGER PRIMARY KEY, " +
             "nom_equipe TEXT, " +
             "categorie TEXT, " +
-            "num_course INTEGER )";
+            "num_course INTEGER, " +
+            "points INTEGER )";
 
     private static final String CREATE_TABLE_COURSE = "CREATE TABLE course ( " +
             "id INTEGER PRIMARY KEY, " +
@@ -140,6 +141,7 @@ public class DBController extends SQLiteOpenHelper {
             values.put("nom_equipe", queryValues.get("equipe.nom_equipe"));
             values.put("categorie", queryValues.get("equipe.categorie"));
             values.put("num_course", queryValues.get("equipe.num_course"));
+            values.put("points", "");
             database.insert("equipe", null, values);
         }
         else if(queryValues.get("course.id") != null)
@@ -268,7 +270,8 @@ public class DBController extends SQLiteOpenHelper {
         }
 
         String selectQuery = "SELECT liste_balises.num_balise,liste_balises.temps,liste_balises.suivante,liste_balises.num_suivante," +
-                             "balise.poste,liste_balises.azimut,liste_balises.azimut_degre,liste_balises.azimut_distance" +
+                             "balise.poste,liste_balises.azimut,liste_balises.azimut_degre,liste_balises.azimut_distance," +
+                             "liste_balises.depart,liste_balises.arrivee" +
                              " FROM liste_balises INNER JOIN balise ON liste_balises.num_balise = balise.num" +
                              parametres +
                              " ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
@@ -279,8 +282,23 @@ public class DBController extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put("num_balise", cursor.getString(0));
+                //Colonne num_balise
+                if(cursor.getString(8).equals("1") && cursor.getString(9).equals("0")) //départ
+                {
+                    map.put("num_balise", cursor.getString(0) + " (départ)");
+                }
+                else if(cursor.getString(8).equals("0") && cursor.getString(9).equals("1")) //arrivee
+                {
+                    map.put("num_balise", cursor.getString(0) + " (arrivée)");
+                }
+                else
+                {
+                    map.put("num_balise", cursor.getString(0));
+                }
+
+                //Colonne temps
                 map.put("temps", cursor.getString(1));
+                //Colonne suivante
                 if(cursor.getString(2).equals("au choix") || cursor.getString(2).equals("aucune"))
                 {
                     map.put("suivante", cursor.getString(2));
@@ -293,7 +311,9 @@ public class DBController extends SQLiteOpenHelper {
                 {
                     map.put("suivante", cursor.getString(6) +"° " + cursor.getString(7) + "m" + " (" + cursor.getString(2) + ")");
                 }
+
                 map.put("poste", cursor.getString(4));
+                //Ajout de toutes les données dans le Hashmap
                 usersList.add(map);
             } while (cursor.moveToNext());
         }
@@ -404,9 +424,18 @@ public class DBController extends SQLiteOpenHelper {
                 }
                 else if(!balise.equals(nbBaliseSuivante) && departOK)
                 {
-                    cursor.close();
-                    database.close();
-                    return 5; //si c'est pas la balise suivante et que le parcours a commencé
+                    if(!poche.equals(pocheActuelle) && !pocheActuelle.equals("null"))
+                    {
+                        cursor.close();
+                        database.close();
+                        return 15; //si c'est pas la balise suivante et que le parcours a commencé
+                    }
+                    else
+                    {
+                        cursor.close();
+                        database.close();
+                        return 5; //si c'est pas la balise suivante et que le parcours a commencé
+                    }
                 }
                 else if(nbBaliseSuivante.equals("aucune"))
                 {
@@ -450,6 +479,25 @@ public class DBController extends SQLiteOpenHelper {
             String[] args = new String[]{balise};
             database.update("liste_balises", newValues, "num_balise=?", args);
             //database.execSQL("UPDATE parcours SET temps = ? WHERE balise = ?", new String[]{temps,balise});
+
+        }
+        cursor.close();
+        database.close();
+    }
+
+    public void UpdatePoints(String points) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT id,points FROM equipe", null);
+
+        if (cursor.moveToFirst()) {
+
+            //Version plus safe
+            ContentValues newValues = new ContentValues();
+            newValues.put("points", points);
+            String[] args = new String[]{cursor.getString(0)};
+            database.update("equipe", newValues, "id=?", args);
 
         }
         cursor.close();
@@ -919,6 +967,11 @@ public class DBController extends SQLiteOpenHelper {
 
         Cursor cursor44 = database.rawQuery("SELECT num FROM liaison WHERE num = ?", new String[]{liaisonActuelle});
 
+        if(cursor44.getCount() != 0) //pour afficher quand il y a une liaison même vierge par défaut dans l'ordre ASC
+        {
+            sens = "ASC";
+        }
+
         Cursor cursor45 = database.rawQuery("SELECT num_balise,liaison.ordre FROM liste_balises " +
                 "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
                 "INNER JOIN liste_liaisons ON parcours.id = liste_liaisons.num_parcours " +
@@ -931,16 +984,18 @@ public class DBController extends SQLiteOpenHelper {
             System.out.println("nb balise liaison = " + cursor44.getCount());
             System.out.println("num_balise =  " + cursor45.getString(0) + "  liaison_ordre = " + cursor45.getString(1));
 
+            //si la premiere balise scannée d'une liaison est la dernière de la liaison, ORDRE DESC
             if(Integer.parseInt(cursor45.getString(1)) == cursor44.getCount())
             {
                 sens = "DESC";
             }
+            //si la premiere balise scannée d'une liaison est la première de la liaison, ORDRE ASC
             else if(Integer.parseInt(cursor45.getString(1)) == 1)
             {
                 sens = "ASC";
             }
-
         }
+
         cursor44.close();
         cursor45.close();
 
@@ -953,10 +1008,11 @@ public class DBController extends SQLiteOpenHelper {
 
 
         String liaisons = "";
-        String sens = "aucun";
+        String sens;
         String reussi = "";
         String encours = "";
         String rate = "";
+        String aFaire = "";
 
         Cursor cursor2 = database.rawQuery("SELECT num FROM liste_liaisons", null);
 
@@ -1067,8 +1123,27 @@ public class DBController extends SQLiteOpenHelper {
                                         cursor4.moveToLast();
                                     }
                                 }
+                                //Si la liaison n'a pas été commencé
+                                else if(longueurTest == 0 && cursor4.getString(1).equals(""))
+                                {
+                                    aFaire = aFaire + "[---] ";
+                                    System.out.println("LA DEDANS");
+
+                                    if(cursor3.moveToFirst())
+                                    {
+                                        do {
+                                            if(!cursor3.isLast())
+                                                aFaire = aFaire + cursor3.getString(1) + "-";
+                                            else
+                                                aFaire = aFaire + cursor3.getString(1) +
+                                                        " : " + cursor3.getString(3) + " pts<br/>";
+
+                                        } while(cursor3.moveToNext());
+                                        cursor4.moveToLast();
+                                    }
+                                }
                                 //réorganisation de l'affichage
-                                liaisons = encours + reussi + rate;
+                                liaisons = encours + aFaire + reussi + rate;
 
                             } while (cursor4.moveToNext());
                         }
@@ -1138,7 +1213,8 @@ public class DBController extends SQLiteOpenHelper {
     public String composeJSONfromSQLite() { //a modifier
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<HashMap<String, String>>();
-        String selectQuery = "SELECT course.id, parcours.id, equipe.id, liste_balises.num_balise, liste_balises.temps FROM liste_balises " +
+        String selectQuery = "SELECT course.id, parcours.id, equipe.id, liste_balises.num_balise, liste_balises.temps, equipe.points " +
+                             "FROM liste_balises " +
                              "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
                              "INNER JOIN course ON parcours.num_course = course.id " +
                              "INNER JOIN equipe ON course.id = equipe.num_course " +
@@ -1154,6 +1230,7 @@ public class DBController extends SQLiteOpenHelper {
                 map.put("numEquipe", cursor.getString(2));
                 map.put("numBalise", cursor.getString(3));
                 map.put("temps", cursor.getString(4));
+                map.put("points", cursor.getString(5));
                 wordList.add(map);
             } while (cursor.moveToNext());
         }

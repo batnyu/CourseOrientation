@@ -117,13 +117,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         dllParkour = (Button) view.findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
-        dllParkour.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
         dllParkour.setVisibility(View.GONE);
 
         spinner = (ProgressBar) view.findViewById(R.id.progressBar2);
         spinner.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
         layoutDllParkour = (LinearLayout) view.findViewById(R.id.layoutDllParkour);
-        layoutDllParkour.getBackground().setColorFilter(rgb(58,114,173), PorterDuff.Mode.MULTIPLY);
         layoutDllParkour.setVisibility(View.GONE);
 
 
@@ -241,6 +239,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                     ipServer = mCallback.getWifiApIpAddress();
                     if(!ipServer.equals("erreur"))
                     {
+                        //si le bouton télécharger est visible, on le recache
+                        if(dllParkour.getVisibility() == View.VISIBLE)
+                        {
+                            dllParkour.setVisibility(View.GONE);
+                        }
+
                         getPlayersAndRace();
                     }
                 }

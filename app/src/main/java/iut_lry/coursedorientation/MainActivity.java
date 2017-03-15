@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+
     public void showToast(String msg, String duree) {
 
         if(duree.equals("long")) {
@@ -137,6 +137,14 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         long[] pattern = {0, 250, 130, 250};
         v.vibrate(pattern, -1);
     }
+
+/*    @Override
+    public void onResume() {
+        super.onResume();
+        communicateToFragment2();
+        communicateToFragment3();
+        Utils.showToast(MainActivity.this,"RESTART","long");
+    }*/
 
     @Override
     public void communicateToFragment2() {

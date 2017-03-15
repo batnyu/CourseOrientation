@@ -21,9 +21,9 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="7dp"
         android:id="@+id/interface2">
 
 
@@ -40,13 +40,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/chrono"
-                android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp"
+                android:paddingTop="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_tuile"
-                android:layout_marginRight="3dp">
+                android:layout_marginRight="3dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:text="Chronomètre"
@@ -92,8 +92,8 @@
                         android:layout_height="match_parent"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
                         android:id="@+id/endBalise"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
@@ -126,12 +126,12 @@
                         android:layout_height="match_parent"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
+                        android:paddingTop="8dp"
                         android:id="@+id/startBalise"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_tuile">
+                        android:background="@drawable/bg_tuile"
+                        android:paddingBottom="8dp">
 
                         <TextView
                             android:text="Départ"
@@ -161,13 +161,13 @@
                     android:layout_height="match_parent"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
+                    android:paddingTop="8dp"
                     android:layout_marginLeft="3dp"
                     android:id="@+id/points"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_tuile">
+                    android:background="@drawable/bg_tuile"
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:text="Points"
@@ -205,13 +205,13 @@
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
+                android:paddingTop="8dp"
                 android:id="@+id/liaisonsBalise"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/bg_tuile"
                 android:layout_weight="1"
-                android:layout_marginRight="3dp">
+                android:layout_marginRight="3dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:text="Liaisons optionnelles"
@@ -252,13 +252,13 @@
                 android:layout_height="match_parent"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
+                android:paddingTop="8dp"
                 android:id="@+id/pocheBalise"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/bg_tuile"
                 android:layout_weight="1"
-                android:layout_marginLeft="3dp">
+                android:layout_marginLeft="3dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:text="Poches"
@@ -301,11 +301,11 @@
             android:background="@drawable/bg_tuile"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="8dp"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"
-            android:id="@+id/totalBalise">
+            android:id="@+id/totalBalise"
+            android:paddingBottom="8dp">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -342,77 +342,108 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/bg_tuile"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="8dp"
             android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp">
+            android:layout_marginBottom="3dp"
+            android:id="@+id/infos"
+            android:paddingBottom="8dp">
 
             <LinearLayout
                 android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Info scan : "
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_infos_txt"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/textView_infos"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:textColor="@color/zxing_custom_result_view"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/layoutErreur">
+
+                    <TextView
+                        android:text="Info erreur : "
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_infosErreur_txt"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/textView_infosErreur"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:textColor="@color/zxing_custom_result_view"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_tuile"
+            android:paddingLeft="10dp"
+            android:paddingRight="5dp"
+            android:paddingTop="8dp"
+            android:id="@+id/suivante"
+            android:layout_weight="1"
+            android:paddingBottom="8dp"
+            android:layout_marginTop="3dp">
+
+            <TextView
+                android:text="Balise suivante à scanner"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView_balise_suivante"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:text="aucune\n"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/bg_tuile"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:id="@+id/lastBalise"
-                android:layout_marginRight="3dp">
-
-                <TextView
-                    android:text="Dernière balise"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_balise_pointee"
-                    android:textAllCaps="false"
-                    android:textSize="14sp"
-                    android:paddingTop="2dp" />
-
-                <TextView
-                    android:text=""
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_balise_pointee_nb"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="25sp"
-                    android:textColor="@color/zxing_result_view" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_tuile"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:id="@+id/suivante"
-                android:layout_weight="1"
-                android:layout_marginLeft="3dp">
-
-                <TextView
-                    android:text="Balise suivante à scanner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_balise_suivante"
-                    android:textAllCaps="false"
-                    android:textSize="14sp"
-                    android:paddingTop="2dp" />
-
-                <TextView
-                    android:text="aucune\n\n"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/textView_balise_suivante_nb"
-                    android:layout_marginTop="2dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/zxing_result_view"
-                    android:textAllCaps="false"
-                    android:paddingTop="6dp" />
-            </LinearLayout>
+                android:id="@+id/textView_balise_suivante_nb"
+                android:layout_marginTop="2dp"
+                android:textSize="15sp"
+                android:textColor="@color/zxing_result_view"
+                android:textAllCaps="false" />
         </LinearLayout>
 
         <Button

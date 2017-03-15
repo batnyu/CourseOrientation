@@ -15,10 +15,10 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            android:paddingRight="20dp"
-            android:layout_height="56dp">
+            android:paddingRight="20dp">
 
         </android.support.v7.widget.Toolbar>
 

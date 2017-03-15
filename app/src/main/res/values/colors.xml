@@ -7,10 +7,13 @@
     <color name="colorJaune">#378ad5</color>
     <color name="colorRouge">#167cd9</color>
     <color name="colorChrono">#5b5d6e</color>
-    <color name="fond">#e7e7e7</color>
+    <color name="fond">#dedede</color>
     <color name="fondProgressBar">#e6e6e6</color>
     <color name="checkedTab">#d7ffb0</color>
     <color name="black">#000000</color>
     <color name="gris">#5b5b5b</color>
+    <color name="fondDeux">#d4d4d4</color>
+    <color name="rougeBoutonSup">#d90000</color>
+    <color name="rougeBoutonSupDark">#ad0000</color>
 
 </resources>

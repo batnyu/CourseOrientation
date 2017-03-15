@@ -60,6 +60,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     String[] baliseActuelle;
 
+    String infos = "";
+    String infosErreur = "";
+
     boolean activiteRedemarre;
 
     int resultat = 54;
@@ -230,15 +233,26 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 temps = hh+":"+mm+":"+ss;
 
                 if(resultat == 1)
+                {
+                    infos = "La balise n°" + scanContent + " a été scanné ! " + temps;
+                    infosErreur = "";
                     mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps,"long");
+                }
                 else
+                {
+                    infos = "La balise n°" + scanContent + " a été scanné ! " + temps + "\nVous avez quitté la poche " + pocheActuelle;
+                    infosErreur = "";
                     mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps + "\nVous avez quitté la poche " + pocheActuelle,"long");
+                }
+
 
             }
             else if(resultat == 3)
             {
                 temps = timeElapsed.getText().toString();
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
+                infos = "La balise n°" + scanContent + " a été scanné ! " + temps;
+                infosErreur = "";
                 mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps,"long");
 
                 timeElapsed.setBase(SystemClock.elapsedRealtime());
@@ -248,54 +262,63 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             else if(resultat == 2)
             {
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
+                infosErreur = "La balise n°" + scanContent + " a déjà été scanné !";
                 mCallback.showToast("La balise n°" + scanContent + " a déjà été scanné !","long");
 
             }
             else if(resultat == 4)
             {
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
+                infosErreur = "La balise n°" + scanContent + " n'est pas la balise de départ !";
                 mCallback.showToast("La balise n°" + scanContent + " n'est pas la balise de départ !","long");
 
             }
             else if(resultat == 5)
             {
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise suivante !", Toast.LENGTH_LONG).show();
+                infosErreur = "La balise n°" + scanContent + " n'est pas la balise suivante !";
                 mCallback.showToast("La balise n°" + scanContent + " n'est pas la balise suivante !","long");
 
             }
             else if(resultat == 6)
             {
                 //Toast.makeText(getActivity(), "Vous avez déjà fini le parcours!", Toast.LENGTH_LONG).show();
+                infosErreur =  "Vous avez déjà fini le parcours!";
                 mCallback.showToast("Vous avez déjà fini le parcours!","long");
 
             }
             else if(resultat == 7)
             {
                 //Toast.makeText(getActivity(), "Vous n'êtes pas rentré dans la poche de cette balise!", Toast.LENGTH_LONG).show();
+                infosErreur = "Vous n'êtes pas rentré dans la poche de cette balise!";
                 mCallback.showToast("Vous n'êtes pas rentré dans la poche de cette balise!","long");
 
             }
             else if(resultat == 8)
             {
                 //Toast.makeText(getActivity(), "La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.", Toast.LENGTH_LONG).show();
+                infosErreur = "La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.";
                 mCallback.showToast("La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.","long");
 
             }
             else if(resultat == 15)
             {
                 //Toast.makeText(getActivity(), "La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!", Toast.LENGTH_LONG).show();
+                infosErreur = "La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!";
                 mCallback.showToast("La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!","long");
 
             }
             else if(resultat == 10)
             {
                 //Toast.makeText(getActivity(), "Cas non traité!", Toast.LENGTH_LONG).show();
+                infosErreur = "Cas non traité!";
                 mCallback.showToast("Cas non traité!","long");
 
             }
             else if(resultat !=54)
             {
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
+                infosErreur = "La balise n°" + scanContent + " n'est pas dans le parcours !";
                 mCallback.showToast("La balise n°" + scanContent + " n'est pas dans le parcours !","long");
             }
 
@@ -304,6 +327,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 //on update les infos de l'onglet "infos"
                 updateInfos();
             }
+
+            //update des erreurs
+            ((TextView) view.findViewById(R.id.textView_infosErreur)).setText(infosErreur);
 
             System.out.println("resultat = " + resultat);
 
@@ -374,7 +400,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //Afficher soit la balise de départ avant le départ et la balise d'arrivée pendant la course
             if(departOK){
                 nbBaliseArrivee = controller.getLastBalise();
-
             } else {
                 nbBaliseDepart = controller.getFirstBalise();
             }
@@ -458,34 +483,27 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 view.findViewById(R.id.endBalise).setVisibility(View.GONE);
             }
 
-            //dernière balise
-            if(baliseActuelle[0].equals("")){
-                ((TextView) view.findViewById(R.id.textView_balise_pointee_nb)).setText(baliseActuelle[0]);
-            } else {
-                ((TextView) view.findViewById(R.id.textView_balise_pointee_nb)).setText("n°" + baliseActuelle[0]);
-            }
-
             //balise suivante
             TextView txtBaliseSuivante = (TextView) view.findViewById(R.id.textView_balise_suivante_nb);
             if((baliseActuelle[1].equals("obligatoire") || baliseActuelle[1].equals("optionnelle")) && baliseActuelle[3].equals("non"))
             {
                 //Quand prochaine n'est pas azimut
                 txtBaliseSuivante.setText("n°" + baliseActuelle[2] + " -> " + baliseActuelle[1] + "\n" +
-                                          "Poste : " + baliseActuelle[8] + "\n");
+                                          "Poste : " + baliseActuelle[8]);
             }
             else if(baliseActuelle[3].equals("oui"))
             {
                 //Quand prochaine est azimut
-                txtBaliseSuivante.setText("n°" + baliseActuelle[2] + " -> " + baliseActuelle[1] + "\n" +
-                                          "Indication : Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] + "m\n" +
-                                          "Poste : " + baliseActuelle[8]);
+                txtBaliseSuivante.setText("n°" + baliseActuelle[2] + " -> " + baliseActuelle[1] + ", Poste : " + baliseActuelle[8] + "\n" +
+                                          "Indication : Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] +
+                                          "m");
 
                 mCallback.vibrer();
             }
             else
             {
                 //Quand prochaine est au choix ou aucune
-                txtBaliseSuivante.setText(baliseActuelle[1] + "\n\n");
+                txtBaliseSuivante.setText(baliseActuelle[1] + "\n");
             }
 
             //poche
@@ -534,9 +552,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 timeElapsed.setText(baliseActuelle[7]);
 
                 departOK=false;
+                infos = "Balise fin scannée. Parcours terminé !";
                 mCallback.showToast("Vous avez scanné la balise de fin !","long");
             }
 
+            ((TextView) view.findViewById(R.id.textView_infos)).setText(infos);
 
             //Si un temps a été ajouté, on update la listView du fragment 3 (onglet parcours)
             if(resultat == 1 || resultat == 3 || resultat == 12)

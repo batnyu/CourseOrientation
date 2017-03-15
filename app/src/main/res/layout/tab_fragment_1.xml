@@ -1,164 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/fond"
+    android:background="#e7e7e7"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:id="@+id/layoutFocus">
 
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scroll">
+        android:id="@+id/scroll"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/linearLayout"
-            android:weightSum="1"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="5dp"
-                android:weightSum="2">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_height="match_parent"
-                    android:layout_width="102dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textView_course"
-                        android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:text="Course"
-                        android:layout_marginBottom="2dp" />
-
-                    <EditText
-                        android:inputType="number"
-                        android:ems="10"
-                        android:id="@+id/numCourse"
-                        style="@style/Widget.AppCompat.EditText"
-                        android:background="@drawable/bg_edittext"
-                        android:paddingBottom="10dp"
-                        android:paddingTop="10dp"
-                        android:paddingStart="15dp"
-                        android:paddingLeft="15dp"
-                        android:textCursorDrawable="@null"
-                        android:textColor="#3b3b3b"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
-                        android:textSize="17sp"
-                        android:layout_width="match_parent"
-                        android:hint="n°"
-                        android:freezesText="false" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textView_equipe"
-                        android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:text="Équipe"
-                        android:layout_marginBottom="2dp" />
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent">
-
-                        <EditText
-                            android:layout_width="144dp"
-                            android:inputType="number"
-                            android:ems="10"
-                            android:id="@+id/numEquipe"
-                            style="@style/Widget.AppCompat.EditText"
-                            android:background="@drawable/bg_edittext"
-                            android:paddingBottom="10dp"
-                            android:paddingTop="10dp"
-                            android:paddingStart="15dp"
-                            android:paddingLeft="15dp"
-                            android:textCursorDrawable="@null"
-                            android:textColor="#3b3b3b"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="5dp"
-                            android:textSize="17sp"
-                            android:layout_weight="1"
-                            android:hint="n°"
-                            android:freezesText="false" />
-
-                        <FrameLayout
-                            android:layout_width="105dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1">
-
-                            <LinearLayout
-                                android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:background="@drawable/bg_button"
-                                android:id="@+id/layoutSpinnerCheckPlayers">
-
-                                <ProgressBar
-                                    style="@style/Widget.AppCompat.ProgressBar"
-                                    android:id="@+id/progressBar3"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="25dp" />
-                            </LinearLayout>
-
-                            <Button
-                                android:text="Afficher"
-                                android:id="@+id/dllPlayers"
-                                android:layout_gravity="center_horizontal"
-                                android:textSize="14sp"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_button"
-                                android:textColor="@android:color/background_light"
-                                android:layout_width="match_parent" />
-
-                        </FrameLayout>
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
-            </LinearLayout>
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/joueursTab"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_tuile"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:paddingTop="8dp"
+                android:id="@+id/parcoursPresent"
+                android:layout_weight="1"
+                android:paddingBottom="8dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp">
+                android:layout_marginBottom="10dp">
 
-                <LinearLayout android:id="@+id/header"
+                <TextView
+                    android:text="Parcours téléchargé"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_parcoursEnCours_txt"
+                    android:textAllCaps="false"
+                    android:textSize="15sp"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:text="Course :"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/textView_parcoursEnCours"
+                    android:layout_marginTop="2dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/zxing_result_view"
+                    android:textAllCaps="false" />
+
+                <LinearLayout android:id="@+id/header2"
                     android:background="#9b9b9b"
                     android:layout_height="match_parent"
-                    android:layout_width="match_parent">
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="8dp">
 
-                    <TextView android:id="@+id/itemHeader"
+                    <TextView android:id="@+id/itemHeader2"
                         android:layout_height="wrap_content"
                         android:layout_width="0dp"
                         android:text="Joueurs de l'équipe"
@@ -178,133 +84,63 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/layoutPlayers">
+                    android:id="@+id/layoutPlayers2">
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:orientation="vertical"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textView_date"
-                        android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:text="Date de naissance d'un des joueurs" />
-
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="60dp"
+                    android:layout_marginRight="60dp"
+                    android:layout_height="40dp">
 
                     <LinearLayout
-                        android:orientation="horizontal"
+                        style="@style/Widget.AppCompat.Button"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="5dp">
+                        android:orientation="horizontal"
+                        android:id="@+id/layoutDelParkour"
+                        android:background="@drawable/bg_button_big"
+                        android:paddingLeft="50dp">
 
-                        <EditText
+                        <TextView
                             android:layout_width="wrap_content"
-                            android:inputType="date"
-                            android:ems="10"
-                            android:id="@+id/date"
-                            style="@style/Widget.AppCompat.EditText"
-                            android:hint="JJ/MM/AAAA"
-                            android:background="@drawable/bg_edittext"
-                            android:paddingBottom="10dp"
-                            android:paddingTop="10dp"
-                            android:paddingStart="15dp"
-                            android:paddingLeft="15dp"
-                            android:textCursorDrawable="@null"
-                            android:textColor="#3b3b3b"
-                            android:layout_weight="148.94"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="5dp"
-                            android:textSize="17sp"
-                            android:freezesText="false" />
+                            android:layout_height="wrap_content"
+                            android:text="Suppression en cours"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:textColor="@android:color/white" />
 
-                        <FrameLayout
-                            android:layout_width="105dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1">
+                        <ProgressBar
+                            style="@style/Widget.AppCompat.ProgressBar"
+                            android:id="@+id/progressBarDel"
+                            android:layout_height="20dp"
+                            android:layout_width="50dp" />
 
-                            <LinearLayout
-                                android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:background="@drawable/bg_button"
-                                android:id="@+id/layoutSpinnerCheckDate">
-
-                                <ProgressBar
-                                    style="@style/Widget.AppCompat.ProgressBar"
-                                    android:id="@+id/progressBar4"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="25dp" />
-                            </LinearLayout>
-
-                            <Button
-                                android:text="Vérifier"
-                                android:id="@+id/buttonCheckDate"
-                                android:layout_gravity="center_horizontal"
-                                android:textSize="14sp"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_button"
-                                android:textColor="@android:color/background_light"
-                                android:layout_width="match_parent" />
-
-                        </FrameLayout>
                     </LinearLayout>
 
-                </LinearLayout>
+                    <Button
+                        android:layout_width="match_parent"
+                        android:text="Supprimer le parcours"
+                        android:id="@+id/delParkour"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/bg_button_big_red" />
 
+                </FrameLayout>
             </LinearLayout>
 
-            <FrameLayout
+            <Button
+                android:text="Télécharger un parcours"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="2dp">
-
-                <LinearLayout
-                    style="@style/Widget.AppCompat.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingLeft="50dp"
-                    android:id="@+id/layoutDllParkour"
-                    android:background="@drawable/bg_button_big">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Téléchargement en cours"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:textColor="@android:color/white" />
-
-                    <ProgressBar
-                        style="@style/Widget.AppCompat.ProgressBar"
-                        android:id="@+id/progressBar2"
-                        android:layout_height="20dp"
-                        android:layout_width="50dp" />
-
-                </LinearLayout>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:text="Télécharger le parcours"
-                    android:id="@+id/dllParkour"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:paddingBottom="21dp"
-                    android:paddingTop="21dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:background="@drawable/bg_button_big" />
-
-            </FrameLayout>
+                android:id="@+id/nouveauParcoursButton"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_big"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
     </ScrollView>

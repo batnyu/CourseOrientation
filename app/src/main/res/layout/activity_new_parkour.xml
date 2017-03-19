@@ -2,23 +2,27 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical"
-android:background="#e7e7e7"
+android:background="@color/fondFragments"
 android:descendantFocusability="beforeDescendants"
 android:focusableInTouchMode="true"
 android:id="@+id/layoutFocus">
 
-<android.support.v7.widget.Toolbar
-    android:id="@+id/my_toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
-    android:elevation="4dp"
-    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
+    <TextView
+        android:text="Nouvelle course"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/textView"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:gravity="center_vertical"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:paddingLeft="20dp" />
 
     <ScrollView
     android:layout_width="match_parent"
@@ -27,8 +31,9 @@ android:id="@+id/layoutFocus">
     android:layout_alignParentTop="true"
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp">
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:scrollbarStyle="outsideOverlay">
 
         <LinearLayout
             android:orientation="vertical"
@@ -36,14 +41,12 @@ android:id="@+id/layoutFocus">
             android:layout_height="wrap_content"
             android:id="@+id/layoutDllPlayers"
             android:weightSum="1"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:paddingTop="3dp"
             android:paddingBottom="15dp"
             android:layout_marginTop="5dp">
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
@@ -53,7 +56,8 @@ android:id="@+id/layoutFocus">
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_height="match_parent"
-                    android:layout_width="102dp">
+                    android:layout_width="match_parent"
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -69,18 +73,17 @@ android:id="@+id/layoutFocus">
                         android:ems="10"
                         android:id="@+id/numCourse"
                         style="@style/Widget.AppCompat.EditText"
-                        android:background="@drawable/bg_edittext"
-                        android:paddingBottom="10dp"
-                        android:paddingTop="10dp"
+                        android:background="@drawable/bg_edittext_side"
+                        android:paddingBottom="13dp"
+                        android:paddingTop="13dp"
                         android:paddingStart="15dp"
                         android:paddingLeft="15dp"
                         android:textCursorDrawable="@null"
                         android:textColor="#3b3b3b"
                         android:layout_height="match_parent"
-                        android:layout_marginRight="5dp"
                         android:textSize="17sp"
                         android:layout_width="match_parent"
-                        android:hint="n°"
+                        android:hint="Entrez le numéro de la course"
                         android:freezesText="false" />
 
                 </LinearLayout>
@@ -88,7 +91,8 @@ android:id="@+id/layoutFocus">
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="13dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -99,65 +103,59 @@ android:id="@+id/layoutFocus">
                         android:text="Équipe"
                         android:layout_marginBottom="2dp" />
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent">
-
-                        <EditText
-                            android:layout_width="144dp"
-                            android:inputType="number"
-                            android:ems="10"
-                            android:id="@+id/numEquipe"
-                            style="@style/Widget.AppCompat.EditText"
-                            android:background="@drawable/bg_edittext"
-                            android:paddingBottom="10dp"
-                            android:paddingTop="10dp"
-                            android:paddingStart="15dp"
-                            android:paddingLeft="15dp"
-                            android:textCursorDrawable="@null"
-                            android:textColor="#3b3b3b"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="5dp"
-                            android:textSize="17sp"
-                            android:layout_weight="1"
-                            android:hint="n°"
-                            android:freezesText="false" />
-
-                        <FrameLayout
-                            android:layout_width="105dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1">
-
-                            <LinearLayout
-                                android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:background="@drawable/bg_button"
-                                android:id="@+id/layoutSpinnerCheckPlayers">
-
-                                <ProgressBar
-                                    style="@style/Widget.AppCompat.ProgressBar"
-                                    android:id="@+id/progressBar3"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="25dp" />
-                            </LinearLayout>
-
-                            <Button
-                                android:text="Coureurs"
-                                android:id="@+id/dllPlayers"
-                                android:layout_gravity="center_horizontal"
-                                android:textSize="14sp"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_button"
-                                android:textColor="@android:color/background_light"
-                                android:layout_width="match_parent" />
-
-                        </FrameLayout>
-                    </LinearLayout>
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:inputType="number"
+                        android:ems="10"
+                        android:id="@+id/numEquipe"
+                        style="@style/Widget.AppCompat.EditText"
+                        android:background="@drawable/bg_edittext_side"
+                        android:paddingBottom="13dp"
+                        android:paddingTop="13dp"
+                        android:paddingStart="15dp"
+                        android:paddingLeft="15dp"
+                        android:textCursorDrawable="@null"
+                        android:textColor="#3b3b3b"
+                        android:layout_height="match_parent"
+                        android:textSize="17sp"
+                        android:layout_weight="1"
+                        android:hint="Entrez votre numéro d'équipe"
+                        android:freezesText="false" />
 
                 </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:background="@drawable/bg_button"
+                        android:id="@+id/layoutSpinnerCheckPlayers">
+
+                        <ProgressBar
+                            style="@style/Widget.AppCompat.ProgressBar"
+                            android:id="@+id/progressBar3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="25dp" />
+                    </LinearLayout>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Vérifier les joueurs de l'équipe"
+                        android:id="@+id/dllPlayers"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:paddingBottom="20dp"
+                        android:paddingTop="20dp"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/bg_button" />
+
+                </FrameLayout>
 
 
             </LinearLayout>
@@ -215,64 +213,24 @@ android:id="@+id/layoutFocus">
                         android:text="Date de naissance d'un des joueurs" />
 
 
-                    <LinearLayout
-                        android:orientation="horizontal"
+                    <EditText
                         android:layout_width="match_parent"
+                        android:inputType="date"
+                        android:ems="10"
+                        android:id="@+id/date"
+                        style="@style/Widget.AppCompat.EditText"
+                        android:hint="JJ/MM/AAAA"
+                        android:background="@drawable/bg_edittext_side"
+                        android:paddingBottom="13dp"
+                        android:paddingTop="13dp"
+                        android:paddingStart="15dp"
+                        android:paddingLeft="15dp"
+                        android:textCursorDrawable="@null"
+                        android:textColor="#3b3b3b"
+                        android:layout_weight="148.94"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="5dp">
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:inputType="date"
-                            android:ems="10"
-                            android:id="@+id/date"
-                            style="@style/Widget.AppCompat.EditText"
-                            android:hint="JJ/MM/AAAA"
-                            android:background="@drawable/bg_edittext"
-                            android:paddingBottom="10dp"
-                            android:paddingTop="10dp"
-                            android:paddingStart="15dp"
-                            android:paddingLeft="15dp"
-                            android:textCursorDrawable="@null"
-                            android:textColor="#3b3b3b"
-                            android:layout_weight="148.94"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="5dp"
-                            android:textSize="17sp"
-                            android:freezesText="false" />
-
-                        <FrameLayout
-                            android:layout_width="105dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1">
-
-                            <LinearLayout
-                                android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:background="@drawable/bg_button"
-                                android:id="@+id/layoutSpinnerCheckDate">
-
-                                <ProgressBar
-                                    style="@style/Widget.AppCompat.ProgressBar"
-                                    android:id="@+id/progressBar4"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="25dp" />
-                            </LinearLayout>
-
-                            <Button
-                                android:text="Vérifier"
-                                android:id="@+id/buttonCheckDate"
-                                android:layout_gravity="center_horizontal"
-                                android:textSize="14sp"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_button"
-                                android:textColor="@android:color/background_light"
-                                android:layout_width="match_parent" />
-
-                        </FrameLayout>
-                    </LinearLayout>
+                        android:textSize="17sp"
+                        android:freezesText="false" />
 
                 </LinearLayout>
 
@@ -282,8 +240,6 @@ android:id="@+id/layoutFocus">
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="2dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:id="@+id/button_dll">
 
                 <LinearLayout
@@ -292,7 +248,7 @@ android:id="@+id/layoutFocus">
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:id="@+id/layoutDllParkour"
-                    android:background="@drawable/bg_button_big"
+                    android:background="@drawable/bg_button"
                     android:paddingBottom="13dp"
                     android:paddingTop="13dp"
                     android:paddingLeft="50dp">
@@ -316,14 +272,14 @@ android:id="@+id/layoutFocus">
 
                 <Button
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="Télécharger le parcours"
                     android:id="@+id/dllParkour"
                     android:layout_gravity="center_vertical|center_horizontal"
-                    android:paddingBottom="13dp"
-                    android:paddingTop="13dp"
-                    android:layout_height="wrap_content"
+                    android:paddingBottom="20dp"
+                    android:paddingTop="20dp"
                     android:textColor="@android:color/white"
-                    android:background="@drawable/bg_button_big" />
+                    android:background="@drawable/bg_button" />
 
             </FrameLayout>
 

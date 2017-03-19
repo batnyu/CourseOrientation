@@ -39,19 +39,12 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     LinearLayout interfaceMain;
     TextView noParcours;
 
-    Button buttonSend;
-    LinearLayout layoutEnvoiParkour;
-    ProgressBar progressBarSend;
-
     CheckBox checkBoxNotChecked;
     boolean notCheckedBox;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_3, container, false);
-
-        buttonSend = (Button) view.findViewById(R.id.buttonSend);
-        buttonSend.setOnClickListener(this);
 
         checkBoxNotChecked = (CheckBox) view.findViewById(R.id.checkBoxNotChecked);
         checkBoxNotChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -60,11 +53,6 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
                 updateList();
             }
         });
-
-        progressBarSend = (ProgressBar) view.findViewById(R.id.progressBarSend);
-        progressBarSend.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
-        layoutEnvoiParkour = (LinearLayout) view.findViewById(R.id.layoutEnvoiParkour);
-        layoutEnvoiParkour.setVisibility(View.GONE);
 
         return view;
     }
@@ -160,81 +148,9 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.buttonSend:
-                new AlertDialog.Builder(getActivity())
-                        .setMessage("Ceci effacera votre parcours sur le téléphone et l'enverra vers le serveur" +
-                                    "\nEtes-vous sûr ?")
-                        .setCancelable(false)
-                        .setPositiveButton("Envoyer le parcours", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                syncSQLiteMySQLDB();
-                            }
-                        })
-                        .setNegativeButton("Annuler", null)
-                        .show();
-                break;
+
         }
     }
 
-    public void syncSQLiteMySQLDB(){
-        //Create AsycHttpClient object
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
 
-        buttonSend.setVisibility(View.INVISIBLE);
-        layoutEnvoiParkour.setVisibility(View.VISIBLE);
-
-        client.setConnectTimeout(5000);
-        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
-        // est repéré par onFailure contrairement à host unreachable
-        // à étudié c'est relou
-        client.setResponseTimeout(5000); // as above
-        client.setTimeout(5000); // both connection and socket timeout
-        client.setMaxRetriesAndTimeout(1, 100); // times, delay
-
-        String ipServer = mCallback.getWifiApIpAddress();
-
-        params.put("resultatsJSON", controller.composeJSONfromSQLite());
-        Log.d("tag", controller.composeJSONfromSQLite());
-        client.post("http://" + ipServer + ":80/testProjet/insertResultats.php",params ,new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-
-/*                //Convertir byte[] en String
-                String responseString = null;
-                try {
-                    responseString = new String(response, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(responseString);*/
-
-                mCallback.showToast("Le parcours a bien été envoyé !","long");
-
-                buttonSend.setVisibility(View.VISIBLE);
-                layoutEnvoiParkour.setVisibility(View.GONE);
-
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                // Hide ProgressBar
-
-                buttonSend.setVisibility(View.VISIBLE);
-                layoutEnvoiParkour.setVisibility(View.GONE);
-
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                if (statusCode == 404) {
-                    mCallback.showToast("Error " + statusCode + "\nRequested resource not found","long");
-                } else if (statusCode == 500) {
-                    mCallback.showToast("Error " + statusCode + "\nSomething went wrong at server end","long");
-                } else {
-                    mCallback.showToast("Error " + statusCode + "\nUnexpected Error occcured! " +
-                            "[Most common Error: Device might not be connected to Internet]","long");
-                }
-            }
-        });
-    }
 }

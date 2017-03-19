@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -29,9 +28,7 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 
 public class TabFragment2 extends Fragment implements View.OnClickListener {
@@ -60,8 +57,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     String[] baliseActuelle;
 
-    String infos = "";
-    String infosErreur = "";
+    String infoScan = "";
 
     boolean activiteRedemarre;
 
@@ -172,7 +168,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
                 //BALISE TEST
                 if(scanContent.equals("BALISE TEST")) {
-                    mCallback.showToast("La balise TEST a été scanné !","court");
+                    Utils.showToast(getActivity(),"La balise TEST a été scanné !","court");
                 } else {
                     ReceiveData test = new ReceiveData();
                     test.execute();
@@ -199,6 +195,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         */
             //empêcher un autre scan en même temps.
             scanButton.setEnabled(false);
+
+            infoScan = "";
         }
 
         @Override
@@ -234,15 +232,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
                 if(resultat == 1)
                 {
-                    infos = "La balise n°" + scanContent + " a été scanné ! " + temps;
-                    infosErreur = "";
-                    mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps,"long");
+                    infoScan = "[<font color='#2f9e00'>OK</font>] La balise n°" + scanContent + " a été scanné ! " + temps;
+                    Utils.showToast(getActivity(),"La balise n°" + scanContent + " a été scanné ! " + temps,"long");
                 }
                 else
                 {
-                    infos = "La balise n°" + scanContent + " a été scanné ! " + temps + "\nVous avez quitté la poche " + pocheActuelle;
-                    infosErreur = "";
-                    mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps + "\nVous avez quitté la poche " + pocheActuelle,"long");
+                    infoScan = "[<font color='#2f9e00'>OK</font>] La balise n°" + scanContent + " a été scanné ! " + temps + "\nVous avez quitté la poche " + pocheActuelle;
+                    Utils.showToast(getActivity(),"La balise n°" + scanContent + " a été scanné ! " + temps + "\nVous avez quitté la poche " + pocheActuelle,"long");
                 }
 
 
@@ -251,9 +247,8 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 temps = timeElapsed.getText().toString();
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
-                infos = "La balise n°" + scanContent + " a été scanné ! " + temps;
-                infosErreur = "";
-                mCallback.showToast("La balise n°" + scanContent + " a été scanné ! " + temps,"long");
+                infoScan = "[<font color='#2f9e00'>OK</font>] La balise n°" + scanContent + " a été scanné ! " + temps;
+                Utils.showToast(getActivity(),"La balise n°" + scanContent + " a été scanné ! " + temps,"long");
 
                 timeElapsed.setBase(SystemClock.elapsedRealtime());
                 timeElapsed.start();
@@ -262,74 +257,74 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             else if(resultat == 2)
             {
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
-                infosErreur = "La balise n°" + scanContent + " a déjà été scanné !";
-                mCallback.showToast("La balise n°" + scanContent + " a déjà été scanné !","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] La balise n°" + scanContent + " a déjà été scanné !";
+                Utils.showToast(getActivity(),"La balise n°" + scanContent + " a déjà été scanné !","long");
 
             }
             else if(resultat == 4)
             {
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
-                infosErreur = "La balise n°" + scanContent + " n'est pas la balise de départ !";
-                mCallback.showToast("La balise n°" + scanContent + " n'est pas la balise de départ !","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] La balise n°" + scanContent + " n'est pas la balise de départ !";
+                Utils.showToast(getActivity(),"La balise n°" + scanContent + " n'est pas la balise de départ !","long");
 
             }
             else if(resultat == 5)
             {
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise suivante !", Toast.LENGTH_LONG).show();
-                infosErreur = "La balise n°" + scanContent + " n'est pas la balise suivante !";
-                mCallback.showToast("La balise n°" + scanContent + " n'est pas la balise suivante !","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] La balise n°" + scanContent + " n'est pas la balise suivante !";
+                Utils.showToast(getActivity(),"La balise n°" + scanContent + " n'est pas la balise suivante !","long");
 
             }
             else if(resultat == 6)
             {
                 //Toast.makeText(getActivity(), "Vous avez déjà fini le parcours!", Toast.LENGTH_LONG).show();
-                infosErreur =  "Vous avez déjà fini le parcours!";
-                mCallback.showToast("Vous avez déjà fini le parcours!","long");
+                infoScan =  "[<font color='#db1500'>Erreur</font>] Vous avez déjà fini le parcours!";
+                Utils.showToast(getActivity(),"Vous avez déjà fini le parcours!","long");
 
             }
             else if(resultat == 7)
             {
                 //Toast.makeText(getActivity(), "Vous n'êtes pas rentré dans la poche de cette balise!", Toast.LENGTH_LONG).show();
-                infosErreur = "Vous n'êtes pas rentré dans la poche de cette balise!";
-                mCallback.showToast("Vous n'êtes pas rentré dans la poche de cette balise!","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] Vous n'êtes pas rentré dans la poche de cette balise!";
+                Utils.showToast(getActivity(),"Vous n'êtes pas rentré dans la poche de cette balise!","long");
 
             }
             else if(resultat == 8)
             {
                 //Toast.makeText(getActivity(), "La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.", Toast.LENGTH_LONG).show();
-                infosErreur = "La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.";
-                mCallback.showToast("La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.";
+                Utils.showToast(getActivity(),"La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.","long");
 
             }
             else if(resultat == 15)
             {
                 //Toast.makeText(getActivity(), "La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!", Toast.LENGTH_LONG).show();
-                infosErreur = "La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!";
-                mCallback.showToast("La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!";
+                Utils.showToast(getActivity(),"La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!","long");
 
             }
             else if(resultat == 10)
             {
                 //Toast.makeText(getActivity(), "Cas non traité!", Toast.LENGTH_LONG).show();
-                infosErreur = "Cas non traité!";
-                mCallback.showToast("Cas non traité!","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] Cas non traité!";
+                Utils.showToast(getActivity(),"Cas non traité!","long");
 
             }
             else if(resultat !=54)
             {
                 //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
-                infosErreur = "La balise n°" + scanContent + " n'est pas dans le parcours !";
-                mCallback.showToast("La balise n°" + scanContent + " n'est pas dans le parcours !","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] La balise n°" + scanContent + " n'est pas dans le parcours !";
+                Utils.showToast(getActivity(),"La balise n°" + scanContent + " n'est pas dans le parcours !","long");
             }
 
             if(resultat == 1 || resultat == 3 || resultat == 12)
             {
-                //on update les infos de l'onglet "infos"
+                //on update les infoScan de l'onglet "infoScan"
                 updateInfos();
             }
 
             //update des erreurs
-            ((TextView) view.findViewById(R.id.textView_infosErreur)).setText(infosErreur);
+            ((TextView) view.findViewById(R.id.textView_infoScan)).setText(fromHtml(infoScan), TextView.BufferType.SPANNABLE);
 
             System.out.println("resultat = " + resultat);
 
@@ -431,7 +426,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //on attend pas si on refresh qd on télécharge
             if(resultat != 54)
             {
-                //on attend un peu avant de finir le thread pour laisser le temps au joueur de voir les infos bouger
+                //on attend un peu avant de finir le thread pour laisser le temps au joueur de voir les infoScan bouger
                 try {
                     Thread.sleep(400);
                 } catch (InterruptedException e) {
@@ -498,7 +493,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                                           "Indication : Azimut " + baliseActuelle[4] + "° " + baliseActuelle[5] +
                                           "m");
 
-                mCallback.vibrer();
+                Utils.vibrer(getActivity());
             }
             else
             {
@@ -552,11 +547,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 timeElapsed.setText(baliseActuelle[7]);
 
                 departOK=false;
-                infos = "Balise fin scannée. Parcours terminé !";
-                mCallback.showToast("Vous avez scanné la balise de fin !","long");
+                infoScan = "[<font color='#2f9e00'>OK</font>] Balise fin scannée. Parcours terminé !";
+                Utils.showToast(getActivity(),"Vous avez scanné la balise de fin !","long");
             }
 
-            ((TextView) view.findViewById(R.id.textView_infos)).setText(infos);
+            ((TextView) view.findViewById(R.id.textView_infoScan)).setText(fromHtml(infoScan), TextView.BufferType.SPANNABLE);
 
             //Si un temps a été ajouté, on update la listView du fragment 3 (onglet parcours)
             if(resultat == 1 || resultat == 3 || resultat == 12)
@@ -590,7 +585,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             liaisonsDsParcours = controller.checkLiaisons();
 
 
-
+            //Afficher que les poches s'il n'y pas de liaisons et l'inverse
             if(pochesDsParcours && !liaisonsDsParcours)
             {
                 view.findViewById(R.id.liaisonsBalise).setVisibility(LinearLayout.GONE);
@@ -609,7 +604,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //on check si la balise depart a déjà été scanné, si oui on met departOK a true.
             departOK = controller.checkFirstBalise();
 
-            //si la base de données est déjà remplie, on update les infos
+            //si la base de données est déjà remplie, on update les infoScan
             updateInfos();
 
             //fonction a mettre en place pour récupérer le bon chrono si l'activité s'arrete.

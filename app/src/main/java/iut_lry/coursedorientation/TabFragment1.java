@@ -1,8 +1,8 @@
 package iut_lry.coursedorientation;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -10,27 +10,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -38,11 +28,6 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -52,15 +37,25 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
 
     View view;
-    Button nouveauParcoursButton;
+    Button sendButton;
+    Button newParcoursButton;
+    LinearLayout layoutSendParkour;
+    ProgressBar progressBarSend;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.tab_fragment_1, container, false);
 
-        nouveauParcoursButton = (Button) view.findViewById(R.id.nouveauParcoursButton);
-        nouveauParcoursButton.setOnClickListener(this);
+        sendButton = (Button) view.findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(this);
 
+        progressBarSend = (ProgressBar) view.findViewById(R.id.progressBarSend);
+        progressBarSend.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
+        layoutSendParkour = (LinearLayout) view.findViewById(R.id.layoutSendParkour);
+        layoutSendParkour.setVisibility(View.GONE);
+
+        newParcoursButton = (Button) view.findViewById(R.id.newParcoursButton);
+        newParcoursButton.setOnClickListener(this);
 
         return view;
     }
@@ -127,21 +122,27 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
 
-            case R.id.nouveauParcoursButton:
+            case R.id.sendButton:
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Ceci effacera votre parcours sur le téléphone et l'enverra vers le serveur" +
+                                "\nEtes-vous sûr ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Envoyer le parcours", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                syncSQLiteMySQLDB();
+                            }
+                        })
+                        .setNegativeButton("Annuler", null)
+                        .show();
+                break;
+
+            case R.id.newParcoursButton:
                 //On lance l'activité NewParkour avec un contrôle du résultat
                 Intent intent = new Intent(getActivity(), NewParkour.class);
                 startActivityForResult(intent,2);
                 break;
         }
     }
-
-
-    public String getWifiNetworkName() {
-        WifiManager wifiMgr = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-        return wifiInfo.getSSID();
-    }
-
 
     public void afficherJoueurs(String response, String choix, TextView headerTxt, LinearLayout layout){
 
@@ -260,7 +261,71 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 view.findViewById(R.id.parcoursPresent).setVisibility(View.GONE);
             }
         }
+    }
 
+    public void syncSQLiteMySQLDB(){
+
+        DBController controller = new DBController(getActivity());
+
+        //Create AsycHttpClient object
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+
+        sendButton.setVisibility(View.INVISIBLE);
+        layoutSendParkour.setVisibility(View.VISIBLE);
+
+        client.setConnectTimeout(5000);
+        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
+        // est repéré par onFailure contrairement à host unreachable
+        // à étudié c'est relou
+        client.setResponseTimeout(5000); // as above
+        client.setTimeout(5000); // both connection and socket timeout
+        client.setMaxRetriesAndTimeout(1, 100); // times, delay
+
+        String ipServer = Utils.getWifiApIpAddress(getActivity());
+
+        params.put("resultatsJSON", controller.composeJSONfromSQLite());
+        Log.d("tag", controller.composeJSONfromSQLite());
+        client.post("http://" + ipServer + ":80/testProjet/insertResultats.php",params ,new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+
+/*                //Convertir byte[] en String
+                String responseString = null;
+                try {
+                    responseString = new String(response, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(responseString);*/
+
+                Utils.showToast(getActivity(),"Le parcours a bien été envoyé !","long");
+
+                sendButton.setVisibility(View.VISIBLE);
+                layoutSendParkour.setVisibility(View.GONE);
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                // Hide ProgressBar
+
+                sendButton.setVisibility(View.VISIBLE);
+                layoutSendParkour.setVisibility(View.GONE);
+
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                if (statusCode == 404) {
+                    Utils.showToast(getActivity(),"Error " + statusCode + "\nRequested resource not found","long");
+                } else if (statusCode == 500) {
+                    Utils.showToast(getActivity(),"Error " + statusCode + "\nSomething went wrong at server end","long");
+                } else {
+                    Utils.showToast(getActivity(),"Error " + statusCode + "\nUnexpected Error occcured! " +
+                            "[Most common Error: Device might not be connected to Internet]","long");
+                }
+            }
+        });
     }
 
 }

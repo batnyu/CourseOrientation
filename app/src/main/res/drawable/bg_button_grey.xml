@@ -3,9 +3,9 @@
 <item android:state_pressed="true" >
     <shape>
         <solid
-            android:color="@color/colorPrimaryDark" />
+            android:color="@color/colorButtonGreyPushed" />
         <corners
-            android:radius="8dp" />
+            android:radius="4dp" />
         <padding
             android:left="10dp"
             android:top="10dp"
@@ -17,9 +17,9 @@
 <item>
     <shape>
         <solid
-            android:color="@color/colorButton" />
+            android:color="@color/colorButtonGrey" />
         <corners
-            android:radius="8dp" />
+            android:radius="4dp" />
         <padding
             android:left="10dp"
             android:top="10dp"

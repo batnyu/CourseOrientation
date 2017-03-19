@@ -10,8 +10,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -64,17 +67,17 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
     String nomEquipe;
     String categorie;
     String num_parcours;
-    Button buttonCheckDate;
+
     EditText date;
     int longueur;
     String dateStr;
     String dateStrActuel;
-    ProgressBar spinnerCheckDate;
-    LinearLayout layoutSpinnerCheckDate;
+
 
     int essaiDate;
 
     ScrollView scroll;
+
     LinearLayout layoutPlayers;
 
     HashMap<String, String> queryValues;
@@ -84,9 +87,6 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_parkour);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(0xFFFFFFFF);
 
         numCourse = (EditText) findViewById(R.id.numCourse);
 
@@ -94,6 +94,8 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
 
         dllPlayers = (Button) findViewById(R.id.dllPlayers);
         dllPlayers.setOnClickListener(this);
+
+        scroll = (ScrollView) findViewById(R.id.scroll);
 
         spinnerCheckPlayers = (ProgressBar) findViewById(R.id.progressBar3);
         spinnerCheckPlayers.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
@@ -103,13 +105,8 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
         joueursTab = (LinearLayout) findViewById(R.id.joueursTab);
         joueursTab.setVisibility(View.GONE);
         header = (TextView) findViewById(R.id.itemHeader);
-        buttonCheckDate = (Button) findViewById(R.id.buttonCheckDate);
-        buttonCheckDate.setOnClickListener(this);
+
         date = (EditText) findViewById(R.id.date);
-        spinnerCheckDate = (ProgressBar) findViewById(R.id.progressBar4);
-        spinnerCheckDate.getIndeterminateDrawable().setColorFilter(rgb(255,255,255), PorterDuff.Mode.MULTIPLY);
-        layoutSpinnerCheckDate = (LinearLayout) findViewById(R.id.layoutSpinnerCheckDate);
-        layoutSpinnerCheckDate.setVisibility(View.GONE);
 
         dllParkour = (Button) findViewById(R.id.dllParkour);
         dllParkour.setOnClickListener(this);
@@ -156,6 +153,23 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
             }
         });
 
+        //on écoute l'appui sur l'editText date pour descendre le scroll afin de voir le bouton Télécharger
+        date.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(MotionEvent.ACTION_UP == event.getAction()) {
+                    //Aller en bas du scroll
+                    scroll.postDelayed(new Runnable() {
+                        public void run() {
+                            scroll.scrollTo(0, scroll.getBottom());
+                        }
+                    }, 200);
+                }
+
+                return false; // return is important...
+            }
+        });
+
         //initialiser les essais de requêtes pour la date.
         essaiDate = 0;
         //initialisation
@@ -173,31 +187,34 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                 numCourseStrActuel=numCourse.getText().toString();
                 numEquipeStrActuel=numEquipe.getText().toString();
 
-                if(!numEquipeStrActuel.equals(numEquipeStr) || !numCourseStrActuel.equals(numCourseStr))
+                if(!numCourseStrActuel.equals("") && !numEquipeStrActuel.equals(""))
                 {
-                    numCourse.clearFocus();
-                    numEquipe.clearFocus();
-                    Utils.hideKeyboard(NewParkour.this);
-                    essaiDate = 0;
-                    ipServer = Utils.getWifiApIpAddress(NewParkour.this);
-                    if(!ipServer.equals("erreur"))
+                    if(!numEquipeStrActuel.equals(numEquipeStr) || !numCourseStrActuel.equals(numCourseStr))
                     {
-                        //si le bouton télécharger est visible, on le recache
-                        if(dllParkour.getVisibility() == View.VISIBLE)
+                        numCourse.clearFocus();
+                        numEquipe.clearFocus();
+                        date.clearFocus();
+                        Utils.hideKeyboard(NewParkour.this);
+                        essaiDate = 0;
+                        ipServer = Utils.getWifiApIpAddress(NewParkour.this);
+                        if(!ipServer.equals("erreur"))
                         {
-                            dllParkour.setVisibility(View.GONE);
+                            getPlayersAndRace();
                         }
-
-                        getPlayersAndRace();
+                    }
+                    else
+                    {
+                        Utils.showToast(NewParkour.this,"Veuillez changer les données avant de refaire une requête.","court");
                     }
                 }
                 else
                 {
-                    Utils.showToast(NewParkour.this,"Veuillez changer les données avant de refaire une requête.","court");
+                    Utils.showToast(NewParkour.this,"Veuillez saisir vos numéros de course et d'équipe.","court");
                 }
+
                 break;
 
-            case R.id.buttonCheckDate:
+            case R.id.dllParkour:
 
                 dateStrActuel=date.getText().toString();
 
@@ -208,6 +225,8 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
 
                 if(essaiDate < 2)
                 {
+                    numCourse.clearFocus();
+                    numEquipe.clearFocus();
                     date.clearFocus();
                     Utils.hideKeyboard(NewParkour.this);
                     ipServer = Utils.getWifiApIpAddress(NewParkour.this);
@@ -219,14 +238,6 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                 else
                 {
                     Utils.showToast(NewParkour.this,"Veuillez changer de date avant de refaire une requête.","court");
-                }
-                break;
-
-            case R.id.dllParkour:
-                ipServer = Utils.getWifiApIpAddress(NewParkour.this);
-                if(!ipServer.equals("erreur"))
-                {
-                    syncSQLiteMySQLDB();
                 }
                 break;
         }
@@ -247,7 +258,8 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
         layoutSpinnerCheckPlayers.setVisibility(View.VISIBLE);
-        dllPlayers.setVisibility(View.INVISIBLE);
+        dllPlayers.setVisibility(View.VISIBLE);
+
 
         //on récupère le num de la course
         numCourseStr = numCourse.getText().toString();
@@ -274,15 +286,16 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
 
                 System.out.println(responseString);
 
-                layoutSpinnerCheckPlayers.setVisibility(View.GONE);
-                dllPlayers.setVisibility(View.VISIBLE);
-
-                //changer dllPlayer pour afficher le bon msg si on vient de dll.
-                dllParkour.setEnabled(true);
-                dllParkour.setText("Télécharger le parcours");
-
                 if(!responseString.equals("erreur") && !responseString.equals("erreurParcours")) {
                     afficherJoueurs(responseString,"onVerify",header,layoutPlayers);
+                    dllParkour.setVisibility(View.VISIBLE);
+/*                    //Aller en bas du scroll
+                    scroll.post(new Runnable() {
+                        public void run() {
+                            scroll.scrollTo(0, scroll.getBottom());
+                        }
+                    });*/
+
                 } else {
                     //on vide la liste des joueurs et on cache tout
                     if(layoutPlayers.getChildCount() > 0){
@@ -373,6 +386,7 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
     }
 
     public void checkDate(){
+
         //Create AsycHttpClient object
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
@@ -384,9 +398,6 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
         client.setResponseTimeout(5000); // as above
         client.setTimeout(5000); // both connection and socket timeout
         client.setMaxRetriesAndTimeout(1, 100); // times, delay
-
-        layoutSpinnerCheckDate.setVisibility(View.VISIBLE);
-        buttonCheckDate.setVisibility(View.INVISIBLE);
 
         numEquipeStr = numEquipe.getText().toString();
         System.out.println(numEquipeStr);
@@ -411,12 +422,9 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
 
                 System.out.println(responseString);
 
-                layoutSpinnerCheckDate.setVisibility(View.GONE);
-                buttonCheckDate.setVisibility(View.VISIBLE);
-
                 if(!responseString.equals("erreur")) {
-                    Utils.showToast(NewParkour.this,"Date de naissance OK !\nVous pouvez télécharger le parcours !","court");
-                    dllParkour.setVisibility(View.VISIBLE);
+                    //si la date correspond, on télécharge le parcours
+                    syncSQLiteMySQLDB();
                 } else {
                     Utils.showToast(NewParkour.this,"Erreur : la date de naissance ne correspond pas.","court");
                 }
@@ -439,8 +447,9 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                             "[Most common Error: Device might not be connected to Internet]","long");
                 }
 
-                layoutSpinnerCheckDate.setVisibility(View.GONE);
-                buttonCheckDate.setVisibility(View.VISIBLE);
+                //cacher le spinner et afficher le bouton
+                dllParkour.setVisibility(View.VISIBLE);
+                layoutDllParkour.setVisibility(View.GONE);
 
                 //on ré-initialise la date enregistré si fail pour pouvoir redemander.
                 dateStr = "aucune";

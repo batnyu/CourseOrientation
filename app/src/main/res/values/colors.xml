@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#3a72ad</color>
     <color name="colorPrimaryDark">#225994</color>
+    <color name="colorButton">#3a72ad</color>
     <color name="colorAccent">#8e8e8e</color>
     <color name="colorMain">#5194d1</color>
     <color name="colorJaune">#378ad5</color>
@@ -9,11 +10,20 @@
     <color name="colorChrono">#5b5d6e</color>
     <color name="fond">#dedede</color>
     <color name="fondProgressBar">#e6e6e6</color>
+    <color name="fondFragments">#e7e7e7</color>
     <color name="checkedTab">#d7ffb0</color>
     <color name="black">#000000</color>
     <color name="gris">#5b5b5b</color>
     <color name="fondDeux">#d4d4d4</color>
     <color name="rougeBoutonSup">#d90000</color>
     <color name="rougeBoutonSupDark">#ad0000</color>
+    <color name="FFCOvertClair">#97be13</color>
+    <color name="FFCOvertFonce">#00742d</color>
+    <color name="FFCOvertBleu">#01a6dc</color>
+    <color name="FFCOvertOrange">#f47100</color>
+    <color name="colorPrimaryVERT">#7a9d00</color>
+    <color name="colorPrimaryDarkVERT">#5a7500</color>
+    <color name="colorButtonGrey">#d3d3d3</color>
+    <color name="colorButtonGreyPushed">#bebebe</color>
 
 </resources>

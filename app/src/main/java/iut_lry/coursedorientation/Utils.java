@@ -3,6 +3,7 @@ package iut_lry.coursedorientation;
 import android.app.Activity;
 import android.content.Context;
 import android.net.DhcpInfo;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
@@ -72,6 +73,12 @@ public class Utils {
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         long[] pattern = {0, 250, 130, 250};
         v.vibrate(pattern, -1);
+    }
+
+    public  static String getWifiNetworkName(Context context) {
+        WifiManager wifiMgr = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+        return wifiInfo.getSSID();
     }
 
 /*    @Override

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:background="@color/fond">
+    android:background="@color/fondFragments">
 
     <TextView
         android:text="Vous n'avez pas téléchargé de parcours"
@@ -109,49 +109,6 @@
             </ListView>
 
         </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                style="@style/Widget.AppCompat.Button"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingLeft="50dp"
-                android:id="@+id/layoutEnvoiParkour"
-                android:background="@drawable/bg_button_big">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Envoi en cours"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:textColor="@android:color/white" />
-
-                <ProgressBar
-                    style="@style/Widget.AppCompat.ProgressBar"
-                    android:id="@+id/progressBarSend"
-                    android:layout_height="20dp"
-                    android:layout_width="50dp" />
-
-            </LinearLayout>
-
-            <Button
-                android:layout_width="match_parent"
-                android:text="Envoyer le parcours"
-                android:id="@+id/buttonSend"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:paddingBottom="18dp"
-                android:paddingTop="18dp"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:background="@drawable/bg_button_big" />
-
-        </FrameLayout>
 
         <!-- List Divider
     <View android:layout_width="fill_parent"

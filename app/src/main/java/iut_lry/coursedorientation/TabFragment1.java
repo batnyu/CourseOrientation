@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -129,7 +127,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                         .setCancelable(false)
                         .setPositiveButton("Envoyer le parcours", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                syncSQLiteMySQLDB();
+                                envoyerParcours();
                             }
                         })
                         .setNegativeButton("Annuler", null)
@@ -254,6 +252,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 LinearLayout layoutJoueurs = (LinearLayout) view.findViewById(R.id.layoutPlayers2);
                 afficherJoueurs(parametres,"onStart",itemHeader2,layoutJoueurs);
 
+                //Afficher le layout parcours Téléchargé
+                view.findViewById(R.id.parcoursPresent).setVisibility(View.VISIBLE);
+
             }
             else
             {
@@ -263,7 +264,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void syncSQLiteMySQLDB(){
+    public void envoyerParcours(){
 
         DBController controller = new DBController(getActivity());
 

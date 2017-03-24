@@ -46,7 +46,6 @@
                 android:paddingTop="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_tuile"
-                android:layout_marginRight="3dp"
                 android:paddingBottom="6dp">
 
                 <TextView
@@ -177,7 +176,8 @@
                     android:id="@+id/endBalise"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_tuile">
+                    android:background="@drawable/bg_tuile"
+                    android:layout_marginRight="3dp">
 
                     <TextView
                         android:text="Arrivée"
@@ -211,8 +211,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:background="@drawable/bg_tuile"
-                    android:paddingBottom="8dp"
-                    android:layout_marginRight="3dp">
+                    android:paddingBottom="8dp">
 
                     <TextView
                         android:text="Départ"
@@ -245,9 +244,9 @@
                 android:textSize="20sp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_button_grey"
+                android:textColor="@android:color/black"
                 android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                android:textColor="@android:color/black" />
+                android:layout_marginRight="3dp" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -340,7 +339,6 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="8dp"
@@ -349,7 +347,8 @@
                 android:background="@drawable/bg_tuile"
                 android:layout_weight="1"
                 android:layout_marginRight="3dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="8dp"
+                android:layout_height="match_parent">
 
                 <TextView
                     android:text="Liaisons optionnelles"
@@ -363,25 +362,17 @@
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_marginTop="2dp"
-                    android:fillViewport="false"
-                    android:layout_height="match_parent">
+                    android:layout_height="65dp">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical" >
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/textView_liaisons_nb"
-                            android:textAllCaps="false"
-                            android:textSize="15sp"
-                            android:textColor="@color/zxing_result_view"
-                            android:text="aucune"
-                            android:maxLines="3"
-                            android:minLines="3" />
-                    </LinearLayout>
+                        android:id="@+id/textView_liaisons_nb"
+                        android:textAllCaps="false"
+                        android:textSize="15sp"
+                        android:textColor="@color/zxing_result_view"
+                        android:text="aucune"
+                        android:minLines="3" />
                 </ScrollView>
 
             </LinearLayout>
@@ -411,25 +402,18 @@
 
                 <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="65dp"
                     android:layout_marginTop="2dp">
 
-                    <LinearLayout
+                    <TextView
+                        android:text="aucune"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical" >
-
-                        <TextView
-                            android:text="aucune"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/textView_poche_nb"
-                            android:textAllCaps="false"
-                            android:textSize="15sp"
-                            android:textColor="@color/zxing_result_view"
-                            android:minLines="3"
-                            android:maxLines="3" />
-                    </LinearLayout>
+                        android:id="@+id/textView_poche_nb"
+                        android:textAllCaps="false"
+                        android:textSize="15sp"
+                        android:textColor="@color/zxing_result_view"
+                        android:minLines="3" />
                 </ScrollView>
 
             </LinearLayout>

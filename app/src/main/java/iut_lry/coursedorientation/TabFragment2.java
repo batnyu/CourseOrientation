@@ -4,13 +4,16 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,21 +31,27 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class TabFragment2 extends Fragment implements View.OnClickListener {
     private IFragmentToActivity mCallback;
 
     private Button scanButton;
-    Calendar rightNow;
     Chronometer timeElapsed;
+
+    // Declare your shared preference file name
+    private static final String PREF_NAME = "info";
 
     DBController controller;
 
     boolean departOK;
 
-    String scanContent;
+    String scanContent = "";
     String scanFormat;
     String temps;
 
@@ -63,6 +72,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     int resultat = 54;
 
+    LinearLayout liaisonsBalise;
+    LinearLayout pochesBalise;
+
     View view;
 
     @Override
@@ -75,6 +87,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         controller = new DBController(getActivity());
 
         totalBalises = (TextView) view.findViewById(R.id.textView_total_balises_nb);
+
+        liaisonsBalise = (LinearLayout) view.findViewById(R.id.liaisonsBalise);
+        pochesBalise = (LinearLayout) view.findViewById(R.id.pocheBalise);
+
+
 
         return view;
     }
@@ -104,7 +121,59 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         fragmentCommunication2();
         //vérif tableau.
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Create a object SharedPreferences from getSharedPreferences("name_file",MODE_PRIVATE) of Context
+        SharedPreferences preferences = getActivity().getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        long heureExit = preferences.getLong("heureExit",0);
+        long tempsChrono = preferences.getLong("tempsChrono",0);
+
+
+        Log.d("ALLLLLLLLLLLLLOOOOOOOOO", "onResume: heureExit = "+heureExit +"\n tempsChrono = " + tempsChrono);
+
+        if(heureExit != 0 && tempsChrono != 0)
+        {
+            Calendar now = Calendar.getInstance();
+           /* SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");*/
+            long tempsActuel = now.getTimeInMillis();
+
+            //On calcule le délai pr l'ajouter au chrono.
+            long diff = tempsActuel - heureExit;
+
+            //On ajoute le délai au chrono enregistré
+            long bonneHeure = tempsChrono + diff;
+
+            int h   = (int)(bonneHeure /3600000);
+            int m = (int)(bonneHeure - h*3600000)/60000;
+            int s= (int)(bonneHeure - h*3600000- m*60000)/1000 ;
+            String hh = h < 10 ? "0"+h: h+"";
+            String mm = m < 10 ? "0"+m: m+"";
+            String ss = s < 10 ? "0"+s: s+"";
+            String bonneHeureString = hh+":"+mm+":"+ss;
+
+            timeElapsed.setText(bonneHeureString);
+            timeElapsed.setBase(SystemClock.elapsedRealtime() - (1000*s + 1000*60*m + 1000*60*60*h));
+            timeElapsed.start();
+            //Utils.showToast(getActivity(),"Parcours repris à " + bonneHeureString,"long");
+            departOK = true;
+
+            //On supprime les données enregistrées.
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear();
+            editor.commit();
+
+/*            SharedPreferences.Editor editor2 = preferences.edit();
+            editor2.putLong("heureExit",0);
+            editor2.putLong("tempsChrono",0);
+            editor2.apply();*/
+
+            Log.d("ALLLLLLLLLLLLLOOOOOOOOO", "onActivityCreated: ON remet LES TEMPS");
+
+        }
     }
 
     @Override
@@ -195,8 +264,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         */
             //empêcher un autre scan en même temps.
             scanButton.setEnabled(false);
-
-            infoScan = "";
         }
 
         @Override
@@ -204,6 +271,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //do your work here
 
             resultat = controller.checkBalise(scanContent, departOK, nbBaliseDepart, baliseSuivante, nbBaliseSuivante, pocheActuelle);
+
+            //On remplace le contenu du QrCode (String aléatoire) par le num de la balise correspondante
+            scanContent = controller.getNumBalise(scanContent);
+
 
             return null;
         }
@@ -221,10 +292,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 //et pas quand on obtient le résultat
                 //temps = timeElapsed.getText().toString();
                 //Donc obligé de refaire ça :
-                long time = SystemClock.elapsedRealtime() - timeElapsed.getBase();
-                int h   = (int)(time /3600000);
-                int m = (int)(time - h*3600000)/60000;
-                int s= (int)(time - h*3600000- m*60000)/1000 ;
+                long timeChrono = SystemClock.elapsedRealtime() - timeElapsed.getBase();
+                int h   = (int)(timeChrono /3600000);
+                int m = (int)(timeChrono - h*3600000)/60000;
+                int s= (int)(timeChrono - h*3600000- m*60000)/1000 ;
                 String hh = h < 10 ? "0"+h: h+"";
                 String mm = m < 10 ? "0"+m: m+"";
                 String ss = s < 10 ? "0"+s: s+"";
@@ -246,7 +317,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             else if(resultat == 3)
             {
                 temps = timeElapsed.getText().toString();
-                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " a été scanné ! " + temps, Toast.LENGTH_LONG).show();
                 infoScan = "[<font color='#2f9e00'>OK</font>] La balise n°" + scanContent + " a été scanné ! " + temps;
                 Utils.showToast(getActivity(),"La balise n°" + scanContent + " a été scanné ! " + temps,"long");
 
@@ -256,65 +326,56 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             }
             else if(resultat == 2)
             {
-                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " a déjà été scanné !", Toast.LENGTH_LONG).show();
                 infoScan = "[<font color='#db1500'>Erreur</font>] La balise n°" + scanContent + " a déjà été scanné !";
                 Utils.showToast(getActivity(),"La balise n°" + scanContent + " a déjà été scanné !","long");
 
             }
             else if(resultat == 4)
             {
-                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise de départ !", Toast.LENGTH_LONG).show();
                 infoScan = "[<font color='#db1500'>Erreur</font>] La balise n°" + scanContent + " n'est pas la balise de départ !";
                 Utils.showToast(getActivity(),"La balise n°" + scanContent + " n'est pas la balise de départ !","long");
 
             }
             else if(resultat == 5)
             {
-                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas la balise suivante !", Toast.LENGTH_LONG).show();
                 infoScan = "[<font color='#db1500'>Erreur</font>] La balise n°" + scanContent + " n'est pas la balise suivante !";
                 Utils.showToast(getActivity(),"La balise n°" + scanContent + " n'est pas la balise suivante !","long");
 
             }
             else if(resultat == 6)
             {
-                //Toast.makeText(getActivity(), "Vous avez déjà fini le parcours!", Toast.LENGTH_LONG).show();
                 infoScan =  "[<font color='#db1500'>Erreur</font>] Vous avez déjà fini le parcours!";
                 Utils.showToast(getActivity(),"Vous avez déjà fini le parcours!","long");
 
             }
             else if(resultat == 7)
             {
-                //Toast.makeText(getActivity(), "Vous n'êtes pas rentré dans la poche de cette balise!", Toast.LENGTH_LONG).show();
                 infoScan = "[<font color='#db1500'>Erreur</font>] Vous n'êtes pas rentré dans la poche de cette balise!";
                 Utils.showToast(getActivity(),"Vous n'êtes pas rentré dans la poche de cette balise!","long");
 
             }
             else if(resultat == 8)
             {
-                //Toast.makeText(getActivity(), "La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.", Toast.LENGTH_LONG).show();
                 infoScan = "[<font color='#db1500'>Erreur</font>] La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.";
                 Utils.showToast(getActivity(),"La balise ne fait pas partie de la poche actuelle! Veuillez sortir de la poche.","long");
 
             }
             else if(resultat == 15)
             {
-                //Toast.makeText(getActivity(), "La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!", Toast.LENGTH_LONG).show();
                 infoScan = "[<font color='#db1500'>Erreur</font>] La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!";
                 Utils.showToast(getActivity(),"La balise n'est pas la bonne suivante et vous n'avez pas quitté la poche!","long");
 
             }
             else if(resultat == 10)
             {
-                //Toast.makeText(getActivity(), "Cas non traité!", Toast.LENGTH_LONG).show();
                 infoScan = "[<font color='#db1500'>Erreur</font>] Cas non traité!";
                 Utils.showToast(getActivity(),"Cas non traité!","long");
 
             }
             else if(resultat !=54)
             {
-                //Toast.makeText(getActivity(), "La balise n°" + scanContent + " n'est pas dans le parcours !", Toast.LENGTH_LONG).show();
-                infoScan = "[<font color='#db1500'>Erreur</font>] La balise n°" + scanContent + " n'est pas dans le parcours !";
-                Utils.showToast(getActivity(),"La balise n°" + scanContent + " n'est pas dans le parcours !","long");
+                infoScan = "[<font color='#db1500'>Erreur</font>] La balise scannée n'est pas dans le parcours !";
+                Utils.showToast(getActivity(),"La balise scannée n'est pas dans le parcours !","long");
             }
 
             if(resultat == 1 || resultat == 3 || resultat == 12)
@@ -360,6 +421,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
          *    do things before doInBackground() code runs
          *    such as preparing and showing a Dialog or ProgressBar
         */
+
         }
 
         @Override
@@ -524,9 +586,9 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
             //liaisons
             if(liaisons.equals("") && departOK){
-                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("aucune\n\n");
+                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("aucune");
             } else if(liaisons.equals("")){
-                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("\n\n");
+                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("");
             } else {
                 ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText(fromHtml(liaisons), TextView.BufferType.SPANNABLE);
             }
@@ -581,28 +643,30 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             view.findViewById(R.id.interface2).setVisibility(LinearLayout.VISIBLE);
             view.findViewById(R.id.noParcours2).setVisibility(LinearLayout.GONE);
 
-            pochesDsParcours = controller.checkPoches();
+/*            pochesDsParcours = controller.checkPoches();
             liaisonsDsParcours = controller.checkLiaisons();
-
 
             //Afficher que les poches s'il n'y pas de liaisons et l'inverse
             if(pochesDsParcours && !liaisonsDsParcours)
             {
-                view.findViewById(R.id.liaisonsBalise).setVisibility(LinearLayout.GONE);
+                liaisonsBalise.setVisibility(View.GONE);
                 LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 params.setMargins(0,0,0,0);
-                view.findViewById(R.id.pocheBalise).setLayoutParams(params);
+                pochesBalise.setLayoutParams(params);
             }
             else if(!pochesDsParcours && liaisonsDsParcours)
             {
-                view.findViewById(R.id.pocheBalise).setVisibility(LinearLayout.GONE);
+                pochesBalise.setVisibility(View.GONE);
                 LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 params.setMargins(0,0,0,0);
-                view.findViewById(R.id.liaisonsBalise).setLayoutParams(params);
-            }
+                liaisonsBalise.setLayoutParams(params);
+            }*/
 
             //on check si la balise depart a déjà été scanné, si oui on met departOK a true.
             departOK = controller.checkFirstBalise();
+
+            //on réinitialise infosScan
+            infoScan = "";
 
             //si la base de données est déjà remplie, on update les infoScan
             updateInfos();
@@ -619,6 +683,32 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             view.findViewById(R.id.interface2).setVisibility(LinearLayout.GONE);
             view.findViewById(R.id.noParcours2).setVisibility(LinearLayout.VISIBLE);
         }
+    }
+
+    //Si l'user quitte l'application pendant la course
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if(departOK) { //si le parcours est commencé
+
+            //On récupère l'heure du téléphone en ms
+            Calendar rightNow = Calendar.getInstance();
+            long heureExit = rightNow.getTimeInMillis();
+
+            //On récupère le temps du chrono en ms
+            long heureChrono = SystemClock.elapsedRealtime() - timeElapsed.getBase();
+
+            SharedPreferences preferences = getActivity().getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putLong("heureExit",heureExit);
+            editor.putLong("tempsChrono",heureChrono);
+            editor.apply();
+            Log.d("test", "onPause: heureExit : " + heureExit +"\n tempsChrono : " + heureChrono);
+        }
+
+
+
     }
 
     @SuppressWarnings("deprecation")

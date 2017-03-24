@@ -465,6 +465,23 @@ public class DBController extends SQLiteOpenHelper {
         }
     }
 
+    public String getNumBalise(String hash) {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT num FROM balise WHERE hash = ?", new String[]{hash});
+
+        String numBalise = "";
+
+        if (cursor.moveToFirst()) {
+            numBalise = cursor.getString(0);
+            cursor.close();
+            database.close();
+        }
+
+        return numBalise;
+    }
+
     public void UpdateTemps(String balise, String temps) {
 
         SQLiteDatabase database = this.getReadableDatabase();
@@ -842,7 +859,7 @@ public class DBController extends SQLiteOpenHelper {
                             poche = poche + " (en cours)";
                         }
 
-                        poche = poche + "</br>";
+                        poche = poche + "<br/>";
                     }
                     cursor4.close();
                 }

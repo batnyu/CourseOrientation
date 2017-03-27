@@ -88,64 +88,6 @@ public class MainActivity extends AppCompatActivity implements IFragmentToActivi
         return super.onOptionsItemSelected(item);
     }
 
-
-    public void showToast(String msg, String duree) {
-
-        if(duree.equals("long")) {
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        }
-        else {
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    public void hideKeyboard(){
-        // Check if no view has focus:
-        View view = getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
-
-    public String getWifiApIpAddress() {
-        String myIP = null;
-        final WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        final DhcpInfo dhcp = manager.getDhcpInfo();
-        //conversion chelou pour la mettre en string adresse IP
-        byte[] myIPAddress = BigInteger.valueOf(dhcp.gateway).toByteArray();
-        // you must reverse the byte array before conversion. Use Apache's commons library
-        ArrayUtils.reverse(myIPAddress);
-        InetAddress myInetIP = null;
-        try {
-            myInetIP = InetAddress.getByAddress(myIPAddress);
-            myIP = myInetIP.getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            Log.d("erreur ",e.getMessage());
-            showToast("Veuillez activer votre Wi-fi, connectez-vous au réseau de l'organisateur et réessayez.","long");
-            myIP = "erreur";
-        }
-
-        return myIP;
-    }
-
-    public void vibrer()
-    {
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        long[] pattern = {0, 250, 130, 250};
-        v.vibrate(pattern, -1);
-    }
-
-/*    @Override
-    public void onResume() {
-        super.onResume();
-        communicateToFragment2();
-        communicateToFragment3();
-        Utils.showToast(MainActivity.this,"RESTART","long");
-    }*/
-
     @Override
     public void communicateToFragment2() {
         TabFragment2 fragment = (TabFragment2) adapter.getFragment(1);

@@ -236,8 +236,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 */
 
                 //BALISE TEST
-                if(scanContent.equals("BALISE TEST")) {
+                if(scanContent.equals("Balise TEST")) {
                     Utils.showToast(getActivity(),"La balise TEST a été scanné !","court");
+                    infoScan = "[<font color='#2f9e00'>OK</font>] La balise TEST a été scanné ! ";
+                    ((TextView) view.findViewById(R.id.textView_infoScan)).setText(fromHtml(infoScan), TextView.BufferType.SPANNABLE);
+
                 } else {
                     ReceiveData test = new ReceiveData();
                     test.execute();

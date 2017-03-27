@@ -44,6 +44,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.tab_fragment_1, container, false);
 
+        //cacher le layout parcours Téléchargé
+        view.findViewById(R.id.parcoursPresent).setVisibility(View.GONE);
+
         sendButton = (Button) view.findViewById(R.id.sendButton);
         sendButton.setOnClickListener(this);
 

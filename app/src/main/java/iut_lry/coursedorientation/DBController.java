@@ -672,6 +672,8 @@ public class DBController extends SQLiteOpenHelper {
             if(cursor25.moveToFirst()) {
                 balise[8] = cursor25.getString(0);
             }
+
+            cursor25.close();
         }
         else
         {
@@ -1161,6 +1163,9 @@ public class DBController extends SQLiteOpenHelper {
                                 }
                                 //réorganisation de l'affichage
                                 liaisons = encours + aFaire + reussi + rate;
+                                //Suppression du saut de ligne en trop
+                                if(liaisons.length() > 0)
+                                    liaisons = liaisons.substring(0,liaisons.length()-5);
 
                             } while (cursor4.moveToNext());
                         }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -82,6 +83,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         view = inflater.inflate(R.layout.tab_fragment_2, container, false);
 
         scanButton = (Button) view.findViewById(R.id.scan_button);
+
         scanButton.setOnClickListener(this);
 
         controller = new DBController(getActivity());
@@ -91,7 +93,16 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         liaisonsBalise = (LinearLayout) view.findViewById(R.id.liaisonsBalise);
         pochesBalise = (LinearLayout) view.findViewById(R.id.pocheBalise);
 
+/*        new CountDownTimer(30000, 1000) {
 
+            public void onTick(long millisUntilFinished) {
+                mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                mTextField.setText("done!");
+            }
+        }.start();*/
 
         return view;
     }

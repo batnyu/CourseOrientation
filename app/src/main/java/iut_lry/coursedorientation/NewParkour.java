@@ -286,7 +286,7 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
 
                 System.out.println(responseString);
 
-                if(!responseString.equals("erreur") && !responseString.equals("erreurParcours")) {
+                if(!responseString.equals("erreur")) {
                     afficherJoueurs(responseString,"onVerify",header,layoutPlayers);
                     dllParkour.setVisibility(View.VISIBLE);
 /*                    //Aller en bas du scroll
@@ -305,12 +305,8 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                         date.setText("");
                     }
                     if(responseString.equals("erreur")) {
-                        Utils.showToast(NewParkour.this,"Erreur, l'équipe est introuvable","long");
+                        Utils.showToast(NewParkour.this,"Erreur, l'équipe ou la course est introuvable","long");
                     }
-                    else if(responseString.equals("erreurParcours")) {
-                        Utils.showToast(NewParkour.this,"La course n'a pas de parcours pour votre catégorie.","long");
-                    }
-
                 }
 
             }
@@ -375,7 +371,12 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                 }
 
                 //changer le header du tableau pour mettre le nom de l'équipe
-                headerTxt.setText("Joueurs de l'équipe \""+ nomEquipe +"\" catégorie " + categorie);
+                if(arr.length()>1) {
+                    headerTxt.setText("Joueurs de l'équipe \""+ nomEquipe +"\" catégorie " + categorie);
+                } else {
+                    headerTxt.setText("Joueur de l'équipe \""+ nomEquipe +"\" catégorie " + categorie);
+                }
+                
                 //afficher le tableau et le truc pr rentrer la date de naissance
                 joueursTab.setVisibility(View.VISIBLE);
 
@@ -481,6 +482,7 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
         System.out.println("num parcours : " + num_parcours);
         System.out.println("num course : " + numCourseStr);
         System.out.println("num equipe : " + numEquipeStr);
+
         params.put("num_parcours", num_parcours);
         params.put("num_course", numCourseStr);
         params.put("num_equipe", numEquipeStr);
@@ -651,12 +653,12 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                         queryValues.put("course.id", obj.get("course.id").toString());
                         queryValues.put("course.date", obj.get("course.date").toString());
                         queryValues.put("course.temps", obj.get("course.temps").toString());
+                        queryValues.put("course.categorie", obj.get("course.categorie").toString());
+                        queryValues.put("course.num_parcours", obj.get("course.num_parcours").toString());
                     }
                     else if(!obj.isNull("parcours.id"))
                     {
                         queryValues.put("parcours.id", obj.get("parcours.id").toString());
-                        queryValues.put("parcours.num_course", obj.get("parcours.num_course").toString());
-                        queryValues.put("parcours.categorie", obj.get("parcours.categorie").toString());
                         queryValues.put("parcours.description", obj.get("parcours.description").toString());
                     }
                     else if(!obj.isNull("liste_balises.id"))
@@ -673,21 +675,20 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                         queryValues.put("liste_balises.arrivee", obj.get("liste_balises.arrivee").toString());
                         queryValues.put("liste_balises.liaison", obj.get("liste_balises.liaison").toString());
                         queryValues.put("liste_balises.groupe", obj.get("liste_balises.groupe").toString());
+                        queryValues.put("liste_balises.coord_gps", obj.get("liste_balises.coord_gps").toString());
+                        queryValues.put("liste_balises.poste", obj.get("liste_balises.poste").toString());
                         queryValues.put("liste_balises.points", obj.get("liste_balises.points").toString());
                     }
                     else if(!obj.isNull("balise.num"))
                     {
                         queryValues.put("balise.num", obj.get("balise.num").toString());
                         queryValues.put("balise.hash", obj.get("balise.hash").toString());
-                        queryValues.put("balise.coord_gps", obj.get("balise.coord_gps").toString());
-                        queryValues.put("balise.poste", obj.get("balise.poste").toString());
                     }
                     else if(!obj.isNull("groupe.nom_groupe"))
                     {
                         queryValues.put("groupe.nom_groupe", obj.get("groupe.nom_groupe").toString());
                         queryValues.put("groupe.balise_entree", obj.get("groupe.balise_entree").toString());
                         queryValues.put("groupe.balise_sortie", obj.get("groupe.balise_sortie").toString());
-                        queryValues.put("groupe.points_bonus", obj.get("groupe.points_bonus").toString());
                     }
                     else if(!obj.isNull("liste_liaisons.num"))
                     {

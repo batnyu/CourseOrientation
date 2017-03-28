@@ -36,12 +36,12 @@ public class DBController extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_COURSE = "CREATE TABLE course ( " +
             "id INTEGER PRIMARY KEY, " +
             "date TEXT, " +
-            "temps TEXT )";
+            "temps TEXT," +
+            "categorie TEXT," +
+            "num_parcours INTEGER )";
 
     private static final String CREATE_TABLE_PARCOURS = "CREATE TABLE parcours ( " +
             "id INTEGER PRIMARY KEY, " +
-            "num_course INTEGER, " +
-            "categorie TEXT, " +
             "description TEXT)";
 
     private static final String CREATE_TABLE_LISTE_BALISES = "CREATE TABLE liste_balises ( " +
@@ -56,21 +56,20 @@ public class DBController extends SQLiteOpenHelper {
             "depart INTEGER, " +
             "arrivee INTEGER, " +
             "liaison TEXT, " +
-            "groupe TEXT, " +
+            "groupe TEXT," +
+            "coord_gps TEXT," +
+            "poste TEXT, " +
             "points INTEGER, " +
             "temps TEXT )";
 
     private static final String CREATE_TABLE_BALISE = "CREATE TABLE balise ( " +
             "num INTEGER PRIMARY KEY, " +
-            "hash TEXT, " +
-            "coord_gps INTEGER, " +
-            "poste TEXT )";
+            "hash TEXT )";
 
     private static final String CREATE_TABLE_GROUPE = "CREATE TABLE groupe ( " +
             "nom_groupe TEXT PRIMARY KEY, " +
             "balise_entree INTEGER, " +
-            "balise_sortie INTEGER, " +
-            "points_bonus INTEGER )";
+            "balise_sortie INTEGER)";
 
     private static final String CREATE_TABLE_LISTE_LIAISONS = "CREATE TABLE liste_liaisons ( " +
             "num INTEGER PRIMARY KEY, " +
@@ -151,6 +150,8 @@ public class DBController extends SQLiteOpenHelper {
             values.put("id", queryValues.get("course.id"));
             values.put("date", queryValues.get("course.date"));
             values.put("temps", queryValues.get("course.temps"));
+            values.put("categorie", queryValues.get("course.categorie"));
+            values.put("num_parcours", queryValues.get("course.num_parcours"));
             database.insert("course", null, values);
         }
         else if(queryValues.get("parcours.id") != null)
@@ -158,8 +159,6 @@ public class DBController extends SQLiteOpenHelper {
             System.out.println("parcours");
             //parcours
             values.put("id", queryValues.get("parcours.id"));
-            values.put("num_course", queryValues.get("parcours.num_course"));
-            values.put("categorie", queryValues.get("parcours.categorie"));
             values.put("description", queryValues.get("parcours.description"));
             database.insert("parcours", null, values);
         }
@@ -180,6 +179,8 @@ public class DBController extends SQLiteOpenHelper {
             values.put("arrivee", queryValues.get("liste_balises.arrivee"));
             values.put("liaison", queryValues.get("liste_balises.liaison"));
             values.put("groupe", queryValues.get("liste_balises.groupe"));
+            values.put("coord_gps", queryValues.get("liste_balises.coord_gps"));
+            values.put("poste", queryValues.get("liste_balises.poste"));
             values.put("points", queryValues.get("liste_balises.points"));
             values.put("temps", "");
             database.insert("liste_balises", null, values);
@@ -191,8 +192,6 @@ public class DBController extends SQLiteOpenHelper {
             //values = new ContentValues();
             values.put("num", queryValues.get("balise.num"));
             values.put("hash", queryValues.get("balise.hash"));
-            values.put("coord_gps", queryValues.get("balise.coord_gps"));
-            values.put("poste", queryValues.get("balise.poste"));
             database.insert("balise", null, values);
         }
         else if(queryValues.get("groupe.nom_groupe") != null)
@@ -269,10 +268,10 @@ public class DBController extends SQLiteOpenHelper {
             parametres = " WHERE temps = ''";
         }
 
-        String selectQuery = "SELECT liste_balises.num_balise,liste_balises.temps,liste_balises.suivante,liste_balises.num_suivante," +
-                             "balise.poste,liste_balises.azimut,liste_balises.azimut_degre,liste_balises.azimut_distance," +
-                             "liste_balises.depart,liste_balises.arrivee" +
-                             " FROM liste_balises INNER JOIN balise ON liste_balises.num_balise = balise.num" +
+        String selectQuery = "SELECT num_balise,temps,suivante,num_suivante," +
+                             "poste,azimut,azimut_degre,azimut_distance," +
+                             "depart,arrivee" +
+                             " FROM liste_balises" +
                              parametres +
                              " ORDER BY CASE WHEN temps = '' THEN 2 ELSE 1 END, temps";
 
@@ -526,10 +525,10 @@ public class DBController extends SQLiteOpenHelper {
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<HashMap<String, String>>();
 
-        String selectQuery = "SELECT course.id, equipe.id, prenom, nom, nom_equipe, parcours.categorie, parcours.id, date_naissance FROM joueurs " +
+        String selectQuery = "SELECT course.id, equipe.id, prenom, nom, nom_equipe, course.categorie, course.id, date_naissance FROM joueurs " +
                              "INNER JOIN equipe ON joueurs.num_equipe = equipe.id " +
                              "INNER JOIN course ON equipe.num_course = course.id " +
-                             "INNER JOIN parcours ON course.id = parcours.num_course ";
+                             "INNER JOIN parcours ON course.num_parcours = parcours.id ";
 
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
@@ -667,7 +666,7 @@ public class DBController extends SQLiteOpenHelper {
             }
 
             Cursor cursor25 = database.rawQuery("SELECT poste " +
-                    "FROM balise WHERE num = ?", new String[]{cursor.getString(2)});
+                    "FROM liste_balises WHERE num_balise = ?", new String[]{cursor.getString(2)});
 
             if(cursor25.moveToFirst()) {
                 balise[8] = cursor25.getString(0);
@@ -1238,7 +1237,7 @@ public class DBController extends SQLiteOpenHelper {
         String selectQuery = "SELECT course.id, parcours.id, equipe.id, liste_balises.num_balise, liste_balises.temps, equipe.points " +
                              "FROM liste_balises " +
                              "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
-                             "INNER JOIN course ON parcours.num_course = course.id " +
+                             "INNER JOIN course ON parcours.id = course.num_parcours " +
                              "INNER JOIN equipe ON course.id = equipe.num_course " +
                              "ORDER BY CASE WHEN liste_balises.temps = '' THEN 2 ELSE 1 END, liste_balises.temps";
 

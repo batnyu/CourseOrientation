@@ -1231,15 +1231,98 @@ public class DBController extends SQLiteOpenHelper {
      *
      * @return
      */
-    public String composeJSONfromSQLite() { //a modifier
+    public String composeJSONfromSQLite() {
+        ArrayList<HashMap<String, String>> wordList;
+        wordList = new ArrayList<HashMap<String, String>>();
+
+        //récupération du nombre de balises scannées
+        int[] scannéSurTotal = getNbCheckpoints();
+        String nbScanne = Integer.toString(scannéSurTotal[0]);
+
+        //récupération du temps de la dernière balise
+        String tempsLast = checkLastBalise();
+        //variable parcours fini
+        String fini= "oui";
+        if(tempsLast.equals(""))
+        {
+            fini = "non";
+        }
+
+
+        String selectQuery = "SELECT course.id, parcours.id, equipe.id, equipe.points " +
+                             "FROM parcours " +
+                             "INNER JOIN course ON parcours.id = course.num_parcours " +
+                             "INNER JOIN equipe ON course.id = equipe.num_course";
+
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("numCourse", cursor.getString(0));
+                map.put("numParcours", cursor.getString(1));
+                map.put("numEquipe", cursor.getString(2));
+                map.put("numBalise", nbScanne);
+                map.put("temps", tempsLast);
+                map.put("points", cursor.getString(3));
+                map.put("fini", fini);
+                wordList.add(map);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        database.close();
+        Gson gson = new GsonBuilder().create();
+        //Use GSON to serialize Array List to JSON
+        return gson.toJson(wordList);
+    }
+
+    public String checkLastBalise(){
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String temps = "";
+
+        Cursor cursor = database.rawQuery("SELECT temps,depart FROM liste_balises WHERE arrivee=1", null);
+
+        if (cursor.moveToFirst()) {
+
+            temps = cursor.getString(0);
+        }
+
+        cursor.close();
+        database.close();
+
+        return temps;
+    }
+
+    public String checkfefBalise(){
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String temps = "";
+
+        Cursor cursor = database.rawQuery("SELECT temps,depart FROM liste_balises WHERE arrivee=1", null);
+
+        if (cursor.moveToFirst()) {
+
+            temps = cursor.getString(0);
+        }
+
+        cursor.close();
+        database.close();
+
+        return temps;
+
+    }
+
+    public String composeJSONfromSQLiteNul() {
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<HashMap<String, String>>();
         String selectQuery = "SELECT course.id, parcours.id, equipe.id, liste_balises.num_balise, liste_balises.temps, equipe.points " +
-                             "FROM liste_balises " +
-                             "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
-                             "INNER JOIN course ON parcours.id = course.num_parcours " +
-                             "INNER JOIN equipe ON course.id = equipe.num_course " +
-                             "ORDER BY CASE WHEN liste_balises.temps = '' THEN 2 ELSE 1 END, liste_balises.temps";
+                "FROM liste_balises " +
+                "INNER JOIN parcours ON liste_balises.num_parcours = parcours.id " +
+                "INNER JOIN course ON parcours.id = course.num_parcours " +
+                "INNER JOIN equipe ON course.id = equipe.num_course " +
+                "ORDER BY CASE WHEN liste_balises.temps = '' THEN 2 ELSE 1 END, liste_balises.temps";
 
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);

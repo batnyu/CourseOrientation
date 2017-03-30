@@ -49,10 +49,11 @@ public class Utils {
     public static String getWifiApIpAddress(Context context) {
         String myIP = null;
         final WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        //On récupère les infos du dhcp
         final DhcpInfo dhcp = manager.getDhcpInfo();
-        //conversion chelou pour la mettre en string adresse IP
+        //Conversion pour avoir l'IP en octet
         byte[] myIPAddress = BigInteger.valueOf(dhcp.gateway).toByteArray();
-        // you must reverse the byte array before conversion. Use Apache's commons library
+        // you must reverse the byte array before conversion.
         ArrayUtils.reverse(myIPAddress);
         InetAddress myInetIP = null;
         try {
@@ -61,10 +62,10 @@ public class Utils {
         } catch (UnknownHostException e) {
             e.printStackTrace();
             Log.d("erreur ",e.getMessage());
-            showToast(context,"Veuillez activer votre Wi-fi, connectez-vous au réseau de l'organisateur et réessayez.","long");
+            showToast(context,"Veuillez activer votre Wi-fi, connectez-vous au réseau de " +
+                              "l'organisateur et réessayez.","long");
             myIP = "erreur";
         }
-
         return myIP;
     }
 

@@ -3,6 +3,7 @@ package iut_lry.coursedorientation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,9 @@ import cz.msebera.android.httpclient.Header;
 import static android.graphics.Color.rgb;
 
 public class NewParkour extends AppCompatActivity implements View.OnClickListener{
+
+    // Declare your shared preference file name
+    private static final String PREF_NAME = "info";
 
     EditText numCourse;
     EditText numEquipe;
@@ -376,7 +380,7 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                 } else {
                     headerTxt.setText("Joueur de l'équipe \""+ nomEquipe +"\" catégorie " + categorie);
                 }
-                
+
                 //afficher le tableau et le truc pr rentrer la date de naissance
                 joueursTab.setVisibility(View.VISIBLE);
 
@@ -501,11 +505,8 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
                 dllParkour.setVisibility(View.VISIBLE);
                 layoutDllParkour.setVisibility(View.GONE);
 
-                //Eviter que le joueur télécharge 10 000 fois le parcours pour rien.
-
                 dllParkour.setVisibility(View.GONE);
 
-                //Toast.makeText(getActivity().getApplicationContext(), "Le parcours a bien été téléchargé !", Toast.LENGTH_LONG).show();
                 Utils.showToast(NewParkour.this,"Le parcours a bien été téléchargé !","long");
 
                 // Update SQLite DB with response sent by getusers.php
@@ -588,8 +589,17 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
          *    close any dialogs/ProgressBars/etc...
         */
 
+            //ON SUPPRIME LES DONNEES ENREGISTREES DU TEMPS SI ON TELECHARGE UN NOUVEAU PARCOURS.
+            //Create a object SharedPreferences from getSharedPreferences("name_file",MODE_PRIVATE) of Context
+            SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+            //On supprime les données enregistrées.
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear();
+            editor.commit();
+
+
             //on renvoie le résultat 111 et on ferme l'activité,
-            //dans le activity result du fragment, si le resultCode est à 2, on reload tous les fragments.
+            //dans le activity result du fragment, si le resultCode est à 2, on reload tous les fragments
             Intent intent=new Intent();
             setResult(111,intent);
             finish();

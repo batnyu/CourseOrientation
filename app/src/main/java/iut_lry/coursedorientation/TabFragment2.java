@@ -229,39 +229,23 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(getActivity(), "Scan annulé !", Toast.LENGTH_LONG).show();
-
                 //TODO jouez son echec scan
-
             }
             else {
-
                 //Récupération du contenu du scan
                 scanContent = result.getContents();
                 scanFormat = result.getFormatName();
-
-                /*
-                //récupère le temps actuel SERT PLUS A RIEN
-                rightNow = Calendar.getInstance();
-                SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-                temps = format.format(rightNow.getTime());
-                */
 
                 //BALISE TEST
                 if(scanContent.equals("Balise TEST")) {
                     Utils.showToast(getActivity(),"La balise TEST a été scanné !","court");
                     infoScan = "[<font color='#2f9e00'>OK</font>] La balise TEST a été scanné ! ";
-                    ((TextView) view.findViewById(R.id.textView_infoScan)).setText(fromHtml(infoScan), TextView.BufferType.SPANNABLE);
-
+                    ((TextView) view.findViewById(R.id.textView_infoScan))
+                            .setText(fromHtml(infoScan), TextView.BufferType.SPANNABLE);
                 } else {
                     ReceiveData test = new ReceiveData();
                     test.execute();
                 }
-
-                /*//Joué un son -> BUG
-                final MediaPlayer mp = MediaPlayer.create(getActivity(), R.raw.zxing_beep);
-                mp.setVolume(10,10);
-                mp.start();*/
-
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -720,9 +704,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             editor.apply();
             Log.d("test", "onPause: heureExit : " + heureExit +"\n tempsChrono : " + heureChrono);
         }
-
-
-
     }
 
     @SuppressWarnings("deprecation")

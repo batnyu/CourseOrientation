@@ -123,7 +123,7 @@
 
                     <Button
                         android:layout_width="match_parent"
-                        android:text="Envoyer le parcours"
+                        android:text="Envoyer mes résultats"
                         android:id="@+id/sendButton"
                         android:layout_gravity="center_vertical|center_horizontal"
                         android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
 
                 </FrameLayout>
 
-                <FrameLayout
+                <!--<FrameLayout
                     android:layout_width="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="40dp"
@@ -168,13 +168,13 @@
                     <Button
                         android:layout_width="match_parent"
                         android:text="Supprimer le parcours"
-                        android:id="@+id/delParkour"
+                        android:id="@+id/removeButton"
                         android:layout_gravity="center_vertical|center_horizontal"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
                         android:background="@drawable/bg_button_big_red" />
 
-                </FrameLayout>
+                </FrameLayout>-->
             </LinearLayout>
 
             <Button

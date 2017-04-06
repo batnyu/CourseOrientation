@@ -17,153 +17,240 @@
         android:textSize="18sp"
         android:textColor="@android:color/black" />
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/interface2"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp">
-
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/left"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="3dp">
+            android:layout_height="wrap_content"
+            android:id="@+id/interface2"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp">
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/left"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="3dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/chrono"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_tuile"
+                    android:paddingBottom="6dp">
+
+                    <TextView
+                        android:text="Chronomètre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_chrono"
+                        android:layout_marginTop="2dp"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+
+                    <Chronometer
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:id="@+id/chronometer1"
+                        android:fontFamily="sans-serif"
+                        android:textSize="25sp"
+                        android:textColor="#5b5d6e"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="2dp"
+                        android:textAlignment="center" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/chrono"
+                android:background="@drawable/bg_tuile"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_tuile"
-                android:paddingBottom="6dp">
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:id="@+id/infos"
+                android:paddingBottom="8dp">
 
-                <TextView
-                    android:text="Chronomètre"
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_chrono"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
+                    android:layout_height="match_parent">
 
-                <Chronometer
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:id="@+id/chronometer1"
-                    android:fontFamily="sans-serif"
-                    android:textSize="25sp"
-                    android:textColor="#5b5d6e"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:layout_marginTop="2dp"
-                    android:textAlignment="center" />
+                    <TextView
+                        android:text="Info scan : "
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_infos_txt"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_infoScan"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:textColor="@color/zxing_custom_result_view"
+                        android:minLines="2"
+                        android:maxLines="2" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_tuile"
+                android:paddingLeft="10dp"
+                android:paddingRight="5dp"
+                android:paddingTop="8dp"
+                android:id="@+id/suivante"
+                android:layout_weight="1"
+                android:paddingBottom="8dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_tuile"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="8dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            android:id="@+id/infos"
-            android:paddingBottom="8dp">
+                <TextView
+                    android:text="Balise suivante à scanner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView_balise_suivante"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:text="aucune"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/textView_balise_suivante_nb"
+                    android:layout_marginTop="2dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/zxing_result_view"
+                    android:textAllCaps="false"
+                    android:minLines="2"
+                    android:maxLines="2" />
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:baselineAligned="false"
+                android:layout_weight="1"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:text="Info scan : "
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_infos_txt"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-
-                <TextView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_infoScan"
-                    android:textAllCaps="false"
-                    android:textSize="14sp"
-                    android:textColor="@color/zxing_custom_result_view"
-                    android:minLines="2"
-                    android:maxLines="2" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="3dp">
 
-            </LinearLayout>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:id="@+id/endBalise"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_tuile"
+                        android:layout_marginRight="3dp">
 
-        </LinearLayout>
+                        <TextView
+                            android:text="Arrivée"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_balise_arrivee"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="14sp" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_tuile"
-            android:paddingLeft="10dp"
-            android:paddingRight="5dp"
-            android:paddingTop="8dp"
-            android:id="@+id/suivante"
-            android:layout_weight="1"
-            android:paddingBottom="8dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp">
+                        <TextView
+                            android:text=""
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_balise_arrivee_nb"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="25sp"
+                            android:textColor="@color/zxing_result_view" />
 
-            <TextView
-                android:text="Balise suivante à scanner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView_balise_suivante"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                android:layout_marginTop="2dp" />
+                    </LinearLayout>
 
-            <TextView
-                android:text="aucune"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/textView_balise_suivante_nb"
-                android:layout_marginTop="2dp"
-                android:textSize="15sp"
-                android:textColor="@color/zxing_result_view"
-                android:textAllCaps="false"
-                android:minLines="2"
-                android:maxLines="2" />
-        </LinearLayout>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingTop="8dp"
+                        android:id="@+id/startBalise"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_tuile"
+                        android:paddingBottom="8dp">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:baselineAligned="false"
-            android:layout_weight="1"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp">
+                        <TextView
+                            android:text="Départ"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_balise_depart"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="14sp" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="3dp">
+                        <TextView
+                            android:text=""
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_balise_depart_nb"
+                            android:layout_marginTop="2dp"
+                            android:textAllCaps="false"
+                            android:textSize="25sp"
+                            android:textColor="@color/zxing_result_view" />
+
+                    </LinearLayout>
+                </FrameLayout>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/scan_button"
+                    android:layout_gravity="center_vertical"
+                    android:text="SCAN"
+                    android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_grey"
+                    android:textColor="@android:color/black"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp" />
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -171,32 +258,126 @@
                     android:layout_height="match_parent"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:paddingTop="7dp"
-                    android:paddingBottom="7dp"
-                    android:id="@+id/endBalise"
+                    android:paddingTop="8dp"
+                    android:layout_marginLeft="3dp"
+                    android:id="@+id/points"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:background="@drawable/bg_tuile"
-                    android:layout_marginRight="3dp">
+                    android:paddingBottom="8dp">
 
                     <TextView
-                        android:text="Arrivée"
+                        android:text="Points"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView_balise_arrivee"
+                        android:id="@+id/textView_points"
                         android:layout_marginTop="2dp"
                         android:textAllCaps="false"
                         android:textSize="14sp" />
 
                     <TextView
-                        android:text=""
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView_balise_arrivee_nb"
+                        android:id="@+id/textView_points_nb"
                         android:layout_marginTop="2dp"
                         android:textAllCaps="false"
                         android:textSize="25sp"
                         android:textColor="@color/zxing_result_view" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_tuile"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="6dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:id="@+id/totalBalise"
+                android:paddingBottom="6dp">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:text="Total balises"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_total_balises"
+                        android:textAllCaps="false"
+                        android:textSize="14sp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:text="0/10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_total_balises_nb"
+                        android:textAllCaps="false"
+                        android:textSize="17sp"
+                        android:textColor="@color/zxing_custom_result_view" />
+                </LinearLayout>
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:id="@+id/progressBarTotal"
+                    android:progressDrawable="@drawable/bg_progressbar"
+                    android:layout_height="3dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginTop="5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="3dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="8dp"
+                    android:id="@+id/liaisonsBalise"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_tuile"
+                    android:layout_weight="1"
+                    android:layout_marginRight="3dp"
+                    android:paddingBottom="8dp"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:text="Liaisons optionnelles"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView_liaisons"
+                        android:layout_marginTop="2dp"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="2dp"
+                        android:layout_height="65dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/textView_liaisons_nb"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            android:textColor="@color/zxing_result_view"
+                            android:text="aucune"
+                            android:minLines="3" />
+                    </ScrollView>
 
                 </LinearLayout>
 
@@ -207,220 +388,44 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="8dp"
-                    android:id="@+id/startBalise"
+                    android:id="@+id/pocheBalise"
                     android:layout_gravity="center_horizontal"
-                    android:layout_weight="1"
                     android:background="@drawable/bg_tuile"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="3dp"
                     android:paddingBottom="8dp">
 
                     <TextView
-                        android:text="Départ"
+                        android:text="Poches"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView_balise_depart"
+                        android:id="@+id/textView_poche"
                         android:layout_marginTop="2dp"
                         android:textAllCaps="false"
                         android:textSize="14sp" />
 
-                    <TextView
-                        android:text=""
+                    <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textView_balise_depart_nb"
-                        android:layout_marginTop="2dp"
-                        android:textAllCaps="false"
-                        android:textSize="25sp"
-                        android:textColor="@color/zxing_result_view" />
+                        android:layout_height="65dp"
+                        android:layout_marginTop="2dp">
+
+                        <TextView
+                            android:text="aucune"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/textView_poche_nb"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            android:textColor="@color/zxing_result_view"
+                            android:minLines="3" />
+                    </ScrollView>
 
                 </LinearLayout>
-            </FrameLayout>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/scan_button"
-                android:layout_gravity="center_vertical"
-                android:text="SCAN"
-                android:textSize="20sp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button_grey"
-                android:textColor="@android:color/black"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="8dp"
-                android:layout_marginLeft="3dp"
-                android:id="@+id/points"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:background="@drawable/bg_tuile"
-                android:paddingBottom="8dp">
-
-                <TextView
-                    android:text="Points"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_points"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_points_nb"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="25sp"
-                    android:textColor="@color/zxing_result_view" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_tuile"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="6dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            android:id="@+id/totalBalise"
-            android:paddingBottom="6dp">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:text="Total balises"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_total_balises"
-                    android:textAllCaps="false"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:text="0/10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_total_balises_nb"
-                    android:textAllCaps="false"
-                    android:textSize="17sp"
-                    android:textColor="@color/zxing_custom_result_view" />
-            </LinearLayout>
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:id="@+id/progressBarTotal"
-                android:progressDrawable="@drawable/bg_progressbar"
-                android:layout_height="3dp"
-                android:layout_marginBottom="4dp"
-                android:layout_marginTop="5dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="3dp">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="8dp"
-                android:id="@+id/liaisonsBalise"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/bg_tuile"
-                android:layout_weight="1"
-                android:layout_marginRight="3dp"
-                android:paddingBottom="8dp"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:text="Liaisons optionnelles"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_liaisons"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="2dp"
-                    android:layout_height="65dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/textView_liaisons_nb"
-                        android:textAllCaps="false"
-                        android:textSize="15sp"
-                        android:textColor="@color/zxing_result_view"
-                        android:text="aucune"
-                        android:minLines="3" />
-                </ScrollView>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="8dp"
-                android:id="@+id/pocheBalise"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/bg_tuile"
-                android:layout_weight="1"
-                android:layout_marginLeft="3dp"
-                android:paddingBottom="8dp">
-
-                <TextView
-                    android:text="Poches"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_poche"
-                    android:layout_marginTop="2dp"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="65dp"
-                    android:layout_marginTop="2dp">
-
-                    <TextView
-                        android:text="aucune"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/textView_poche_nb"
-                        android:textAllCaps="false"
-                        android:textSize="15sp"
-                        android:textColor="@color/zxing_result_view"
-                        android:minLines="3" />
-                </ScrollView>
 
             </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
 
 </RelativeLayout>

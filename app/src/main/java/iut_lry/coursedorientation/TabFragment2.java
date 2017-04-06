@@ -217,7 +217,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             IntentIntegrator.forSupportFragment(this)
                     .setCaptureActivity(CaptureActivityAnyOrientation.class)
                     .setPrompt("Encadrez le code-barres d'une balise pour la valider !")
-                    .setBeepEnabled(false)
+                    .setBeepEnabled(true)
                     .setOrientationLocked(false).initiateScan();
         }
     }

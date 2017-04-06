@@ -27,6 +27,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+
 import cz.msebera.android.httpclient.Header;
 
 import static android.graphics.Color.rgb;
@@ -37,8 +39,12 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     View view;
     Button sendButton;
     Button newParcoursButton;
+    //Button removeButton;
     LinearLayout layoutSendParkour;
     ProgressBar progressBarSend;
+
+    DBController controller;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +63,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
         newParcoursButton = (Button) view.findViewById(R.id.newParcoursButton);
         newParcoursButton.setOnClickListener(this);
+
+        //removeButton = (Button) view.findViewById(R.id.removeButton);
+        //removeButton.setOnClickListener(this);
+
+        controller = new DBController(getActivity());
 
         return view;
     }
@@ -125,10 +136,10 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             case R.id.sendButton:
                 new AlertDialog.Builder(getActivity())
-                        .setMessage("Ceci effacera votre parcours sur le téléphone et l'enverra vers le serveur" +
+                        .setMessage("Vous ne pourrez plus modifier vos résultats." +
                                 "\nEtes-vous sûr ?")
                         .setCancelable(false)
-                        .setPositiveButton("Envoyer le parcours", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Envoyer mes résultats", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 envoyerParcours();
                             }
@@ -138,10 +149,43 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.newParcoursButton:
-                //On lance l'activité NewParkour avec un contrôle du résultat
-                Intent intent = new Intent(getActivity(), NewParkour.class);
-                startActivityForResult(intent,2);
+                boolean parcoursFull = controller.checkParcours();
+                if(parcoursFull) {
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage("Si vous téléchargez un nouveau parcours, celui déjà présent sur votre téléphone sera effacé." +
+                                    "\nEtes-vous sûr ?")
+                            .setCancelable(false)
+                            .setPositiveButton("Télécharger un parcours", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //On lance l'activité NewParkour avec un contrôle du résultat
+                                    Intent intent = new Intent(getActivity(), NewParkour.class);
+                                    startActivityForResult(intent,2);
+                                }
+                            })
+                            .setNegativeButton("Annuler", null)
+                            .show();
+                }
+                else {
+                    //On lance l'activité NewParkour avec un contrôle du résultat
+                    Intent intent = new Intent(getActivity(), NewParkour.class);
+                    startActivityForResult(intent,2);
+                }
+
                 break;
+
+            /*case R.id.removeButton:
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Ceci effacera votre parcours du téléphone" +
+                                "\nEtes-vous sûr ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Effacer le parcours", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                envoyerParcours();
+                            }
+                        })
+                        .setNegativeButton("Annuler", null)
+                        .show();
+                break;*/
         }
     }
 
@@ -269,67 +313,74 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     public void envoyerParcours(){
 
-        DBController controller = new DBController(getActivity());
 
-        //Create AsycHttpClient object
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
+        if(!controller.checkSync()) {
+            //Create AsycHttpClient object
+            AsyncHttpClient client = new AsyncHttpClient();
+            RequestParams params = new RequestParams();
 
-        sendButton.setVisibility(View.INVISIBLE);
-        layoutSendParkour.setVisibility(View.VISIBLE);
+            sendButton.setVisibility(View.INVISIBLE);
+            layoutSendParkour.setVisibility(View.VISIBLE);
 
-        client.setConnectTimeout(5000);
-        //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
-        // est repéré par onFailure contrairement à host unreachable
-        // à étudié c'est relou
-        client.setResponseTimeout(5000); // as above
-        client.setTimeout(5000); // both connection and socket timeout
-        client.setMaxRetriesAndTimeout(1, 100); // times, delay
+            client.setConnectTimeout(5000);
+            //en mettant un temps de 1sec, on déclenche l'erreur connectTimeoutException qui
+            // est repéré par onFailure contrairement à host unreachable
+            // à étudié c'est relou
+            client.setResponseTimeout(5000); // as above
+            client.setTimeout(5000); // both connection and socket timeout
+            client.setMaxRetriesAndTimeout(1, 100); // times, delay
 
-        String ipServer = Utils.getWifiApIpAddress(getActivity());
+            String ipServer = Utils.getWifiApIpAddress(getActivity());
 
-        params.put("resultatsJSON", controller.composeJSONfromSQLite());
-        Log.d("tag", controller.composeJSONfromSQLite());
-        client.post("http://" + ipServer + ":80/testProjet/insertResultats.php",params ,new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            params.put("resultatsJSON", controller.composeJSONfromSQLite());
+            Log.d("tag", controller.composeJSONfromSQLite());
+            client.post("http://" + ipServer + ":80/testProjet/insertResultats.php", params, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] response) {
 
-/*                //Convertir byte[] en String
-                String responseString = null;
-                try {
-                    responseString = new String(response, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    //Convertir byte[] en String
+                    String responseString = null;
+                    try {
+                        responseString = new String(response, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (responseString.equals("oui")) {
+                        controller.updateSyncStatus(responseString);
+                        Utils.showToast(getActivity(), "Le parcours a bien été envoyé !", "long");
+                    } else {
+                        Utils.showToast(getActivity(), "Erreur serveur, veuillez réessayez.", "long");
+                    }
+
+                    sendButton.setVisibility(View.VISIBLE);
+                    layoutSendParkour.setVisibility(View.GONE);
+
+
                 }
-                System.out.println(responseString);*/
 
-                Utils.showToast(getActivity(),"Le parcours a bien été envoyé !","long");
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                    // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                    // Hide ProgressBar
 
-                sendButton.setVisibility(View.VISIBLE);
-                layoutSendParkour.setVisibility(View.GONE);
+                    sendButton.setVisibility(View.VISIBLE);
+                    layoutSendParkour.setVisibility(View.GONE);
 
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                // Hide ProgressBar
-
-                sendButton.setVisibility(View.VISIBLE);
-                layoutSendParkour.setVisibility(View.GONE);
-
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                if (statusCode == 404) {
-                    Utils.showToast(getActivity(),"Error " + statusCode + "\nRequested resource not found","long");
-                } else if (statusCode == 500) {
-                    Utils.showToast(getActivity(),"Error " + statusCode + "\nSomething went wrong at server end","long");
-                } else {
-                    Utils.showToast(getActivity(),"Error " + statusCode + "\nUnexpected Error occcured! " +
-                            "[Most common Error: Device might not be connected to Internet]","long");
+                    // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                    if (statusCode == 404) {
+                        Utils.showToast(getActivity(), "Error " + statusCode + "\nRequested resource not found", "long");
+                    } else if (statusCode == 500) {
+                        Utils.showToast(getActivity(), "Error " + statusCode + "\nSomething went wrong at server end", "long");
+                    } else {
+                        Utils.showToast(getActivity(), "Error " + statusCode + "\nUnexpected Error occcured! " +
+                                "[Most common Error: Device might not be connected to Internet]", "long");
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            Utils.showToast(getActivity(), "Vos résultats ont déjà été envoyé !", "long");
+        }
     }
 
 }

@@ -39,7 +39,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     View view;
     Button sendButton;
     Button newParcoursButton;
-    //Button removeButton;
+    Button removeButton;
     LinearLayout layoutSendParkour;
     ProgressBar progressBarSend;
 
@@ -64,8 +64,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         newParcoursButton = (Button) view.findViewById(R.id.newParcoursButton);
         newParcoursButton.setOnClickListener(this);
 
-        //removeButton = (Button) view.findViewById(R.id.removeButton);
-        //removeButton.setOnClickListener(this);
+        removeButton = (Button) view.findViewById(R.id.removeButton);
+        removeButton.setOnClickListener(this);
 
         controller = new DBController(getActivity());
 
@@ -173,19 +173,19 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 break;
 
-            /*case R.id.removeButton:
+            case R.id.removeButton:
                 new AlertDialog.Builder(getActivity())
-                        .setMessage("Ceci effacera votre parcours du téléphone" +
+                        .setMessage("Ceci effacera les temps de votre parcours" +
                                 "\nEtes-vous sûr ?")
                         .setCancelable(false)
-                        .setPositiveButton("Effacer le parcours", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Reset les temps du parcours", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                envoyerParcours();
+                                controller.ResetTemps();
                             }
                         })
                         .setNegativeButton("Annuler", null)
                         .show();
-                break;*/
+                break;
         }
     }
 

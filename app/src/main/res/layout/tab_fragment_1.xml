@@ -132,7 +132,7 @@
 
                 </FrameLayout>
 
-                <!--<FrameLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="40dp"
@@ -174,7 +174,7 @@
                         android:textColor="@android:color/white"
                         android:background="@drawable/bg_button_big_red" />
 
-                </FrameLayout>-->
+                </FrameLayout>
             </LinearLayout>
 
             <Button

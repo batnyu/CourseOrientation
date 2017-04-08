@@ -964,6 +964,7 @@ public class DBController extends SQLiteOpenHelper {
 
                             } while (listeBalises.moveToNext());
                         }
+                        listeBalises.close();
                     }
                     balisesLiaison.close();
                 }
@@ -1162,6 +1163,7 @@ public class DBController extends SQLiteOpenHelper {
 
                             } while (balises.moveToNext());
                         }
+                        balises.close();
                     }
                     balisesLiaisons.close();
                 }
@@ -1369,5 +1371,27 @@ public class DBController extends SQLiteOpenHelper {
         //Use GSON to serialize Array List to JSON
         return gson.toJson(wordList);
     }
+
+    public void ResetTemps() {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT num_balise,temps FROM liste_balises WHERE temps != ''", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                ContentValues newValues = new ContentValues();
+                newValues.put("temps", "");
+                String[] args = new String[]{cursor.getString(0)};
+                database.update("liste_balises", newValues, "num_balise=?", args);
+
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        database.close();
+    }
+
+
 
 }

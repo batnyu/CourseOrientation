@@ -576,6 +576,7 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
         protected Void doInBackground(String... parametres) {
             //do your work here
             String responseStringThread = parametres[0];
+
             updateParcours(responseStringThread);
 
             return null;
@@ -600,8 +601,8 @@ public class NewParkour extends AppCompatActivity implements View.OnClickListene
 
             //on renvoie le résultat 111 et on ferme l'activité,
             //dans le activity result du fragment, si le resultCode est à 2, on reload tous les fragments
-            Intent intent=new Intent();
-            setResult(111,intent);
+            Intent input = new Intent();
+            setResult(111,input);
             finish();
 
         }

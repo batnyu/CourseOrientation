@@ -2,6 +2,8 @@ package iut_lry.coursedorientation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -18,6 +20,7 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import static android.content.Context.AUDIO_SERVICE;
 import static com.loopj.android.http.AsyncHttpClient.LOG_TAG;
 
 /**
@@ -82,24 +85,31 @@ public class Utils {
         return wifiInfo.getSSID();
     }
 
-/*    @Override
-    public void communicateToFragment2() {
-        TabFragment2 fragment = (TabFragment2) adapter.getFragment(1);
-        if (fragment != null) {
-            fragment.fragmentCommunication2();
-        } else {
-            Log.i(LOG_TAG, "Fragment 2 is not initialized");
-        }
+    public static void playSound(Context context, int sound) {
+
+        AudioManager am = (AudioManager) context.getSystemService(AUDIO_SERVICE);
+        int volume_level= am.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        am.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                volume_level,
+                0);
+
+        MediaPlayer mp;
+        mp = MediaPlayer.create(context, sound);
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                // TODO Auto-generated method stub
+                mp.reset();
+                mp.release();
+                mp=null;
+            }
+
+        });
+        mp.start();
     }
 
-    @Override
-    public void communicateToFragment3() {
-        TabFragment3 fragment = (TabFragment3) adapter.getFragment(2);
-        if (fragment != null) {
-            fragment.fragmentCommunication3();
-        } else {
-            Log.i(LOG_TAG, "Fragment 3 is not initialized");
-        }
-    }*/
 
 }

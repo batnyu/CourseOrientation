@@ -132,7 +132,7 @@
 
                 </FrameLayout>
 
-                <FrameLayout
+<!--                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="40dp"
@@ -174,19 +174,31 @@
                         android:textColor="@android:color/white"
                         android:background="@drawable/bg_button_big_red" />
 
-                </FrameLayout>
+                </FrameLayout>-->
             </LinearLayout>
 
             <Button
-                android:text="Télécharger un parcours"
+                android:text="S'identifier pour une course"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/newParcoursButton"
                 android:layout_weight="1"
                 android:background="@drawable/bg_button_big"
                 android:textColor="@android:color/white"
-                android:paddingBottom="20dp"
-                android:paddingTop="20dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:layout_marginTop="10dp" />
+
+            <Button
+                android:text="Télécharger le parcours test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/newTestParcoursButton"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_big"
+                android:textColor="@android:color/white"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:layout_marginTop="10dp" />
 
         </LinearLayout>

@@ -82,7 +82,7 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
 
         ArrayList<HashMap<String, String>> baliseList;
         // Get User records from SQLite DB
-        boolean parcoursFull;
+        boolean courseDownloaded;
 
         if(checkBoxNotChecked.isChecked())
         {
@@ -94,11 +94,11 @@ public class TabFragment3 extends Fragment implements View.OnClickListener {
         }
 
         baliseList = controller.getAllBalises(notCheckedBox);
-        parcoursFull = controller.checkParcours();
+        courseDownloaded = controller.checkCourse();
 
         System.out.println("nombre de ligne de la table à afficher : " + baliseList.size());
         // If users exists in SQLite DB
-        if (parcoursFull) {
+        if (courseDownloaded) {
 
             //Test
             interfaceMain.setVisibility(LinearLayout.VISIBLE);

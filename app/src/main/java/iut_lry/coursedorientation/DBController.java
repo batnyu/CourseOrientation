@@ -231,10 +231,10 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
     }
 
-    public boolean checkParcours(){
+    public boolean checkCourse(){
         SQLiteDatabase database = this.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT id FROM parcours", null);
+        Cursor cursor = database.rawQuery("SELECT id FROM course", null);
 
         if (cursor.moveToFirst()) {
             cursor.close();
@@ -246,9 +246,6 @@ public class DBController extends SQLiteOpenHelper {
             database.close();
             return false;
         }
-
-
-
     }
 
     /**
@@ -377,7 +374,7 @@ public class DBController extends SQLiteOpenHelper {
             if (tempsReq.equals(""))
             {
                 System.out.println("departOK = " + departOK);
-                System.out.println("balise" + balise);
+                System.out.println("balise = " + balise);
                 System.out.println("nbBaliseSuivante = " + nbBaliseSuivante);
                 System.out.println("baliseSuivante = " + baliseSuivante);
                 System.out.println("baliseSortie = " + baliseSortie);
@@ -533,7 +530,7 @@ public class DBController extends SQLiteOpenHelper {
         String selectQuery = "SELECT course.id, equipe.id, prenom, nom, nom_equipe, course.categorie, course.id, date_naissance FROM joueurs " +
                              "INNER JOIN equipe ON joueurs.num_equipe = equipe.id " +
                              "INNER JOIN course ON equipe.num_course = course.id " +
-                             "INNER JOIN parcours ON course.num_parcours = parcours.id ";
+                             "INNER JOIN parcours ON course.num_parcours = parcours.id";
 
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
@@ -691,98 +688,6 @@ public class DBController extends SQLiteOpenHelper {
         database.close();
 
         return balise;
-    }
-
-    public boolean checkSortiePoche(String pocheActuelle){ //essai autrement
-        SQLiteDatabase database = this.getReadableDatabase();
-
-        String temps = "";
-
-        Cursor cursor = database.rawQuery("SELECT num_balise,temps,groupe,balise_entree FROM liste_balises " +
-                "LEFT JOIN groupe ON groupe = nom_groupe WHERE num_balise = ?", new String[]{pocheActuelle});
-
-        if (cursor.moveToFirst()) {
-
-            temps = cursor.getString(0);
-        }
-
-        cursor.close();
-        database.close();
-
-        if(temps.equals("")){
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-
-    }
-
-    public String getSortiePoche(String pocheActuelle) {
-
-        SQLiteDatabase database = this.getReadableDatabase();
-
-        String sortiePoche = "";
-
-        Cursor cursor = database.rawQuery("SELECT balise_sortie FROM groupe WHERE nom_groupe=?", new String[]{pocheActuelle});
-
-        if (cursor.moveToFirst()) {
-            sortiePoche = cursor.getString(0);
-        }
-
-        cursor.close();
-        database.close();
-
-        return sortiePoche;
-    }
-
-    public String getRemainingPoche(String pocheActuelle) {
-
-        SQLiteDatabase database = this.getReadableDatabase();
-
-        String poche = "";
-
-        Cursor cursor = database.rawQuery("SELECT num_balise FROM liste_balises WHERE groupe=? AND temps = ''", new String[]{pocheActuelle});
-
-        if (cursor.moveToFirst()) {
-            do {
-                if(poche.equals("")) {
-                    poche = cursor.getString(0);
-                } else {
-                    poche = poche + "-" + cursor.getString(0);
-                }
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        database.close();
-
-        return poche;
-    }
-
-    public String getCheckedPoche(String pocheActuelle) {
-
-        SQLiteDatabase database = this.getReadableDatabase();
-
-        String poche = "";
-
-        Cursor cursor = database.rawQuery("SELECT num_balise FROM liste_balises WHERE groupe=? AND temps != ''", new String[]{pocheActuelle});
-
-        if (cursor.moveToFirst()) {
-            do {
-                if(poche.equals("")) {
-                    poche = cursor.getString(0);
-                } else {
-                    poche = poche + "-" + cursor.getString(0);
-                }
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        database.close();
-
-        return poche;
     }
 
     public String getPoche(String pocheActuelle)
@@ -1319,27 +1224,6 @@ public class DBController extends SQLiteOpenHelper {
         return sync;
     }
 
-    public void UpdatePointsaa(String points) {
-
-        SQLiteDatabase database = this.getReadableDatabase();
-
-        Cursor cursor = database.rawQuery("SELECT id,points FROM equipe", null);
-
-        if (cursor.moveToFirst()) {
-
-            //Version plus safe
-            ContentValues newValues = new ContentValues();
-            newValues.put("points", points);
-            String[] args = new String[]{cursor.getString(0)};
-            database.update("equipe", newValues, "id=?", args);
-
-        }
-        cursor.close();
-        database.close();
-    }
-
-
-
     //Inutilisé remplacé par l'envoi des résultats direct
     public String composeJSONfromSQLiteNul() {
         ArrayList<HashMap<String, String>> wordList;
@@ -1372,6 +1256,23 @@ public class DBController extends SQLiteOpenHelper {
         return gson.toJson(wordList);
     }
 
+    public String getTimeOfRace() {
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        String temps = "";
+
+        Cursor cursor = database.rawQuery("SELECT temps FROM course", null);
+
+        if (cursor.moveToFirst()) {
+            temps = cursor.getString(0);
+        }
+        cursor.close();
+        database.close();
+
+        return temps;
+    }
+
     public void ResetTemps() {
 
         SQLiteDatabase database = this.getReadableDatabase();
@@ -1390,6 +1291,130 @@ public class DBController extends SQLiteOpenHelper {
         }
         cursor.close();
         database.close();
+    }
+
+    public String dllTest() {
+
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        String[] tabPoste = {"Riviere", "Arbre", "Rocher" , "Lac" , "Maison"};
+
+        String course = "1";
+
+        //joueurs
+        ContentValues values = new ContentValues();
+        System.out.println("joueurs");
+        values.put("id", "1");
+        values.put("prenom", "Baptiste");
+        values.put("nom", "Vrignaud");
+        values.put("date_naissance", "20/09/1993");
+        values.put("num_equipe", "1");
+        database.insert("joueurs", null, values);
+
+        //equipe
+        values = new ContentValues();
+        System.out.println("equipe");
+        values.put("id", "1");
+        values.put("nom_equipe", "bOss");
+        values.put("categorie", "adulte");
+        values.put("num_course", "1");
+        values.put("points", "");
+        database.insert("equipe", null, values);
+
+        //course
+        values = new ContentValues();
+        System.out.println("course");
+        values.put("id", "1");
+        values.put("date", "08/04/2017");
+        values.put("temps", "00:01:00");
+        values.put("categorie", "adulte");
+        values.put("num_parcours", "1");
+        values.put("sync", "non");
+        database.insert("course", null, values);
+
+
+        //parcours
+        values = new ContentValues();
+        System.out.println("parcours");
+        values.put("id", "1");
+        values.put("description", "test");
+        database.insert("parcours", null, values);
+
+        //liste_balises
+        System.out.println("liste_balises");
+        for(int i=1;i<=5;i++) {
+            values = new ContentValues();
+            values.put("id", String.valueOf(i));
+            values.put("num_parcours", "1");
+            values.put("num_balise", String.valueOf(i));
+
+            if(i != 5) {
+                values.put("suivante", "au choix");
+            } else {
+                values.put("suivante", "aucune");
+            }
+
+            values.put("num_suivante", "");
+            values.put("azimut", "non");
+            values.put("azimut_distance", "0");
+            values.put("azimut_degre", "0");
+            if(i==1)
+                values.put("depart", "1");
+            else
+                values.put("depart", "0");
+            if(i==5)
+                values.put("arrivee", "1");
+            else
+                values.put("arrivee", "0");
+
+            values.put("liaison", "non");
+            values.put("groupe", "null");
+            values.put("coord_gps", "486546");
+            values.put("poste", tabPoste[i-1]);
+            values.put("points", "10");
+            values.put("temps", "");
+            database.insert("liste_balises", null, values);
+        }
+
+        //balise
+        System.out.println("balise");
+        for(int i=1;i<=5;i++) {
+            values = new ContentValues();
+            values.put("num", String.valueOf(i));
+            values.put("hash", String.valueOf(i));
+            database.insert("balise", null, values);
+        }
+
+/*        System.out.println("groupe");
+        //groupe
+        //values = new ContentValues();
+        values.put("nom_groupe", queryValues.get("groupe.nom_groupe"));
+        values.put("balise_entree", queryValues.get("groupe.balise_entree"));
+        values.put("balise_sortie", queryValues.get("groupe.balise_sortie"));
+        database.insert("groupe", null, values);
+
+        System.out.println("liste_liaisons");
+        //liste_liaisons
+        //values = new ContentValues();
+        values.put("num", queryValues.get("liste_liaisons.num"));
+        values.put("num_parcours", queryValues.get("liste_liaisons.num_parcours"));
+        values.put("description", queryValues.get("liste_liaisons.description"));
+        values.put("points", queryValues.get("liste_liaisons.points"));
+        database.insert("liste_liaisons", null, values);
+
+        System.out.println("liaison");
+        //liaison
+        //values = new ContentValues();
+        values.put("num", queryValues.get("liaison.num"));
+        values.put("balise", queryValues.get("liaison.balise"));
+        values.put("ordre", queryValues.get("liaison.ordre"));
+        database.insert("liaison", null, values);*/
+
+
+        database.close();
+
+        return course;
+
     }
 
 

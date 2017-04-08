@@ -8,7 +8,7 @@
     android:background="@color/fondFragments">
 
     <TextView
-        android:text="Vous n'avez pas téléchargé de parcours"
+        android:text="Aucune course en cours."
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/noParcours2"
@@ -180,8 +180,7 @@
                         android:id="@+id/endBalise"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_tuile"
-                        android:layout_marginRight="3dp">
+                        android:background="@drawable/bg_tuile">
 
                         <TextView
                             android:text="Arrivée"
@@ -210,12 +209,12 @@
                         android:layout_height="match_parent"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:paddingTop="8dp"
+                        android:paddingTop="7dp"
                         android:id="@+id/startBalise"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
                         android:background="@drawable/bg_tuile"
-                        android:paddingBottom="8dp">
+                        android:paddingBottom="7dp">
 
                         <TextView
                             android:text="Départ"

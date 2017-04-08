@@ -3,6 +3,7 @@ package iut_lry.coursedorientation;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 
 import cz.msebera.android.httpclient.Header;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.graphics.Color.rgb;
 
 public class TabFragment1 extends Fragment implements View.OnClickListener {
@@ -39,11 +41,14 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
     View view;
     Button sendButton;
     Button newParcoursButton;
-    Button removeButton;
+    //Button removeButton;
+    Button newTestParcoursButton;
     LinearLayout layoutSendParkour;
     ProgressBar progressBarSend;
 
     DBController controller;
+
+    String courseActuelle;
 
 
     @Override
@@ -64,8 +69,11 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         newParcoursButton = (Button) view.findViewById(R.id.newParcoursButton);
         newParcoursButton.setOnClickListener(this);
 
-        removeButton = (Button) view.findViewById(R.id.removeButton);
-        removeButton.setOnClickListener(this);
+        newTestParcoursButton = (Button) view.findViewById(R.id.newTestParcoursButton);
+        newTestParcoursButton.setOnClickListener(this);
+
+/*        removeButton = (Button) view.findViewById(R.id.removeButton);
+        removeButton.setOnClickListener(this);*/
 
         controller = new DBController(getActivity());
 
@@ -80,33 +88,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
         thread.execute();
 
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        //On regarde si on recoit bie le bon résultat, ce qui veux dire que l'on a téléchargé un parcours
-        //dans l'activité NewParkour
-        if(resultCode==111 && requestCode==2)
-        {
-            //On update l'onglet 1
-            updateParametres thread = new updateParametres();
-            thread.execute();
-            //On update la listView du fragment 3 (onglet parcours)
-            mCallback.communicateToFragment3();
-            //Changer affichage de l'onglet 2
-            mCallback.communicateToFragment2();
-
-        }
-    }
-
-    //pr tenter de régler "IInputConnectionWrapper: showStatusIcon on inactive InputConnection" quand on quitte l'appli quand on a un edittext sélectionné
-/*    @Override
-    public void onResume() {
-        RelativeLayout layoutFocus = (RelativeLayout) getView().findViewById(R.id.layoutFocus);
-        layoutFocus.requestFocus();
-        super.onResume();
-    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -149,8 +130,8 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.newParcoursButton:
-                boolean parcoursFull = controller.checkParcours();
-                if(parcoursFull) {
+                boolean courseDownloaded = controller.checkCourse();
+                if(courseDownloaded) {
                     new AlertDialog.Builder(getActivity())
                             .setMessage("Si vous téléchargez un nouveau parcours, celui déjà présent sur votre téléphone sera effacé." +
                                     "\nEtes-vous sûr ?")
@@ -173,7 +154,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 break;
 
-            case R.id.removeButton:
+/*            case R.id.removeButton:
                 new AlertDialog.Builder(getActivity())
                         .setMessage("Ceci effacera les temps de votre parcours" +
                                 "\nEtes-vous sûr ?")
@@ -185,7 +166,44 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
                         })
                         .setNegativeButton("Annuler", null)
                         .show();
+                break;*/
+
+            case R.id.newTestParcoursButton:
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Ceci téléchargera le parcours test" +
+                                "\nEtes-vous sûr ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Download test parcours", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                dllParcoursTest thread = new dllParcoursTest();
+                                thread.execute();
+
+                            }
+                        })
+                        .setNegativeButton("Annuler", null)
+                        .show();
                 break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        //On regarde si on recoit bien le bon résultat, ce qui veux dire que l'on a téléchargé un parcours
+        //dans l'activité NewParkour
+        if(resultCode==111 && requestCode==2)
+        {
+            //On update l'onglet 1
+            updateParametres thread = new updateParametres();
+            thread.execute();
+
+            //Changer affichage de l'onglet 2
+            mCallback.communicateToFragment2();
+            //On update la listView du fragment 3 (onglet parcours)
+            mCallback.communicateToFragment3();
+
         }
     }
 
@@ -249,7 +267,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
     public class updateParametres extends AsyncTask<Void, Void, Void> {
 
-        boolean parcoursFull;
+        boolean courseDownloaded;
         String parametres;
 
         @Override
@@ -274,10 +292,9 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
             DBController controller = new DBController(getActivity());
 
-            parcoursFull = controller.checkParcours();
+            courseDownloaded = controller.checkCourse();
 
-
-            if (parcoursFull)
+            if (courseDownloaded)
             {
                 parametres = controller.updateOngletParametres();
                 System.out.println("PARAMETRES : " + parametres);
@@ -293,7 +310,7 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
          *    display it or send to mainactivity
          *    close any dialogs/ProgressBars/etc...
         */
-            if (parcoursFull)
+            if (courseDownloaded)
             {
                 TextView itemHeader2 = (TextView) view.findViewById(R.id.itemHeader2);
                 LinearLayout layoutJoueurs = (LinearLayout) view.findViewById(R.id.layoutPlayers2);
@@ -301,7 +318,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
 
                 //Afficher le layout parcours Téléchargé
                 view.findViewById(R.id.parcoursPresent).setVisibility(View.VISIBLE);
-
             }
             else
             {
@@ -310,6 +326,75 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+    //POUR DLL PARCOURS TEST
+    public class dllParcoursTest extends AsyncTask<Void, Void, Void> {
+
+        String course;
+
+        @Override
+        protected void onPreExecute() {
+        /*
+         *    do things before doInBackground() code runs
+         *    such as preparing and showing a Dialog or ProgressBar
+        */
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        /*
+         *    updating data
+         *    such a Dialog or ProgressBar
+        */
+        }
+
+        @Override
+        protected Void doInBackground(Void... settings) {
+            //do your work here
+
+            //ON SUPPRIME LES DONNEES ENREGISTREES DU TEMPS SI ON TELECHARGE UN NOUVEAU PARCOURS.
+            //Create a object SharedPreferences from getSharedPreferences("name_file",MODE_PRIVATE) of Context
+            SharedPreferences preferences = getActivity().getSharedPreferences("info", MODE_PRIVATE);
+            //On supprime les données enregistrées.
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear();
+            editor.commit();
+
+            //test pour reset table qd télécharge le parcours
+            controller.deleteTable("joueurs");
+            controller.deleteTable("equipe");
+            controller.deleteTable("course");
+            controller.deleteTable("parcours");
+            controller.deleteTable("liste_balises");
+            controller.deleteTable("balise");
+            controller.deleteTable("groupe");
+            controller.deleteTable("liste_liaisons");
+            controller.deleteTable("liaison");
+
+            courseActuelle = controller.dllTest();
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+        /*
+         *    do something with data here
+         *    display it or send to mainactivity
+         *    close any dialogs/ProgressBars/etc...
+        */
+            //On update l'onglet 1
+            updateParametres thread = new updateParametres();
+            thread.execute();
+
+            //Changer affichage de l'onglet 2
+            mCallback.communicateToFragment2();
+            //On update la listView du fragment 3 (onglet parcours)
+            mCallback.communicateToFragment3();
+
+        }
+    }
+
 
     public void envoyerParcours(){
 
@@ -382,5 +467,6 @@ public class TabFragment1 extends Fragment implements View.OnClickListener {
             Utils.showToast(getActivity(), "Vos résultats ont déjà été envoyé !", "long");
         }
     }
+
 
 }

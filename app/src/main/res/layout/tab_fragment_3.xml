@@ -8,7 +8,7 @@
     android:background="@color/fondFragments">
 
     <TextView
-        android:text="Vous n'avez pas téléchargé de parcours"
+        android:text="Aucune course en cours."
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/noParcours"

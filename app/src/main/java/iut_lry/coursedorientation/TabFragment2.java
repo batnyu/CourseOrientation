@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -68,6 +69,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
     String[] baliseActuelle;
 
     String infoScan = "";
+    String tempsCourse = "";
 
     boolean activiteRedemarre;
 
@@ -75,6 +77,10 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
     LinearLayout liaisonsBalise;
     LinearLayout pochesBalise;
+
+
+
+
 
     View view;
 
@@ -107,6 +113,29 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    private String milliToString(long time) {
+
+        int h   = (int)(time /3600000);
+        int m = (int)(time - h*3600000)/60000;
+        int s= (int)(time - h*3600000- m*60000)/1000 ;
+        String hh = h < 10 ? "0"+h: h+"";
+        String mm = m < 10 ? "0"+m: m+"";
+        String ss = s < 10 ? "0"+s: s+"";
+
+        return hh+":"+mm+":"+ss;
+    }
+
+    private long StringToMilli(String time) {
+
+        String[] tokens = time.split(":");
+        int hours = Integer.parseInt(tokens[0]);
+        int minutes = Integer.parseInt(tokens[1]);
+        int seconds = Integer.parseInt(tokens[2]);
+        long duration = 3600000 * hours + 60000 * minutes + 1000 * seconds;
+
+        return duration;
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -115,14 +144,22 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         timeElapsed.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener(){
             @Override
             public void onChronometerTick(Chronometer cArg) {
+
                 long time = SystemClock.elapsedRealtime() - cArg.getBase();
-                int h   = (int)(time /3600000);
-                int m = (int)(time - h*3600000)/60000;
-                int s= (int)(time - h*3600000- m*60000)/1000 ;
-                String hh = h < 10 ? "0"+h: h+"";
-                String mm = m < 10 ? "0"+m: m+"";
-                String ss = s < 10 ? "0"+s: s+"";
-                cArg.setText(hh+":"+mm+":"+ss);
+
+                String heureColor = "";
+
+                if(time > StringToMilli(tempsCourse)) {
+                    heureColor = "<font color='#db1500'>" + milliToString(time) + "</font>";
+                } else {
+                    heureColor = milliToString(time);
+                }
+                cArg.setText(fromHtml(heureColor), TextView.BufferType.SPANNABLE);
+                if(StringToMilli(tempsCourse) - time >= 0) {
+                    ((TextView) view.findViewById(R.id.textView_chrono)).setText("Chronomètre (temps restant : " + milliToString(StringToMilli(tempsCourse) - time + 1) + ")");
+                }
+
+
             }
         });
         timeElapsed.setText("00:00:00");
@@ -217,7 +254,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             IntentIntegrator.forSupportFragment(this)
                     .setCaptureActivity(CaptureActivityAnyOrientation.class)
                     .setPrompt("Encadrez le code-barres d'une balise pour la valider !")
-                    .setBeepEnabled(true)
+                    .setBeepEnabled(false)
                     .setOrientationLocked(false).initiateScan();
         }
     }
@@ -229,7 +266,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(getActivity(), "Scan annulé !", Toast.LENGTH_LONG).show();
-                //TODO jouez son echec scan
             }
             else {
                 //Récupération du contenu du scan
@@ -291,13 +327,7 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 //temps = timeElapsed.getText().toString();
                 //Donc obligé de refaire ça :
                 long timeChrono = SystemClock.elapsedRealtime() - timeElapsed.getBase();
-                int h   = (int)(timeChrono /3600000);
-                int m = (int)(timeChrono - h*3600000)/60000;
-                int s= (int)(timeChrono - h*3600000- m*60000)/1000 ;
-                String hh = h < 10 ? "0"+h: h+"";
-                String mm = m < 10 ? "0"+m: m+"";
-                String ss = s < 10 ? "0"+s: s+"";
-                temps = hh+":"+mm+":"+ss;
+                temps = milliToString(timeChrono);
 
                 if(resultat == 1)
                 {
@@ -380,6 +410,14 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             {
                 //on update les infoScan de l'onglet "infoScan"
                 updateInfos();
+
+                //Son OK
+                Utils.playSound(getActivity(),R.raw.sound_ok);
+            }
+            else if(resultat != 54){
+                //Son Erreur
+                Log.d("testdhdh", "DEVRAIT JOUER SON ZXING_BEEP");
+                Utils.playSound(getActivity(),R.raw.sound_ko);
             }
 
             //update des erreurs
@@ -403,8 +441,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         String nbBaliseArrivee;
 
-        String baliseRemainingPoche;
-        String baliseCheckedPoche;
         String baliseSortiePoche;
         String pocheStr;
 
@@ -436,10 +472,11 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
                 }
             }
 
-            if(resultat == 1 || resultat == 3 || resultat == 12)
-            {
+            Log.d("test", "resultat = " + resultat);
+
+            if(resultat == 1 || resultat == 3 || resultat == 12) {
                 //Update du temps dans la base de données
-                controller.UpdateTemps(scanContent,temps);
+                controller.UpdateTemps(scanContent, temps);
             }
 
             //pour pouvoir vérifier si la suivante a déjà été pointé
@@ -467,11 +504,6 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             }
 
             //poche
-            baliseSortiePoche = controller.getSortiePoche(baliseActuelle[6]);
-            baliseRemainingPoche = controller.getRemainingPoche(baliseActuelle[6]);
-            baliseCheckedPoche = controller.getCheckedPoche(baliseActuelle[6]);
-
-            //poche test
             pocheStr = controller.getPoche(baliseActuelle[6]);
 
             //liaisons
@@ -562,34 +594,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             }
 
             //poche
-            TextView balisePoche = ((TextView) view.findViewById(R.id.textView_poche_nb));
-/*            if(baliseActuelle[6].equals("")) { //si on vient de dll le parkour
-                ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
-                balisePoche.setText("\n\n");
-            } else if(!baliseActuelle[6].equals("null")){ //si la balise actuelle fait partie d'une poche
-                ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle : " + baliseActuelle[6]);
-                balisePoche.setText("sortie : " + baliseSortiePoche
-                                  + "\nrestantes : " + baliseRemainingPoche
-                                  + "\nscannées : " + baliseCheckedPoche);
-
-                pocheActuelle = baliseActuelle[6];
-            } else { //si la balise actuelle n'a pas de poche
-                ((TextView) view.findViewById(R.id.textView_poche)).setText("Poche actuelle");
-                balisePoche.setText("aucune\n\n");
-                pocheActuelle = "null";
-            }*/
-
-            balisePoche.setText(fromHtml(pocheStr), TextView.BufferType.SPANNABLE);
+            TextView balisePoches = ((TextView) view.findViewById(R.id.textView_poche_nb));
+            balisePoches.setText(fromHtml(pocheStr), TextView.BufferType.SPANNABLE);
             pocheActuelle = baliseActuelle[6];
 
             //liaisons
-            if(liaisons.equals("") && departOK){
-                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("aucune");
-            } else if(liaisons.equals("")){
-                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText("");
-            } else {
-                ((TextView) view.findViewById(R.id.textView_liaisons_nb)).setText(fromHtml(liaisons), TextView.BufferType.SPANNABLE);
-            }
+            TextView liaisonsPoches = ((TextView) view.findViewById(R.id.textView_liaisons_nb));
+            liaisonsPoches.setText(fromHtml(liaisons), TextView.BufferType.SPANNABLE);
 
             //points
             ((TextView) view.findViewById(R.id.textView_points_nb)).setText(nbPoints);
@@ -628,14 +639,14 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
 
         boolean pochesDsParcours;
         boolean liaisonsDsParcours;
-        boolean parcoursFull;
+        boolean courseDownloaded;
 
-        parcoursFull = controller.checkParcours();
+        courseDownloaded = controller.checkCourse();
 
         timeElapsed.stop();
         timeElapsed.setText("00:00:00");
 
-        if (parcoursFull) {
+        if (courseDownloaded) {
 
             //afficher l'interface du deuxieme onglet et cacher la phrase
             view.findViewById(R.id.interface2).setVisibility(LinearLayout.VISIBLE);
@@ -666,10 +677,13 @@ public class TabFragment2 extends Fragment implements View.OnClickListener {
             //on réinitialise infosScan
             infoScan = "";
 
+            //récupération temps parcours
+            tempsCourse = controller.getTimeOfRace();
+            ((TextView) view.findViewById(R.id.textView_chrono)).setText("Chronomètre (temps restant : " + tempsCourse + ")");
+
             //si la base de données est déjà remplie, on update les infoScan
             updateInfos();
 
-            //fonction a mettre en place pour récupérer le bon chrono si l'activité s'arrete.
         }
         else
         {
